@@ -125,12 +125,12 @@
 
     <!-- Javascript Logic for Render, Search, Theme & Print -->
     <script>
-        // 1. Data Definition (Removed Creative Field / Role, updated code format to Team.X)
+        // 1. Data Definition
         const teamsData = [
-            { id: "A", name: "Team.A", members: ["유서연", "김나연"], code: "A팀" },
-            { id: "B", name: "Team.B", members: ["황세현", "홍지혁"], code: "B팀" },
-            { id: "C", name: "Team.C", members: ["박준형", "이우철"], code: "C팀" },
-            { id: "D", name: "Team.D", members: ["김은채", "이시형"], code: "D팀" },
+            { id: "A", name: "A팀", members: ["유서연", "김나연"], code: "Team.A" },
+            { id: "B", name: "B팀", members: ["황세현", "홍지혁"], code: "Team.B" },
+            { id: "C", name: "C팀", members: ["박준형", "이우철"], code: "Team.C" },
+            { id: "D", name: "D팀", members: ["김은채", "이시형"], code: "Team.D" },
             { id: "E", name: "E팀", members: ["최보아", "한영균", "조지운"], code: "Team.E" },
             { id: "F", name: "F팀", members: ["이하늘", "정운영"], code: "Team.F" },
             { id: "G", name: "G팀", members: ["박도현", "최강"], code: "Team.G" },
@@ -152,7 +152,8 @@
                 const searchLower = filter.toLowerCase();
                 const matchesTeamName = team.name.toLowerCase().includes(searchLower);
                 const matchesMember = team.members.some(member => member.toLowerCase().includes(searchLower));
-                return matchesTeamName || matchesMember;
+                const matchesCode = team.code.toLowerCase().includes(searchLower);
+                return matchesTeamName || matchesMember || matchesCode;
             });
 
             if (filteredTeams.length === 0) {
@@ -194,11 +195,11 @@
                         <div class="absolute top-0 left-0 w-full h-[6px] ${accentLine}"></div>
                         
                         <div>
-                            <!-- Header Element -->
+                            <!-- Header Element: Small Korean, Large Uppercase English Team Code -->
                             <div class="flex justify-between items-start mb-6">
                                 <div>
-                                    <span class="font-eng text-xs tracking-widest uppercase opacity-50 font-bold">${team.code}</span>
-                                    <h3 class="text-3xl font-black font-eng mt-1 tracking-tight leading-none">${team.name}</h3>
+                                    <span class="text-xs tracking-widest font-bold opacity-50 block">${team.name}</span>
+                                    <h3 class="text-3xl font-black font-eng mt-1 tracking-tight leading-none">${team.code.toUpperCase()}</h3>
                                 </div>
                                 <span class="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${isThreeMembers ? 'bg-rose-100 text-rose-800' : 'bg-neutral-100 text-neutral-800'}">
                                     ${team.members.length} Designers
@@ -206,7 +207,7 @@
                             </div>
                         </div>
 
-                        <!-- Core Roster List (Restored to smaller size for premium aesthetics) -->
+                        <!-- Core Roster List -->
                         <div class="mt-auto">
                             <span class="text-xs block uppercase tracking-widest font-extrabold opacity-70 mb-2">Assignees</span>
                             <div class="flex flex-wrap gap-1.5">
@@ -246,9 +247,9 @@
                     
                     row.innerHTML = `
                         <div class="flex items-center gap-6">
-                            <div class="min-w-[80px]">
-                                <span class="font-eng text-xs font-bold ${codeColor} block tracking-wider">${team.code}</span>
-                                <h3 class="text-2xl font-bold font-eng leading-none mt-1">${team.name}</h3>
+                            <div class="min-w-[120px]">
+                                <span class="text-xs font-bold ${codeColor} block tracking-wider opacity-60">${team.name}</span>
+                                <h3 class="text-2xl font-black font-eng leading-none mt-1">${team.code.toUpperCase()}</h3>
                             </div>
                         </div>
                         
@@ -284,7 +285,7 @@
             renderTeams(searchInput.value);
         }
 
-        // 4. Color Theme Presets for Professional Professors Preference
+        // 4. Color Theme Presets
         function changeTheme(theme) {
             currentTheme = theme;
             const body = document.getElementById('body-theme');
