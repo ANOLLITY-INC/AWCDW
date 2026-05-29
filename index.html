@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DESIGN STUDIO - DESIGN TEAM ARCHIVE</title>
+    <title>Additive Manufacturing Collaborative Design Workshop 2026</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Pretendard / Google Fonts for High-end Typography -->
@@ -33,23 +33,232 @@
                 break-inside: avoid;
             }
         }
+        /* 페이드인 애니메이션 */
+        .fade-in {
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="bg-[#F8F9FA] text-[#1A1A1A] min-h-screen transition-colors duration-500" id="body-theme">
 
-    <div class="max-w-7xl mx-auto px-6 py-12 lg:py-20">
+    <!-- ==================== PAGE 1: LANDING PAGE ==================== -->
+    <div id="landing-page" class="fade-in max-w-7xl mx-auto px-6 py-12 lg:py-20">
         
-        <!-- ==================== HEADER (Swiss Grid Style) ==================== -->
+        <!-- HEADER (Swiss Grid Style) -->
         <header class="border-b-2 border-current pb-8 mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div>
                 <div class="flex items-center gap-3 mb-2">
+                    <span class="inline-block w-3 h-3 bg-[#0055FF] rounded-full animate-pulse" id="landing-dot"></span>
+                    <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">2026 Spring-Summer Session</p>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none uppercase">
+                    2026 적층제조융합설계워크숍
+                </h1>
+                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800" id="landing-sub">Additive Manufacturing Collaborative Design Workshop</p>
+            </div>
+            
+            <!-- THEME SWITCHER -->
+            <div class="no-print">
+                <select id="theme-select-landing" onchange="changeTheme(this.value)" class="text-xs font-semibold bg-white border border-neutral-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    <option value="swiss">Preset: Swiss Studio</option>
+                    <option value="dark">Preset: Midnight Gallery</option>
+                    <option value="bauhaus">Preset: Bauhaus Primary</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- MAIN SCHEDULE TIMELINE (Interactive) -->
+        <section class="mb-16">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-xl font-extrabold tracking-tight uppercase border-l-4 border-current pl-3" id="timeline-title">
+                    WORKSHOP MASTER TIMELINE &middot; 워크숍 로드맵
+                </h2>
+                <span class="text-xs font-bold opacity-60 font-eng bg-neutral-200/50 px-2.5 py-1 rounded" id="today-indicator">TODAY: 2026. 05. 29</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="schedule-grid">
+                <!-- 1 -->
+                <div class="border border-neutral-200 bg-white p-6 rounded-2xl relative transition-all hover:border-blue-600 group" data-step="1">
+                    <span class="text-3xl font-black font-eng opacity-10 absolute right-4 top-4 group-hover:opacity-30 transition-opacity">01</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 mb-3 inline-block">온라인 아이디어</span>
+                    <h4 class="font-extrabold text-base mb-2">디자인팀 온라인 아이디어 제안</h4>
+                    <p class="text-xs text-neutral-500 font-semibold">2026.05.02.(토) ~ 05.23.(토)</p>
+                </div>
+
+                <!-- 2 (ACTIVE CURRENTLY - Pulse decoration) -->
+                <div class="border-2 border-blue-500 bg-white p-6 rounded-2xl relative transition-all shadow-[0_0_20px_rgba(59,130,246,0.15)] scale-[1.02]" data-step="2">
+                    <span class="text-3xl font-black font-eng text-blue-500 opacity-20 absolute right-4 top-4">02</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-100 text-blue-800 mb-3 inline-block animate-pulse">● 현재 진행 중</span>
+                    <h4 class="font-extrabold text-base mb-2 text-blue-900" id="step2-title">온라인 사전 워크숍 운영</h4>
+                    <p class="text-xs text-blue-600 font-bold">2026.05.23(토) ~ 06.07(일)</p>
+                </div>
+
+                <!-- 3 -->
+                <div class="border border-neutral-200 bg-white p-6 rounded-2xl relative transition-all hover:border-blue-600 group" data-step="3">
+                    <span class="text-3xl font-black font-eng opacity-10 absolute right-4 top-4 group-hover:opacity-30 transition-opacity">03</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 mb-3 inline-block">1차 오프라인</span>
+                    <h4 class="font-extrabold text-base mb-1">1차 워크숍 (부산대학교)</h4>
+                    <p class="text-xs text-neutral-400 font-semibold mb-2">2026.06.24(수) ~ 06.26(금)</p>
+                    <p class="text-[11px] leading-relaxed text-neutral-600 font-medium bg-neutral-50 p-2.5 rounded-lg border border-neutral-100">이론 교육, 팀 빌딩, 아이디어 및 컨셉 도출 <span class="text-blue-600 font-bold text-[10px] block mt-1">2박3일 &middot; 숙소 제공</span></p>
+                </div>
+
+                <!-- 4 -->
+                <div class="border border-neutral-200 bg-white p-6 rounded-2xl relative transition-all hover:border-blue-600 group" data-step="4">
+                    <span class="text-3xl font-black font-eng opacity-10 absolute right-4 top-4 group-hover:opacity-30 transition-opacity">04</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 mb-3 inline-block">2차 오프라인</span>
+                    <h4 class="font-extrabold text-base mb-1">2차 워크숍 (중앙대학교)</h4>
+                    <p class="text-xs text-neutral-400 font-semibold mb-2">2026.07.08.(수) ~ 07.10.(금)</p>
+                    <p class="text-[11px] leading-relaxed text-neutral-600 font-medium bg-neutral-50 p-2.5 rounded-lg border border-neutral-100">제품 모델링 및 제작 <span class="text-blue-600 font-bold text-[10px] block mt-1">2박3일 &middot; 숙소 제공</span></p>
+                </div>
+
+                <!-- 5 -->
+                <div class="border border-neutral-200 bg-white p-6 rounded-2xl relative transition-all hover:border-blue-600 group" data-step="5">
+                    <span class="text-3xl font-black font-eng opacity-10 absolute right-4 top-4 group-hover:opacity-30 transition-opacity">05</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 mb-3 inline-block">3차 오프라인</span>
+                    <h4 class="font-extrabold text-base mb-1">3차 워크숍 (한국기술교육대)</h4>
+                    <p class="text-xs text-neutral-400 font-semibold mb-2">2026.08.19.(수) ~ 08.21.(금)</p>
+                    <p class="text-[11px] leading-relaxed text-neutral-600 font-medium bg-neutral-50 p-2.5 rounded-lg border border-neutral-100">부품 조립 및 시제품 완성 <span class="text-blue-600 font-bold text-[10px] block mt-1">2박3일 &middot; 숙소 제공</span></p>
+                </div>
+
+                <!-- 6 -->
+                <div class="border border-neutral-200 bg-white p-6 rounded-2xl relative transition-all hover:border-blue-600 group" data-step="6">
+                    <span class="text-3xl font-black font-eng opacity-10 absolute right-4 top-4 group-hover:opacity-30 transition-opacity">06</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 mb-3 inline-block">최종 제출</span>
+                    <h4 class="font-extrabold text-base mb-2">최종보고서 및 전시 기획서 제출</h4>
+                    <p class="text-xs text-neutral-500 font-semibold">~ 2026.09.</p>
+                    <p class="text-[10px] text-blue-600 font-bold mt-2">대한기계학회논문집C 투고, 재료비/전시비용 지원</p>
+                </div>
+
+                <!-- 7 -->
+                <div class="border border-neutral-200 bg-white p-6 rounded-2xl relative transition-all hover:border-blue-600 group" data-step="7">
+                    <span class="text-3xl font-black font-eng opacity-10 absolute right-4 top-4 group-hover:opacity-30 transition-opacity">07</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 mb-3 inline-block">학회 예선</span>
+                    <h4 class="font-extrabold text-base mb-2">대한기계학회 특별세션 예선 발표</h4>
+                    <p class="text-xs text-neutral-500 font-semibold">2026.11초 예정</p>
+                    <p class="text-[10px] text-neutral-500 mt-2">제주도 (장소 확정 예정)</p>
+                </div>
+
+                <!-- 8 -->
+                <div class="border border-neutral-200 bg-white p-6 rounded-2xl relative transition-all hover:border-blue-600 group" data-step="8">
+                    <span class="text-3xl font-black font-eng opacity-10 absolute right-4 top-4 group-hover:opacity-30 transition-opacity">08</span>
+                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 mb-3 inline-block">최종 발표</span>
+                    <h4 class="font-extrabold text-base mb-2">최종발표회 (CO-SHOW)</h4>
+                    <p class="text-xs text-neutral-500 font-semibold">2026.11.18.(수) ~ 11.21.(토)</p>
+                    <p class="text-[10px] text-neutral-500 mt-2">광주광역시 김대중컨벤션센터</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTERACTIVE NAV HUB (TABS & BOXES) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Core Links Card 1: mnm.ac.kr -->
+            <div class="group border-2 border-current bg-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1" id="nav-mnm">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-[10px] font-black uppercase tracking-widest bg-black text-white px-2 py-1 rounded">External Link</span>
+                        <svg class="w-5 h-5 text-neutral-400 group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-black mb-2 tracking-tight">온라인 강의실 접속링크</h3>
+                    <p class="text-sm opacity-70 mb-8 leading-relaxed">적층제조 및 워크숍 이론 강의 수강, 과제 제출 등을 진행할 수 있는 공식 학습 플랫폼으로 즉시 연결합니다.</p>
+                </div>
+                <a href="https://mnm.ac.kr" target="_blank" class="w-full text-center bg-black text-white font-bold text-sm py-4 rounded-xl group-hover:bg-blue-600 transition-colors inline-block uppercase tracking-wider font-eng">
+                    mnm.ac.kr 바로가기 &rarr;
+                </a>
+            </div>
+
+            <!-- Core Links Card 2: Go to 3 Page (Current Team Allocation) -->
+            <div class="group border-2 border-current bg-[#0055FF] text-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1" id="nav-teams">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-[10px] font-black uppercase tracking-widest bg-white text-blue-600 px-2 py-1 rounded">Interactive Portal</span>
+                        <svg class="w-5 h-5 text-blue-200 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-black mb-2 tracking-tight">디자이너 사전 주제 제안</h3>
+                    <p class="text-sm opacity-90 mb-8 leading-relaxed">워크숍에 참여하는 디자이너들의 전공 매칭과 조별 주제 분배 및 상세 팀 구성을 인터랙티브 보드로 확인합니다.</p>
+                </div>
+                <button onclick="navigateTo('teams')" class="w-full text-center bg-white text-black font-black text-sm py-4 rounded-xl group-hover:bg-yellow-300 transition-colors inline-block uppercase tracking-wider font-eng">
+                    팀 배정 현황판 열기 &rarr;
+                </button>
+            </div>
+            
+        </section>
+
+        <!-- ADDITIONAL DETAILS GRID (Page Link Placeholders) -->
+        <section class="mt-12">
+            <h3 class="text-sm font-extrabold tracking-wider uppercase opacity-50 mb-6">DETAILED WORKSHOP SCHEDULES &middot; 세부 일정 자료</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- Tab 1 -->
+                <button onclick="openPendingModal('온라인 사전워크숍')" class="group border border-neutral-300 bg-white hover:border-black p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md" id="tab-1">
+                    <div>
+                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">Schedule 01</p>
+                        <h4 class="font-extrabold text-sm mt-1 text-neutral-800">온라인 사전워크숍 상세일정</h4>
+                    </div>
+                    <span class="text-xl font-bold opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                </button>
+
+                <!-- Tab 2 -->
+                <button onclick="openPendingModal('1차 워크숍(부산대학교)')" class="group border border-neutral-300 bg-white hover:border-black p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md" id="tab-2">
+                    <div>
+                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">Schedule 02</p>
+                        <h4 class="font-extrabold text-sm mt-1 text-neutral-800">1차 워크숍 (부산대) 상세일정</h4>
+                    </div>
+                    <span class="text-xl font-bold opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                </button>
+
+                <!-- Tab 3 -->
+                <button onclick="openPendingModal('2차 워크숍(중앙대학교)')" class="group border border-neutral-300 bg-white hover:border-black p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md" id="tab-3">
+                    <div>
+                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">Schedule 03</p>
+                        <h4 class="font-extrabold text-sm mt-1 text-neutral-800">2차 워크숍 (중앙대) 상세일정</h4>
+                    </div>
+                    <span class="text-xl font-bold opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                </button>
+
+                <!-- Tab 4 -->
+                <button onclick="openPendingModal('3차 워크숍(한국기술교육대학교)')" class="group border border-neutral-300 bg-white hover:border-black p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md" id="tab-4">
+                    <div>
+                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">Schedule 04</p>
+                        <h4 class="font-extrabold text-sm mt-1 text-neutral-800">3차 워크숍 (한기대) 상세일정</h4>
+                    </div>
+                    <span class="text-xl font-bold opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                </button>
+
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-20 pt-8 border-t border-neutral-300 text-xs opacity-50 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p>© 2026 Additive Manufacturing Collaborative Design Workshop. COSS&ByunSeoHee. All rights reserved.</p>
+            <div class="flex gap-6">
+                <a href="mailto:baradene0910@cau.ac.kr" class="hover:underline cursor-pointer">Inquiries: baradene0910@cau.ac.kr</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ==================== PAGE 3: TEAM ALLOCATION PAGE (Initially Hidden) ==================== -->
+    <div id="teams-page" class="hidden fade-in max-w-7xl mx-auto px-6 py-12 lg:py-20">
+        
+        <!-- HEADER (Swiss Grid Style) -->
+        <header class="border-b-2 border-current pb-8 mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <button onclick="navigateTo('landing')" class="no-print mr-2 bg-neutral-200 hover:bg-neutral-300 text-neutral-800 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition-all">
+                        &larr; Back to Home
+                    </button>
                     <span class="inline-block w-3 h-3 bg-[#0055FF] rounded-full animate-pulse" id="theme-dot"></span>
                     <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">2026 Spring Semester</p>
                 </div>
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none uppercase">
                     Design Team Allocation
                 </h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">디자이너 사전주제제안 — 팀 배정 현황</p>
+                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800" id="teams-sub">디자이너 사전주제제안 — 팀 배정 현황</p>
             </div>
             
             <!-- CONTROLS (no-print) -->
@@ -123,14 +332,30 @@
 
     </div>
 
-    <!-- Javascript Logic for Render, Search, Theme & Print -->
+    <!-- ==================== MODERN MODAL (NO ALERT GUARDRAIL) ==================== -->
+    <div id="pending-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+        <div class="bg-white border-2 border-black rounded-2xl p-8 max-w-md w-full shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform scale-95 transition-transform duration-300" id="modal-box">
+            <div class="flex items-center gap-3 mb-4 text-amber-500">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <h3 class="text-xl font-black text-black uppercase tracking-tight">Schedule Pending</h3>
+            </div>
+            <p class="text-sm text-neutral-600 leading-relaxed mb-6">
+                선택하신 <strong id="modal-target" class="text-black font-extrabold">세부일정</strong> 페이지는 현재 학회 및 워크숍 운영위원회 내부 조율 중입니다. 확정 즉시 배포 예정이오니 양해 부탁드립니다.
+            </p>
+            <button onclick="closePendingModal()" class="w-full text-center bg-black hover:bg-neutral-800 text-white font-bold text-sm py-3.5 rounded-xl transition-colors uppercase tracking-wider font-eng">
+                확인 & 닫기
+            </button>
+        </div>
+    </div>
+
+    <!-- Javascript Logic for Render, Search, Theme, Page Switching & Print -->
     <script>
-        // 1. Data Definition (Removed Creative Field / Role, updated code format to Team.X)
+        // 1. Data Definition
         const teamsData = [
-            { id: "A", name: "Team.A", members: ["유서연", "김나연"], code: "A팀" },
-            { id: "B", name: "Team.B", members: ["황세현", "홍지혁"], code: "B팀" },
-            { id: "C", name: "Team.C", members: ["박준형", "이우철"], code: "C팀" },
-            { id: "D", name: "Team.D", members: ["김은채", "이시형"], code: "D팀" },
+            { id: "A", name: "A팀", members: ["유서연", "김나연"], code: "Team.A" },
+            { id: "B", name: "B팀", members: ["황세현", "홍지혁"], code: "Team.B" },
+            { id: "C", name: "C팀", members: ["박준형", "이우철"], code: "Team.C" },
+            { id: "D", name: "D팀", members: ["김은채", "이시형"], code: "Team.D" },
             { id: "E", name: "E팀", members: ["최보아", "한영균", "조지운"], code: "Team.E" },
             { id: "F", name: "F팀", members: ["이하늘", "정운영"], code: "Team.F" },
             { id: "G", name: "G팀", members: ["박도현", "최강"], code: "Team.G" },
@@ -144,15 +369,61 @@
         const searchInput = document.getElementById('search');
         const noResults = document.getElementById('no-results');
 
+        // Page Router Function
+        function navigateTo(pageId) {
+            const page1 = document.getElementById('landing-page');
+            const page3 = document.getElementById('teams-page');
+            
+            if (pageId === 'landing') {
+                page3.classList.add('hidden');
+                page1.classList.remove('hidden');
+                document.getElementById('theme-select-landing').value = currentTheme;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (pageId === 'teams') {
+                page1.classList.add('hidden');
+                page3.classList.remove('hidden');
+                document.getElementById('theme-select').value = currentTheme;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                renderTeams();
+            }
+        }
+
+        // Modal Controls (Replaces native alerts safely)
+        function openPendingModal(targetName) {
+            const modal = document.getElementById('pending-modal');
+            const targetEl = document.getElementById('modal-target');
+            const modalBox = document.getElementById('modal-box');
+            
+            targetEl.textContent = `[${targetName}]`;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalBox.classList.remove('scale-95');
+                modalBox.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closePendingModal() {
+            const modal = document.getElementById('pending-modal');
+            const modalBox = document.getElementById('modal-box');
+            
+            modalBox.classList.remove('scale-100');
+            modalBox.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 150);
+        }
+
         // 2. Main Render Engine
         function renderTeams(filter = '') {
+            if (!teamsContainer) return;
             teamsContainer.innerHTML = '';
             
             const filteredTeams = teamsData.filter(team => {
                 const searchLower = filter.toLowerCase();
                 const matchesTeamName = team.name.toLowerCase().includes(searchLower);
                 const matchesMember = team.members.some(member => member.toLowerCase().includes(searchLower));
-                return matchesTeamName || matchesMember;
+                const matchesCode = team.code.toLowerCase().includes(searchLower);
+                return matchesTeamName || matchesMember || matchesCode;
             });
 
             if (filteredTeams.length === 0) {
@@ -194,11 +465,11 @@
                         <div class="absolute top-0 left-0 w-full h-[6px] ${accentLine}"></div>
                         
                         <div>
-                            <!-- Header Element -->
+                            <!-- Header Element: Small Korean, Large Uppercase English Team Code -->
                             <div class="flex justify-between items-start mb-6">
                                 <div>
-                                    <span class="font-eng text-xs tracking-widest uppercase opacity-50 font-bold">${team.code}</span>
-                                    <h3 class="text-3xl font-black font-eng mt-1 tracking-tight leading-none">${team.name}</h3>
+                                    <span class="text-xs tracking-widest font-bold opacity-50 block">${team.name}</span>
+                                    <h3 class="text-3xl font-black font-eng mt-1 tracking-tight leading-none">${team.code.toUpperCase()}</h3>
                                 </div>
                                 <span class="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${isThreeMembers ? 'bg-rose-100 text-rose-800' : 'bg-neutral-100 text-neutral-800'}">
                                     ${team.members.length} Designers
@@ -206,7 +477,7 @@
                             </div>
                         </div>
 
-                        <!-- Core Roster List (Restored to smaller size for premium aesthetics) -->
+                        <!-- Core Roster List -->
                         <div class="mt-auto">
                             <span class="text-xs block uppercase tracking-widest font-extrabold opacity-70 mb-2">Assignees</span>
                             <div class="flex flex-wrap gap-1.5">
@@ -246,9 +517,9 @@
                     
                     row.innerHTML = `
                         <div class="flex items-center gap-6">
-                            <div class="min-w-[80px]">
-                                <span class="font-eng text-xs font-bold ${codeColor} block tracking-wider">${team.code}</span>
-                                <h3 class="text-2xl font-bold font-eng leading-none mt-1">${team.name}</h3>
+                            <div class="min-w-[120px]">
+                                <span class="text-xs font-bold ${codeColor} block tracking-wider opacity-60">${team.name}</span>
+                                <h3 class="text-2xl font-black font-eng leading-none mt-1">${team.code.toUpperCase()}</h3>
                             </div>
                         </div>
                         
@@ -284,13 +555,21 @@
             renderTeams(searchInput.value);
         }
 
-        // 4. Color Theme Presets for Professional Professors Preference
+        // 4. Color Theme Presets (Seamless styling of entire Portal across pages)
         function changeTheme(theme) {
             currentTheme = theme;
             const body = document.getElementById('body-theme');
             const dot = document.getElementById('theme-dot');
+            const landingDot = document.getElementById('landing-dot');
             const stats = ['stat-1', 'stat-2', 'stat-3'];
+            const navMnm = document.getElementById('nav-mnm');
+            const navTeams = document.getElementById('nav-teams');
+            const schedules = ['tab-1', 'tab-2', 'tab-3', 'tab-4'];
             
+            // Sync theme selectors
+            document.getElementById('theme-select').value = theme;
+            document.getElementById('theme-select-landing').value = theme;
+
             // Remove previous configurations
             body.className = "min-h-screen transition-colors duration-500 ";
             
@@ -301,22 +580,52 @@
             if (theme === 'swiss') {
                 body.className += "bg-[#F8F9FA] text-[#111111]";
                 dot.className = "inline-block w-3 h-3 bg-blue-600 rounded-full animate-pulse";
+                landingDot.className = "inline-block w-3 h-3 bg-blue-600 rounded-full animate-pulse";
+                
                 stats.forEach(id => {
                     document.getElementById(id).className += "border-neutral-200 bg-white";
+                });
+
+                // Landing Elements
+                navMnm.className = "group border-2 border-current bg-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1";
+                navTeams.className = "group border-2 border-current bg-[#0055FF] text-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1";
+                
+                schedules.forEach(id => {
+                    document.getElementById(id).className = "group border border-neutral-300 bg-white hover:border-black p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md";
                 });
             } 
             else if (theme === 'dark') {
                 body.className += "bg-[#121214] text-[#F3F4F6]";
                 dot.className = "inline-block w-3 h-3 bg-lime-400 rounded-full animate-pulse";
+                landingDot.className = "inline-block w-3 h-3 bg-lime-400 rounded-full animate-pulse";
+                
                 stats.forEach(id => {
                     document.getElementById(id).className += "border-neutral-800 bg-[#1F1F23]";
+                });
+
+                // Landing Elements Dark Style
+                navMnm.className = "group border-2 border-neutral-800 bg-[#1F1F23] rounded-2xl p-8 flex flex-col justify-between transition-all hover:border-lime-400 hover:shadow-2xl hover:shadow-lime-950/20 hover:-translate-y-1";
+                navTeams.className = "group border-2 border-[#1F1F23] bg-[#0055FF] text-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:border-lime-400 hover:shadow-2xl hover:shadow-lime-950/20 hover:-translate-y-1";
+
+                schedules.forEach(id => {
+                    document.getElementById(id).className = "group border border-neutral-800 bg-[#1F1F23] text-white hover:border-lime-400 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md";
                 });
             } 
             else if (theme === 'bauhaus') {
                 body.className += "bg-[#EAEAEA] text-black";
                 dot.className = "inline-block w-3 h-3 bg-red-600 rounded-full";
+                landingDot.className = "inline-block w-3 h-3 bg-red-600 rounded-full";
+                
                 stats.forEach(id => {
                     document.getElementById(id).className += "border-2 border-black bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]";
+                });
+
+                // Landing Elements Bauhaus Style
+                navMnm.className = "group border-2 border-black bg-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1";
+                navTeams.className = "group border-2 border-black bg-red-500 text-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(239,68,68,1)] hover:-translate-y-1";
+
+                schedules.forEach(id => {
+                    document.getElementById(id).className = "group border-2 border-black bg-white hover:bg-yellow-300 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]";
                 });
             }
             
