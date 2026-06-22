@@ -113,6 +113,9 @@ function navigateTo(pageId) {
     const pageWorkDetail = document.getElementById('work-detail-page');
     const pageApply = document.getElementById('apply-page');
     const pageApplicants = document.getElementById('applicants-page');
+    const pageBusInfo = document.getElementById('bus-info-page');
+    const pageAccommodation = document.getElementById('accommodation-page');
+    const pageCampusMap = document.getElementById('campus-map-page');
 
     // Hide all first
     page1.classList.add('hidden');
@@ -128,6 +131,9 @@ function navigateTo(pageId) {
     if (pageWorkDetail) pageWorkDetail.classList.add('hidden');
     if (pageApply) pageApply.classList.add('hidden');
     if (pageApplicants) pageApplicants.classList.add('hidden');
+    if (pageBusInfo) pageBusInfo.classList.add('hidden');
+    if (pageAccommodation) pageAccommodation.classList.add('hidden');
+    if (pageCampusMap) pageCampusMap.classList.add('hidden');
 
     if (pageId === 'auth') {
         if (pageAuth) { renderAuthPage(); pageAuth.classList.remove('hidden'); }
@@ -163,6 +169,18 @@ function navigateTo(pageId) {
         return;
     } else if (pageId === 'applicants') {
         if (pageApplicants) { if (typeof renderApplicants === 'function') renderApplicants(); pageApplicants.classList.remove('hidden'); }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    } else if (pageId === 'bus-info') {
+        if (pageBusInfo) { if (typeof renderBusInfo === 'function') renderBusInfo(); pageBusInfo.classList.remove('hidden'); }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    } else if (pageId === 'accommodation') {
+        if (pageAccommodation) { if (typeof renderAccommodation === 'function') renderAccommodation(); pageAccommodation.classList.remove('hidden'); }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    } else if (pageId === 'campus-map') {
+        if (pageCampusMap) { pageCampusMap.classList.remove('hidden'); }
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
     }

@@ -181,30 +181,33 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
                 <!-- Busan Tab 1: 서울-부산 버스 이동 공지 -->
-                <button onclick="openPendingModal('서울-부산 버스 이동 공지')" class="group border border-neutral-300 bg-white hover:border-black p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md" id="tab-busan-1">
+                <button onclick="navigateTo('bus-info')" class="group border border-neutral-300 bg-white hover:border-amber-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-busan-1">
+                    <div class="absolute top-0 right-0 bg-amber-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">New</div>
                     <div>
                         <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">Busan 01</p>
-                        <h4 class="font-extrabold text-sm mt-1 text-neutral-800">서울-부산 버스 이동 공지</h4>
+                        <h4 class="font-extrabold text-sm mt-1 text-amber-700 group-hover:text-amber-800 transition-colors">서울-부산 버스 이동 공지</h4>
                     </div>
-                    <span class="text-xl font-bold opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                    <span class="text-xl font-bold text-amber-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
                 </button>
 
                 <!-- Busan Tab 2: 부산 숙소 배정 공지 -->
-                <button onclick="openPendingModal('부산 숙소 배정 공지')" class="group border border-neutral-300 bg-white hover:border-black p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md" id="tab-busan-2">
+                <button onclick="navigateTo('accommodation')" class="group border border-neutral-300 bg-white hover:border-emerald-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-busan-2">
+                    <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">New</div>
                     <div>
                         <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">Busan 02</p>
-                        <h4 class="font-extrabold text-sm mt-1 text-neutral-800">부산 숙소 배정 공지</h4>
+                        <h4 class="font-extrabold text-sm mt-1 text-emerald-700 group-hover:text-emerald-800 transition-colors">부산 숙소 배정 공지</h4>
                     </div>
-                    <span class="text-xl font-bold opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                    <span class="text-xl font-bold text-emerald-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
                 </button>
 
                 <!-- Busan Tab 3: 부산대학교 캠퍼스 맵 -->
-                <button onclick="openPendingModal('부산대학교 캠퍼스 맵')" class="group border border-neutral-300 bg-white hover:border-black p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md" id="tab-busan-3">
+                <button onclick="navigateTo('campus-map')" class="group border border-neutral-300 bg-white hover:border-indigo-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-busan-3">
+                    <div class="absolute top-0 right-0 bg-indigo-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">New</div>
                     <div>
                         <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">Busan 03</p>
-                        <h4 class="font-extrabold text-sm mt-1 text-neutral-800">부산대학교 캠퍼스 맵</h4>
+                        <h4 class="font-extrabold text-sm mt-1 text-indigo-700 group-hover:text-indigo-800 transition-colors">부산대학교 캠퍼스 맵</h4>
                     </div>
-                    <span class="text-xl font-bold opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                    <span class="text-xl font-bold text-indigo-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
                 </button>
 
                 <!-- Busan Tab 4: 1차 워크숍(부산대) 상세일정 → 하단 동일 탭과 같은 페이지 -->
@@ -422,8 +425,15 @@
                     1차 워크숍 (부산대) 일정
                 </h1>
                 <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">2026.06.24(수) ~ 06.26(금) &middot; 부산대학교 통합기계관 등</p>
+                <div class="flex flex-wrap items-center gap-2 mt-3">
+                    <span class="text-xs font-bold opacity-50">장소 구분:</span>
+                    <span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700">통합기계관</span>
+                    <span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-green-100 text-green-700">금정회관</span>
+                    <span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-orange-100 text-orange-600">외부</span>
+                    <button onclick="navigateTo('campus-map')" class="no-print inline-flex items-center gap-1 text-[11px] font-bold text-indigo-600 hover:text-indigo-800 hover:underline ml-1">캠퍼스 맵 보기 &rarr;</button>
+                </div>
             </div>
-            
+
             <!-- CONTROLS -->
             <div class="no-print flex flex-wrap gap-3 items-center w-full md:w-auto">
                 <select id="theme-select-busan" onchange="changeTheme(this.value)" class="text-xs font-semibold bg-white border border-neutral-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 text-black">
@@ -451,12 +461,12 @@
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">13:00~14:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4">워크숍 개회식 및 오리엔테이션</div>
-                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">1층 114호</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 mb-1">통합기계관</span><span class="block">1층 114호</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">14:00~15:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600">V-Space, HIMEC 시설 견학 및 사용 교육</div>
-                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">2층 V-Space</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 mb-1">통합기계관</span><span class="block">2층 V-Space</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">15:00~16:00</div>
@@ -464,19 +474,19 @@
                             채승진 교수님 특강
                             <p class="text-sm font-medium opacity-80 mt-1 text-purple-500">주제: 공학 관점과 디자인학 관점 비교</p>
                         </div>
-                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">1층 114호</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 mb-1">통합기계관</span><span class="block">1층 114호</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">16:00~18:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600">팀별 활동: 아이스브레이킹 & 레크레이션</div>
-                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">1층 A-Space, 3층 C-Space</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 mb-1">통합기계관</span><span class="block">1층 A-Space, 3층 C-Space</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">18:00~19:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4">저녁 식사</div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
-                            <span class="block">교수: 외부 석식</span>
-                            <span class="block">학생: 1층 114호</span>
+                            <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-orange-100 text-orange-600 mr-1">외부</span>교수: 외부 석식</span>
+                            <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 mr-1">통합기계관</span>학생: 1층 114호</span>
                         </div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4">
@@ -502,20 +512,20 @@
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">10:00~12:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600">팀별 활동: 아이디어 구체화, 컨셉 도출</div>
-                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">1층 A-Space, 3층 C-Space</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 mb-1">통합기계관</span><span class="block">1층 A-Space, 3층 C-Space</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">12:00~13:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4">점심 식사</div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
-                            <span class="block">교수: 교수라운지 (904호)</span>
-                            <span class="block">학생: 금정회관</span>
+                            <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 mr-1">통합기계관</span>교수: 교수라운지 (904호)</span>
+                            <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-green-100 text-green-700 mr-1">금정회관</span>학생: 금정회관</span>
                         </div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">13:00~15:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600">팀별 발표 및 지도교수단 피드백</div>
-                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">1층 114호</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 mb-1">통합기계관</span><span class="block">1층 114호</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">15:00~16:00</div>
@@ -525,13 +535,13 @@
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">16:00~18:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600">팀별 활동: 기초 폼보드 목업 제작(Study Mock-Up)</div>
-                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">1층 A-Space, 3층 C-Space</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 mb-1">통합기계관</span><span class="block">1층 A-Space, 3층 C-Space</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">18:00~19:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4">저녁 식사</div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
-                            <span class="block">델라고 부산대점</span>
+                            <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-orange-100 text-orange-600 mr-1">외부</span>델라고 부산대점</span>
                             <span class="block">상세주소 : 부산 금정구 금강로 253-1 2,3층</span>
                         </div>
                     </div>
@@ -558,25 +568,25 @@
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">10:00~12:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600">팀별 활동: 컨셉 구체화</div>
-                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">1층 A-Space, 3층 C-Space</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 mb-1">통합기계관</span><span class="block">1층 A-Space, 3층 C-Space</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">12:00~13:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4">점심 식사</div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
-                            <span class="block">교수: 외부 중식</span>
-                            <span class="block">학생: 금정회관</span>
+                            <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-orange-100 text-orange-600 mr-1">외부</span>교수: 외부 중식</span>
+                            <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-green-100 text-green-700 mr-1">금정회관</span>학생: 금정회관</span>
                         </div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">13:00~15:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600">팀별 발표 및 지도교수단 피드백</div>
-                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">1층 114호</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 mb-1">통합기계관</span><span class="block">1층 114호</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">15:00~16:00</div>
                         <div class="md:w-1/2 font-black text-xl md:px-4">총평 및 워크숍 폐회식 🏆</div>
-                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">1층 114호</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 mb-1">통합기계관</span><span class="block">1층 114호</span></div>
                     </div>
                 </div>
             </div>
@@ -588,6 +598,180 @@
             <p>© 2026 Additive Manufacturing Collaborative Design Workshop. COSS&ByunSeoHee. All rights reserved.</p>
         </footer>
 
+    </div>
+
+    <!-- ==================== PAGE: BUS INFO (서울-부산 버스 이동 공지) ==================== -->
+    <div id="bus-info-page" class="hidden fade-in max-w-5xl mx-auto px-6 py-12 lg:py-20">
+        <header class="border-b-2 border-current pb-8 mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <button onclick="navigateTo('landing')" class="no-print mr-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-black text-sm font-bold px-4 py-2.5 rounded-lg inline-flex items-center gap-1.5 transition-all">
+                        &larr; Back to Home
+                    </button>
+                    <span class="inline-block w-3 h-3 bg-amber-500 rounded-full animate-pulse"></span>
+                    <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">Busan Guide 01</p>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">서울 ↔ 부산 버스 이동 공지</h1>
+                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">1차 워크숍(부산대) · 단체 버스 이동 안내</p>
+            </div>
+        </header>
+
+        <main class="space-y-8">
+            <!-- 가는 편 -->
+            <div class="rounded-2xl border-2 border-amber-500 bg-white overflow-hidden">
+                <div class="bg-amber-500 text-white px-6 py-4">
+                    <p class="text-[11px] font-bold uppercase tracking-widest opacity-90">출발 · 서울 → 부산</p>
+                    <h2 class="text-2xl font-black">06.24 (수) 오전 8:00 출발</h2>
+                </div>
+                <div class="p-6 md:p-8 space-y-4">
+                    <div class="flex items-start gap-3">
+                        <span class="shrink-0 mt-0.5 w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-black text-sm">📍</span>
+                        <div>
+                            <p class="font-extrabold text-lg">양재역 2번 출구 · SC제일은행 앞</p>
+                            <p class="text-sm opacity-70 font-semibold mt-0.5">오전 <span class="text-amber-700 font-black">7시 40분</span>까지 집결하여 버스에 탑승해 주세요.</p>
+                        </div>
+                    </div>
+                    <div class="rounded-xl bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm font-bold flex items-center gap-2">
+                        ⏰ 버스는 <span class="font-black">오전 8시 정시 출발</span> 예정입니다. 반드시 시간을 엄수해 주세요!
+                    </div>
+                </div>
+            </div>
+
+            <!-- 오는 편 -->
+            <div class="rounded-2xl border-2 border-amber-400 bg-white overflow-hidden">
+                <div class="bg-amber-400 text-white px-6 py-4">
+                    <p class="text-[11px] font-bold uppercase tracking-widest opacity-90">복귀 · 부산 → 서울</p>
+                    <h2 class="text-2xl font-black">06.26 (금) 오후 5:00 출발</h2>
+                </div>
+                <div class="p-6 md:p-8">
+                    <div class="flex items-start gap-3">
+                        <span class="shrink-0 mt-0.5 w-7 h-7 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-black text-sm">📍</span>
+                        <div>
+                            <p class="font-extrabold text-lg">부산대학교</p>
+                            <p class="text-sm opacity-70 font-semibold mt-0.5">워크숍 종료 후 부산대학교에서 함께 탑승하여 서울로 이동 예정입니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 신청자 명단 검색 -->
+            <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
+                <h2 class="text-xl font-extrabold mb-1">버스 신청자 명단 확인</h2>
+                <p class="text-sm opacity-60 font-semibold mb-4">본인 이름을 검색하면 어느 방향 버스에 신청되어 있는지 확인할 수 있습니다.</p>
+                <div class="relative max-w-md mb-5">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none opacity-50">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
+                    <input type="text" id="bus-search" oninput="busSearch(this.value)" placeholder="이름 검색..." class="w-full text-sm pl-9 pr-4 py-2.5 bg-white border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all text-black">
+                </div>
+                <div id="bus-result"></div>
+            </div>
+
+            <!-- 탑승 위치 지도 -->
+            <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
+                <h2 class="text-xl font-extrabold mb-1">탑승 위치 지도</h2>
+                <p class="text-sm opacity-60 font-semibold mb-4">양재역 2번 출구 · SC제일은행 앞 (가는 편 집결지)</p>
+                <div class="rounded-xl overflow-hidden border border-neutral-300 mb-3">
+                    <iframe src="https://maps.google.com/maps?q=양재역 2번 출구 SC제일은행&z=17&hl=ko&output=embed" class="w-full h-72 md:h-96" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="양재역 2번 출구 지도"></iframe>
+                </div>
+                <a href="https://map.naver.com/p/search/양재역 2번 출구 SC제일은행" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-sm font-bold text-amber-700 hover:underline">네이버 지도에서 길찾기 &rarr;</a>
+            </div>
+        </main>
+
+        <footer class="mt-16 pt-8 border-t border-neutral-300 text-xs opacity-50">
+            <p>© 2026 Additive Manufacturing Collaborative Design Workshop. COSS&ByunSeoHee. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- ==================== PAGE: ACCOMMODATION (부산 숙소 배정 공지) ==================== -->
+    <div id="accommodation-page" class="hidden fade-in max-w-5xl mx-auto px-6 py-12 lg:py-20">
+        <header class="border-b-2 border-current pb-8 mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <button onclick="navigateTo('landing')" class="no-print mr-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-black text-sm font-bold px-4 py-2.5 rounded-lg inline-flex items-center gap-1.5 transition-all">
+                        &larr; Back to Home
+                    </button>
+                    <span class="inline-block w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span>
+                    <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">Busan Guide 02</p>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">부산 숙소 배정 공지</h1>
+                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">1차 워크숍(부산대) · 해운대 숙소 안내</p>
+            </div>
+        </header>
+
+        <main>
+            <div id="accommodation-top"></div>
+            <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
+                <h2 class="text-xl font-extrabold mb-1">내 방 배정 확인</h2>
+                <p class="text-sm opacity-60 font-semibold mb-4">본인 이름을 검색하면 방 이니셜·호실·호텔·룸메이트를 확인할 수 있습니다.</p>
+                <div class="relative max-w-md mb-5">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none opacity-50">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
+                    <input type="text" id="accommodation-search" oninput="accommodationSearch(this.value)" placeholder="이름 검색..." class="w-full text-sm pl-9 pr-4 py-2.5 bg-white border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-black">
+                </div>
+                <div id="accommodation-result"></div>
+            </div>
+        </main>
+
+        <footer class="mt-16 pt-8 border-t border-neutral-300 text-xs opacity-50">
+            <p>© 2026 Additive Manufacturing Collaborative Design Workshop. COSS&ByunSeoHee. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- ==================== PAGE: CAMPUS MAP (부산대학교 캠퍼스 맵) ==================== -->
+    <div id="campus-map-page" class="hidden fade-in max-w-5xl mx-auto px-6 py-12 lg:py-20">
+        <header class="border-b-2 border-current pb-8 mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <button onclick="navigateTo('landing')" class="no-print mr-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-black text-sm font-bold px-4 py-2.5 rounded-lg inline-flex items-center gap-1.5 transition-all">
+                        &larr; Back to Home
+                    </button>
+                    <span class="inline-block w-3 h-3 bg-indigo-500 rounded-full animate-pulse"></span>
+                    <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">Busan Guide 03</p>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">부산대학교 캠퍼스 맵</h1>
+                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">1차 워크숍 주요 장소 안내 · 부산대학교 부산캠퍼스</p>
+            </div>
+        </header>
+
+        <main class="space-y-8">
+            <!-- 워크숍 주요 장소 범례 -->
+            <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
+                <h2 class="text-xl font-extrabold mb-4">워크숍 주요 장소</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="rounded-xl border border-blue-200 bg-blue-50 p-4">
+                        <span class="inline-block text-[10px] font-black px-2 py-0.5 rounded bg-blue-600 text-white uppercase tracking-wider mb-2">메인 venue</span>
+                        <p class="font-extrabold text-blue-900">통합기계관</p>
+                        <p class="text-xs opacity-70 font-semibold mt-1">개회식·특강·팀활동·발표 (114호, V-Space, A-Space, C-Space, 교수라운지 904호)</p>
+                    </div>
+                    <div class="rounded-xl border border-green-200 bg-green-50 p-4">
+                        <span class="inline-block text-[10px] font-black px-2 py-0.5 rounded bg-green-600 text-white uppercase tracking-wider mb-2">학생 식당</span>
+                        <p class="font-extrabold text-green-900">금정회관</p>
+                        <p class="text-xs opacity-70 font-semibold mt-1">학생 중식·석식 장소 (학생 식당)</p>
+                    </div>
+                    <div class="rounded-xl border border-orange-200 bg-orange-50 p-4">
+                        <span class="inline-block text-[10px] font-black px-2 py-0.5 rounded bg-orange-500 text-white uppercase tracking-wider mb-2">외부</span>
+                        <p class="font-extrabold text-orange-900">델라고 부산대점</p>
+                        <p class="text-xs opacity-70 font-semibold mt-1">Day 2 저녁 식사 · 부산 금정구 금강로 253-1 2,3층</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 공식 캠퍼스 맵 (PDF) -->
+            <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
+                <div class="flex items-center justify-between gap-4 mb-4 flex-wrap">
+                    <h2 class="text-xl font-extrabold">2026 부산대학교 부산캠퍼스 맵</h2>
+                    <a href="busan-campus-map.pdf" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors">새 창에서 크게 보기 &rarr;</a>
+                </div>
+                <iframe src="busan-campus-map.pdf#view=FitH" class="w-full h-[70vh] rounded-xl border border-neutral-300 bg-neutral-50" title="부산대학교 캠퍼스 맵"></iframe>
+                <p class="text-xs opacity-50 mt-3">※ PDF가 보이지 않으면 위의 「새 창에서 크게 보기」 버튼을 눌러 주세요. (출처: 부산대학교 공식 캠퍼스 맵)</p>
+            </div>
+        </main>
+
+        <footer class="mt-16 pt-8 border-t border-neutral-300 text-xs opacity-50">
+            <p>© 2026 Additive Manufacturing Collaborative Design Workshop. COSS&ByunSeoHee. All rights reserved.</p>
+        </footer>
     </div>
 
     <!-- ==================== PAGE 3: TEAM ALLOCATION PAGE (Initially Hidden) ==================== -->
@@ -702,20 +886,22 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
     <!-- Firebase 초기화 (설정값은 이 파일 안에서 교체) -->
-    <script src="js/firebase-config.js?v=20"></script>
+    <script src="js/firebase-config.js?v=21"></script>
 
     <!-- ==================== JavaScript (외부 파일로 분리) ==================== -->
     <!-- 1) 팀 데이터 (로컬 폴백 + 시드 원본 / 추후 Firestore로 완전 이전) -->
-    <script src="js/teams-data.js?v=20"></script>
+    <script src="js/teams-data.js?v=21"></script>
     <!-- 2) 인증 & 역할 (로그인/회원가입/대시보드/페이지 가드) -->
-    <script src="js/auth.js?v=20"></script>
+    <script src="js/auth.js?v=21"></script>
     <!-- 3) 작품 기능 (팀 상세·작품 목록/상세·업로드, Phase 2) -->
-    <script src="js/works.js?v=20"></script>
+    <script src="js/works.js?v=21"></script>
     <!-- 4) 피드백 (작품 상세의 교수 피드백, Phase 3) -->
-    <script src="js/feedback.js?v=20"></script>
+    <script src="js/feedback.js?v=21"></script>
     <!-- 5) 공학생 지원/배정 (Phase 4) -->
-    <script src="js/apply.js?v=20"></script>
-    <!-- 6) 화면 로직 (페이지 전환, 렌더링, 테마, 검색, Firestore 로드) -->
-    <script src="js/main.js?v=20"></script>
+    <script src="js/apply.js?v=21"></script>
+    <!-- 6) 부산 1차 워크숍 안내 (버스/숙소/캠퍼스맵 — 데이터·검색) -->
+    <script src="js/busan-info.js?v=21"></script>
+    <!-- 7) 화면 로직 (페이지 전환, 렌더링, 테마, 검색, Firestore 로드) -->
+    <script src="js/main.js?v=21"></script>
 </body>
 </html>

@@ -1,6 +1,16 @@
 # Firebase deploy cache
 .firebase/
 
+# 개인정보 포함 원본 자료 (공개 리포에 올리지 않음)
+부산 숙소, 버스 이용 관련.xlsx
+2026-부산캠퍼스맵.pdf
+부산캠퍼스 _ 캠퍼스맵 _ 캠퍼스 _ 학교소개 _ 부산대학교.html
+부산캠퍼스 _ 캠퍼스맵 _ 캠퍼스 _ 학교소개 _ 부산대학교_files/
+
+# 작업용 임시 파일
+_xlsx_dump.txt
+_busan_data.json
+
 # OS / editor
 Thumbs.db
 .DS_Store
