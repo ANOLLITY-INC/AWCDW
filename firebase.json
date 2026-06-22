@@ -30,6 +30,7 @@
       "AWCDW_26.06.02.html",
       "SYSTEM_DESIGN.md",
       "PROGRESS.md",
+      "WORKLOG_*.md",
       "firestore.rules",
       "storage.rules",
       "firebase-debug.log",
