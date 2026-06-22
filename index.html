@@ -176,7 +176,7 @@
         </section>
 
         <!-- BUSAN WORKSHOP GUIDE TABS (NEW) -->
-        <section class="mt-12">
+        <section class="mt-12 mb-16">
             <h3 class="text-sm font-extrabold tracking-wider uppercase opacity-50 mb-6">BUSAN WORKSHOP GUIDE &middot; 1차 워크숍(부산대) 안내</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
@@ -654,6 +654,16 @@
                 </div>
             </div>
 
+            <!-- 탑승 위치 지도 -->
+            <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
+                <h2 class="text-xl font-extrabold mb-1">탑승 위치 지도</h2>
+                <p class="text-sm opacity-60 font-semibold mb-4">SC제일은행 양재동지점 · 양재역 2번 출구 앞 (가는 편 집결지)</p>
+                <div class="rounded-xl overflow-hidden border border-neutral-300 mb-3">
+                    <iframe src="https://maps.google.com/maps?q=37.4856672,127.0329062&z=17&hl=ko&output=embed" class="w-full h-72 md:h-96" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="SC제일은행 양재동지점 지도"></iframe>
+                </div>
+                <a href="https://www.google.com/maps/place/SC%EC%A0%9C%EC%9D%BC%EC%9D%80%ED%96%89+%EC%96%91%EC%9E%AC%EB%8F%99%EC%A7%80%EC%A0%90/@37.4856672,127.0281426,17z/data=!3m1!4b1!4m6!3m5!1s0x357ca143e75816f9:0xfc2c42454b78a0f1!8m2!3d37.4856672!4d127.0329062!16s%2Fg%2F1tfg10bb?hl=ko" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-sm font-bold text-amber-700 hover:underline">구글 지도에서 크게 보기 &rarr;</a>
+            </div>
+
             <!-- 신청자 명단 검색 -->
             <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
                 <h2 class="text-xl font-extrabold mb-1">버스 신청자 명단 확인</h2>
@@ -665,16 +675,6 @@
                     <input type="text" id="bus-search" oninput="busSearch(this.value)" placeholder="이름 검색..." class="w-full text-sm pl-9 pr-4 py-2.5 bg-white border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all text-black">
                 </div>
                 <div id="bus-result"></div>
-            </div>
-
-            <!-- 탑승 위치 지도 -->
-            <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
-                <h2 class="text-xl font-extrabold mb-1">탑승 위치 지도</h2>
-                <p class="text-sm opacity-60 font-semibold mb-4">양재역 2번 출구 · SC제일은행 앞 (가는 편 집결지)</p>
-                <div class="rounded-xl overflow-hidden border border-neutral-300 mb-3">
-                    <iframe src="https://maps.google.com/maps?q=양재역 2번 출구 SC제일은행&z=17&hl=ko&output=embed" class="w-full h-72 md:h-96" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="양재역 2번 출구 지도"></iframe>
-                </div>
-                <a href="https://map.naver.com/p/search/양재역 2번 출구 SC제일은행" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-sm font-bold text-amber-700 hover:underline">네이버 지도에서 길찾기 &rarr;</a>
             </div>
         </main>
 
