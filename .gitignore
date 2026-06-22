@@ -1,0 +1,6 @@
+# Firebase deploy cache
+.firebase/
+
+# OS / editor
+Thumbs.db
+.DS_Store

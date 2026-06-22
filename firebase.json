@@ -1,0 +1,39 @@
+{
+  "firestore": {
+    "database": "database1",
+    "rules": "firestore.rules"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "hosting": {
+    "public": ".",
+    "headers": [
+      {
+        "source": "**/*.html",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, max-age=0, must-revalidate" }
+        ]
+      },
+      {
+        "source": "/",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, max-age=0, must-revalidate" }
+        ]
+      }
+    ],
+    "ignore": [
+      "firebase.json",
+      ".firebaserc",
+      "**/.*",
+      "**/node_modules/**",
+      "AWCDW_26.06.02.html",
+      "SYSTEM_DESIGN.md",
+      "PROGRESS.md",
+      "firestore.rules",
+      "storage.rules",
+      "firebase-debug.log",
+      "*.log"
+    ]
+  }
+}
