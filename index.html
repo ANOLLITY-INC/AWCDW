@@ -175,6 +175,51 @@
             </div>
         </section>
 
+        <!-- BUSAN WORKSHOP GUIDE TABS (NEW) -->
+        <section class="mt-12">
+            <h3 class="text-sm font-extrabold tracking-wider uppercase opacity-50 mb-6">BUSAN WORKSHOP GUIDE &middot; 1차 워크숍(부산대) 안내</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                <!-- Busan Tab 1: 서울-부산 버스 이동 공지 -->
+                <button onclick="openPendingModal('서울-부산 버스 이동 공지')" class="group border border-neutral-300 bg-white hover:border-black p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md" id="tab-busan-1">
+                    <div>
+                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">Busan 01</p>
+                        <h4 class="font-extrabold text-sm mt-1 text-neutral-800">서울-부산 버스 이동 공지</h4>
+                    </div>
+                    <span class="text-xl font-bold opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                </button>
+
+                <!-- Busan Tab 2: 부산 숙소 배정 공지 -->
+                <button onclick="openPendingModal('부산 숙소 배정 공지')" class="group border border-neutral-300 bg-white hover:border-black p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md" id="tab-busan-2">
+                    <div>
+                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">Busan 02</p>
+                        <h4 class="font-extrabold text-sm mt-1 text-neutral-800">부산 숙소 배정 공지</h4>
+                    </div>
+                    <span class="text-xl font-bold opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                </button>
+
+                <!-- Busan Tab 3: 부산대학교 캠퍼스 맵 -->
+                <button onclick="openPendingModal('부산대학교 캠퍼스 맵')" class="group border border-neutral-300 bg-white hover:border-black p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md" id="tab-busan-3">
+                    <div>
+                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">Busan 03</p>
+                        <h4 class="font-extrabold text-sm mt-1 text-neutral-800">부산대학교 캠퍼스 맵</h4>
+                    </div>
+                    <span class="text-xl font-bold opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                </button>
+
+                <!-- Busan Tab 4: 1차 워크숍(부산대) 상세일정 → 하단 동일 탭과 같은 페이지 -->
+                <button onclick="navigateTo('schedule-busan')" class="group border border-neutral-300 bg-white hover:border-blue-600 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-busan-4">
+                    <div class="absolute top-0 right-0 bg-blue-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">New</div>
+                    <div>
+                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">Busan 04</p>
+                        <h4 class="font-extrabold text-sm mt-1 text-blue-700 group-hover:text-blue-800 transition-colors">1차 워크숍(부산대) 상세일정</h4>
+                    </div>
+                    <span class="text-xl font-bold text-blue-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                </button>
+
+            </div>
+        </section>
+
         <!-- INTERACTIVE NAV HUB (TABS & BOXES) -->
         <section class="grid grid-cols-1 md:grid-cols-2 gap-8">
             
