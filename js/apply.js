@@ -24,34 +24,45 @@ const DEFAULT_TEAM_CAPACITY = 3;
 //   { rosterPublic:bool, applyStart:"YYYY-MM-DDTHH:mm", applyEnd:"..." }
 // ------------------------------------------------------------
 let rosterPublic = false;   // 지원자 명단 학생 공개 여부
-let applyStart = "";        // 지원 시작 일시(datetime-local 문자열, 로컬시간)
+let previewStart = "";      // 지원 '미리보기' 시작 일시 — 이 시각부터 지원 UI는 보이되 실제 지원은 불가
+let applyStart = "";        // 지원 시작 일시(datetime-local 문자열, 로컬시간) — 실제 지원 가능
 let applyEnd = "";          // 지원 마감 일시
 let applyOpen = false;      // 현재 지원 접수 중인지(계산값)
+let applyPreview = false;   // 현재 미리보기 구간인지(계산값) — 화면은 보이되 지원은 불가
 
 function _fmtDateTime(d) {
     const p = (n) => String(n).padStart(2, "0");
     return `${d.getFullYear()}.${p(d.getMonth() + 1)}.${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
 }
-// 현재 지원 상태: { open, phase:'unset'|'before'|'open'|'after', label }
+// 현재 지원 상태: { open, preview, phase:'unset'|'before'|'preview'|'open'|'after', label }
+//   preview: 미리보기 시작 시각 이후 ~ 지원 시작 시각 이전 → 지원 화면은 보이지만 실제 지원은 막는다.
 function applyStatusInfo() {
     const now = new Date();
+    const p = previewStart ? new Date(previewStart) : null;
     const s = applyStart ? new Date(applyStart) : null;
     const e = applyEnd ? new Date(applyEnd) : null;
-    if (!s && !e) return { open: false, phase: "unset", label: "지원 기간이 설정되지 않았습니다." };
-    if (s && now < s) return { open: false, phase: "before", label: `지원 시작 전입니다 (시작: ${_fmtDateTime(s)})` };
-    if (e && now > e) return { open: false, phase: "after", label: `지원이 마감되었습니다 (마감: ${_fmtDateTime(e)})` };
-    return { open: true, phase: "open", label: `지원 접수 중${e ? ` (마감: ${_fmtDateTime(e)})` : ""}` };
+    if (!p && !s && !e) return { open: false, preview: false, phase: "unset", label: "지원 기간이 설정되지 않았습니다." };
+    if (e && now > e) return { open: false, preview: false, phase: "after", label: `지원이 마감되었습니다 (마감: ${_fmtDateTime(e)})` };
+    if (s && now >= s) return { open: true, preview: false, phase: "open", label: `지원 접수 중${e ? ` (마감: ${_fmtDateTime(e)})` : ""}` };
+    // 여기부터는 지원 시작 전(now < s) 또는 s 미설정 구간
+    if (p && s && now >= p) return { open: false, preview: true, phase: "preview", label: `지원 미리보기 중 — 지원 방법을 미리 확인할 수 있습니다. 실제 지원은 ${_fmtDateTime(s)}부터 가능합니다.` };
+    if (s) return { open: false, preview: false, phase: "before", label: `지원 시작 전입니다 (시작: ${_fmtDateTime(s)}${p ? `, 미리보기: ${_fmtDateTime(p)}` : ""})` };
+    // s 미설정 + e 만 있는 경우는 기존처럼 접수중 취급
+    return { open: true, preview: false, phase: "open", label: `지원 접수 중${e ? ` (마감: ${_fmtDateTime(e)})` : ""}` };
 }
 
 async function loadAppSettings() {
     try {
         const s = await fsGet("settings/app");
         rosterPublic = !!(s && s.rosterPublic);
+        previewStart = (s && s.previewStart) || "";
         applyStart = (s && s.applyStart) || "";
         applyEnd = (s && s.applyEnd) || "";
     } catch (_) { /* 기본값 유지 */ }
-    applyOpen = applyStatusInfo().open;
-    return { rosterPublic, applyOpen };
+    const st = applyStatusInfo();
+    applyOpen = st.open;
+    applyPreview = st.preview;
+    return { rosterPublic, applyOpen, applyPreview };
 }
 // 기존 호출부 호환용 별칭
 async function loadRosterPublic() { await loadAppSettings(); return rosterPublic; }
@@ -72,15 +83,27 @@ async function toggleRosterPublic() {
 }
 window.toggleRosterPublic = toggleRosterPublic;
 
+// 미리보기 구간에 지원을 시도했을 때의 안내
+function previewNotice() {
+    const st = applyStatusInfo();
+    window.alert(st.label || "아직 지원 기간이 아닙니다. 지원 시작 후 신청할 수 있습니다.");
+}
+window.previewNotice = previewNotice;
+
 async function saveApplyWindow() {
+    const pEl = document.getElementById("apply-preview-start");
     const sEl = document.getElementById("apply-start");
     const eEl = document.getElementById("apply-end");
+    const pV = pEl ? pEl.value : "";
     const sV = sEl ? sEl.value : "";
     const eV = eEl ? eEl.value : "";
     if (sV && eV && new Date(sV) > new Date(eV)) { window.alert("시작 일시가 마감 일시보다 늦습니다."); return; }
+    if (pV && !sV) { window.alert("미리보기 시작을 쓰려면 지원 ‘시작 일시’도 설정해야 합니다."); return; }
+    if (pV && sV && new Date(pV) > new Date(sV)) { window.alert("미리보기 시작이 지원 시작 일시보다 늦습니다."); return; }
     try {
-        await fsUpdate("settings/app", { applyStart: sV, applyEnd: eV }); // rosterPublic 보존
-        applyStart = sV; applyEnd = eV; applyOpen = applyStatusInfo().open;
+        await fsUpdate("settings/app", { previewStart: pV, applyStart: sV, applyEnd: eV }); // rosterPublic 보존
+        previewStart = pV; applyStart = sV; applyEnd = eV;
+        const st = applyStatusInfo(); applyOpen = st.open; applyPreview = st.preview;
         await renderApplicants();
     } catch (err) {
         window.alert((err.code === "permission-denied")
@@ -95,10 +118,15 @@ function applyWindowAdminHtml() {
     return `
         <div class="bg-white border-2 border-neutral-300 rounded-2xl p-5 mb-6">
             <p class="font-extrabold mb-1">지원 기간 설정</p>
-            <p class="text-xs ${st.open ? "text-emerald-600" : "text-neutral-500"} font-bold mb-3">${escapeHtml(st.label)}</p>
+            <p class="text-xs ${st.open ? "text-emerald-600" : st.preview ? "text-amber-600" : "text-neutral-500"} font-bold mb-3">${escapeHtml(st.label)}</p>
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-3">
+                <label class="block text-xs font-bold text-amber-700 mb-1">지원 미리보기 시작 일시 <span class="font-semibold opacity-70">(선택)</span></label>
+                <input id="apply-preview-start" type="datetime-local" value="${escapeHtml(previewStart)}" class="w-full border border-amber-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                <p class="text-[11px] text-amber-700/80 mt-1.5">이 시각부터 학생이 <b>지원 화면과 방법을 미리</b> 볼 수 있습니다. 단, <b>실제 지원(신청)은 아래 ‘시작 일시’부터</b> 가능합니다. 비워두면 미리보기 없이 바로 ‘시작 일시’에 지원이 열립니다.</p>
+            </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                 <div>
-                    <label class="block text-xs font-bold text-neutral-500 mb-1">시작 일시</label>
+                    <label class="block text-xs font-bold text-neutral-500 mb-1">지원 시작 일시</label>
                     <input id="apply-start" type="datetime-local" value="${escapeHtml(applyStart)}" class="w-full border border-neutral-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
                 </div>
                 <div>
@@ -107,7 +135,7 @@ function applyWindowAdminHtml() {
                 </div>
             </div>
             <button onclick="saveApplyWindow()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl transition-all">기간 저장</button>
-            <p class="text-[11px] text-neutral-400 mt-2">기간 중에는 공학생이 <b>팀 보드</b>와 「팀 지원」에서 신청할 수 있습니다. 둘 다 비우면 지원이 닫힙니다.</p>
+            <p class="text-[11px] text-neutral-400 mt-2">‘지원 시작 ~ 마감’ 기간 중에는 공학생이 <b>팀 보드</b>와 「팀 지원」에서 신청할 수 있습니다. 시작/마감을 모두 비우면 지원이 닫힙니다.</p>
         </div>`;
 }
 
@@ -213,6 +241,8 @@ function drawApply(apps) {
 
     const periodBanner = st.open
         ? `<div class="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-6 text-sm font-bold text-blue-800">🟢 ${escapeHtml(st.label)}</div>`
+        : st.preview
+        ? `<div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-6 text-sm font-bold text-amber-800">👀 ${escapeHtml(st.label)}</div>`
         : `<div class="bg-neutral-100 border border-neutral-300 rounded-xl p-3 mb-6 text-sm font-bold text-neutral-600">⏳ ${escapeHtml(st.label)} · 신청·변경은 지원 기간에만 가능합니다.</div>`;
 
     const statusBar = myTeamId ? `
@@ -224,7 +254,7 @@ function drawApply(apps) {
             ${st.open ? `<button onclick="cancelApplication()" class="bg-white border border-rose-300 text-rose-600 hover:bg-rose-50 font-bold px-5 py-2.5 rounded-xl transition-all whitespace-nowrap">배정 취소</button>` : ""}
         </div>` : `
         <div class="bg-neutral-50 border border-neutral-200 rounded-2xl p-5 mb-8">
-            <p class="text-sm font-bold">아직 지원하지 않았습니다.${st.open ? " 아래에서 희망 팀의 <b>신청</b> 버튼을 누르세요." : ""}</p>
+            <p class="text-sm font-bold">아직 지원하지 않았습니다.${st.open ? " 아래에서 희망 팀의 <b>신청</b> 버튼을 누르세요." : st.preview ? " 지금은 <b>미리보기</b> 기간 — 아래에서 지원 방법을 확인할 수 있어요. 실제 신청은 지원 시작 후 가능합니다." : ""}</p>
         </div>`;
 
     const cards = teamList().map(t => {
@@ -237,6 +267,8 @@ function drawApply(apps) {
         let action;
         if (mine) {
             action = `<span class="text-xs font-black uppercase tracking-wider text-emerald-700">✓ 내 배정 팀</span>`;
+        } else if (st.preview) {
+            action = `<button onclick="previewNotice()" class="bg-neutral-300 text-white text-sm font-bold px-4 py-2 rounded-lg cursor-not-allowed" title="지원 시작 전 미리보기">신청 <span class="text-[10px] font-semibold">(시작 전)</span></button>`;
         } else if (!st.open) {
             action = `<span class="text-xs font-bold text-neutral-400">${st.phase === "before" ? "대기" : st.phase === "after" ? "마감" : "지원 기간 아님"}</span>`;
         } else if (full) {
@@ -266,9 +298,15 @@ function drawApply(apps) {
 // 신청 핵심 로직(지원 페이지·팀 보드 공용). 성공 시 true.
 async function applyToTeamCore(teamId) {
     if (!currentUser || currentProfile.role !== "engineer") return false;
-    // 지원 기간 확인
+    // 지원 기간 확인 (미리보기 구간이면 화면은 보여도 실제 지원은 차단)
     await loadApplyWindow();
-    if (!applyOpen) { window.alert("지금은 지원 기간이 아닙니다."); return false; }
+    if (!applyOpen) {
+        const st = applyStatusInfo();
+        window.alert(st.preview
+            ? "지금은 지원 미리보기 기간입니다. 실제 지원은 지원 시작 시각부터 가능합니다."
+            : "지금은 지원 기간이 아닙니다.");
+        return false;
+    }
     // 신청 직전 정원 재확인(본인 제외) — 선착순 마감 처리
     let apps;
     try { apps = await loadAllApplications(); }
@@ -352,9 +390,11 @@ function teamDetailApplyPanel(teamId) {
     const mineHere = myTeam === teamId;
     const st = applyStatusInfo();
 
-    // 지원 인원/잔여 수는 지원 기간 중에만 노출. 기간 아니면 상태만 표시.
+    // 지원 인원/잔여 수는 지원 기간 중에만 노출. 미리보기/기간 아니면 상태만 표시.
     const slotsLine = st.open
         ? (countsKnown ? `공학생 ${cnt} / 정원 ${cap}명 · 잔여 ${remain}명` : `공학생 정원 ${cap}명`)
+        : st.preview
+        ? `공학생 정원 ${cap}명 · 지원 미리보기 중`
         : st.label;
 
     let action = "";
@@ -370,6 +410,9 @@ function teamDetailApplyPanel(teamId) {
             } else {
                 action = `<button onclick="applyFromDetail('${escapeHtml(teamId)}')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-lg text-sm transition-all">${myTeam ? "이 팀으로 변경" : "이 팀에 지원"}</button>`;
             }
+        } else if (st.preview) {
+            // 미리보기: 지원 버튼은 보이되 클릭 시 안내만(실제 지원 불가)
+            action = `<button onclick="previewNotice()" class="bg-neutral-300 text-white font-bold px-5 py-2.5 rounded-lg text-sm cursor-not-allowed" title="지원 시작 전 미리보기">이 팀에 지원 <span class="text-[10px] font-semibold">(시작 전)</span></button>`;
         } else if (mineHere) {
             action = `<span class="text-sm font-black text-emerald-700">✓ 이 팀에 지원함</span>`;
         }

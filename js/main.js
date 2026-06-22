@@ -22,15 +22,17 @@ const noResults = document.getElementById('no-results');
 // 팀 보드 지원 상태 (공학생 지원 기간/정원/내 지원) — apply.js 와 연동
 // ------------------------------------------------------------
 let teamApplyOpen = false;   // 현재 지원 접수 중
+let teamApplyPreview = false; // 현재 지원 미리보기 구간(보이되 지원 불가)
 let teamApplyCounts = {};    // teamId → 배정된 공학생 수
 let teamMyTeamId = null;     // 로그인 공학생이 지원한 팀
 
 async function refreshTeamApplyState() {
-    teamApplyOpen = false; teamApplyCounts = {}; teamMyTeamId = null;
+    teamApplyOpen = false; teamApplyPreview = false; teamApplyCounts = {}; teamMyTeamId = null;
     try {
         if (typeof loadApplyWindow === 'function') {
             await loadApplyWindow();
             teamApplyOpen = (typeof applyOpen !== 'undefined') && applyOpen;
+            teamApplyPreview = (typeof applyPreview !== 'undefined') && applyPreview;
         }
     } catch (_) {}
     if (typeof currentUser !== 'undefined' && currentUser && typeof loadAllApplications === 'function') {
@@ -59,6 +61,8 @@ function teamSlotsApplyHtml(team) {
         parts.push(countsKnown
             ? `공학생 ${cnt}/${cap}${remain > 0 ? ' · 잔여 ' + remain : ' · 마감'}`
             : `공학생 정원 ${cap}명`);
+    } else if (teamApplyPreview && isEng) {
+        parts.push(`<span class="text-amber-600 font-bold">지원 미리보기 — 들어가서 방법 확인</span>`);
     }
     if (isEng && mineHere) parts.push(`<span class="text-emerald-600 font-black">✓ 내 지원 팀</span>`);
     return { slots: parts.join(' · '), ctrl: '' };
@@ -78,7 +82,14 @@ function renderApplyBanner() {
         teamsContainer.parentNode.insertBefore(b, teamsContainer);
     }
     const esc = (typeof escapeHtml === 'function') ? escapeHtml : (s => s);
-    b.innerHTML = `<div class="rounded-xl p-3 text-sm font-bold ${st.open ? 'bg-blue-50 border border-blue-200 text-blue-800' : 'bg-neutral-100 border border-neutral-300 text-neutral-600'}">${st.open ? '🟢' : '⏳'} ${esc(st.label)}${st.open ? ' — 지원할 팀을 눌러 들어가서 「이 팀에 지원」을 누르세요.' : ''}</div>`;
+    const cls = st.open ? 'bg-blue-50 border border-blue-200 text-blue-800'
+        : st.preview ? 'bg-amber-50 border border-amber-200 text-amber-800'
+        : 'bg-neutral-100 border border-neutral-300 text-neutral-600';
+    const icon = st.open ? '🟢' : st.preview ? '👀' : '⏳';
+    const tail = st.open ? ' — 지원할 팀을 눌러 들어가서 「이 팀에 지원」을 누르세요.'
+        : st.preview ? ' — 지원할 팀에 들어가면 지원 방법을 미리 볼 수 있습니다. 실제 지원은 시작 시각부터 가능합니다.'
+        : '';
+    b.innerHTML = `<div class="rounded-xl p-3 text-sm font-bold ${cls}">${icon} ${esc(st.label)}${tail}</div>`;
 }
 
 // ------------------------------------------------------------
