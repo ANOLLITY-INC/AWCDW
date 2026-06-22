@@ -57,12 +57,10 @@ function teamSlotsApplyHtml(team) {
     const isEng = (typeof currentProfile !== 'undefined' && currentProfile && currentProfile.role === 'engineer');
     // 지원 인원/잔여 수는 지원 기간 중에만 노출. 기간 아니면 숨김(내 지원 팀 표시만 유지).
     const parts = [];
-    if (teamApplyOpen) {
+    if (teamApplyOpen || teamApplyPreview) {   // 미리보기도 실제 지원 기간과 동일하게 정원/잔여 표시
         parts.push(countsKnown
             ? `공학생 ${cnt}/${cap}${remain > 0 ? ' · 잔여 ' + remain : ' · 마감'}`
             : `공학생 정원 ${cap}명`);
-    } else if (teamApplyPreview && isEng) {
-        parts.push(`<span class="text-amber-600 font-bold">지원 미리보기 — 들어가서 방법 확인</span>`);
     }
     if (isEng && mineHere) parts.push(`<span class="text-emerald-600 font-black">✓ 내 지원 팀</span>`);
     return { slots: parts.join(' · '), ctrl: '' };

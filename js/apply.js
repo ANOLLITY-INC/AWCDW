@@ -238,11 +238,12 @@ function drawApply(apps) {
     const myApp = apps.find(a => a.engineerId === currentUser.uid);
     const myTeamId = myApp && myApp.status === "assigned" ? myApp.assignedTeamId : null;
     const st = applyStatusInfo();
+    const uiOpen = st.open || st.preview;   // 미리보기도 '지원 가능' 화면과 동일하게 그린다(아래에서 회색 레이어로 비활성)
 
     const periodBanner = st.open
         ? `<div class="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-6 text-sm font-bold text-blue-800">🟢 ${escapeHtml(st.label)}</div>`
         : st.preview
-        ? `<div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-6 text-sm font-bold text-amber-800">👀 ${escapeHtml(st.label)}</div>`
+        ? `<div class="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-6 text-sm font-bold text-amber-800">👀 아래는 실제 지원 화면입니다. ${escapeHtml(applyStart ? "지원 시작 " + _fmtDateTime(new Date(applyStart)) + "부터 선택할 수 있습니다." : "")}</div>`
         : `<div class="bg-neutral-100 border border-neutral-300 rounded-xl p-3 mb-6 text-sm font-bold text-neutral-600">⏳ ${escapeHtml(st.label)} · 신청·변경은 지원 기간에만 가능합니다.</div>`;
 
     const statusBar = myTeamId ? `
@@ -254,7 +255,7 @@ function drawApply(apps) {
             ${st.open ? `<button onclick="cancelApplication()" class="bg-white border border-rose-300 text-rose-600 hover:bg-rose-50 font-bold px-5 py-2.5 rounded-xl transition-all whitespace-nowrap">배정 취소</button>` : ""}
         </div>` : `
         <div class="bg-neutral-50 border border-neutral-200 rounded-2xl p-5 mb-8">
-            <p class="text-sm font-bold">아직 지원하지 않았습니다.${st.open ? " 아래에서 희망 팀의 <b>신청</b> 버튼을 누르세요." : st.preview ? " 지금은 <b>미리보기</b> 기간 — 아래에서 지원 방법을 확인할 수 있어요. 실제 신청은 지원 시작 후 가능합니다." : ""}</p>
+            <p class="text-sm font-bold">아직 지원하지 않았습니다.${uiOpen ? " 아래에서 희망 팀의 <b>신청</b> 버튼을 누르세요." : ""}</p>
         </div>`;
 
     const cards = teamList().map(t => {
@@ -267,9 +268,7 @@ function drawApply(apps) {
         let action;
         if (mine) {
             action = `<span class="text-xs font-black uppercase tracking-wider text-emerald-700">✓ 내 배정 팀</span>`;
-        } else if (st.preview) {
-            action = `<button onclick="previewNotice()" class="bg-neutral-300 text-white text-sm font-bold px-4 py-2 rounded-lg cursor-not-allowed" title="지원 시작 전 미리보기">신청 <span class="text-[10px] font-semibold">(시작 전)</span></button>`;
-        } else if (!st.open) {
+        } else if (!uiOpen) {
             action = `<span class="text-xs font-bold text-neutral-400">${st.phase === "before" ? "대기" : st.phase === "after" ? "마감" : "지원 기간 아님"}</span>`;
         } else if (full) {
             action = `<span class="text-xs font-black uppercase tracking-wider text-rose-500">마감</span>`;
@@ -289,10 +288,18 @@ function drawApply(apps) {
             </div>`;
     }).join("");
 
+    const grid = `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">${cards}</div>`;
+    // 미리보기: 실제 지원 화면과 동일하게 그린 뒤 위에 회색 20% 레이어를 덮어 선택 불가 처리
+    const gridBlock = st.preview
+        ? `<div class="relative">
+               <div class="pointer-events-none select-none">${grid}</div>
+               <div class="absolute inset-0 bg-neutral-500/20 rounded-2xl cursor-not-allowed" onclick="previewNotice()" title="실제 지원 시작 전입니다"></div>
+           </div>`
+        : grid;
     page.innerHTML = applyShell(`
         ${periodBanner}
         ${statusBar}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">${cards}</div>`);
+        ${gridBlock}`);
 }
 
 // 신청 핵심 로직(지원 페이지·팀 보드 공용). 성공 시 true.
@@ -390,43 +397,50 @@ function teamDetailApplyPanel(teamId) {
     const mineHere = myTeam === teamId;
     const st = applyStatusInfo();
 
-    // 지원 인원/잔여 수는 지원 기간 중에만 노출. 미리보기/기간 아니면 상태만 표시.
-    const slotsLine = st.open
+    const uiOpen = st.open || st.preview;   // 미리보기도 '지원 가능' 화면과 동일하게 그린다
+    const slotsLine = uiOpen
         ? (countsKnown ? `공학생 ${cnt} / 정원 ${cap}명 · 잔여 ${remain}명` : `공학생 정원 ${cap}명`)
-        : st.preview
-        ? `공학생 정원 ${cap}명 · 지원 미리보기 중`
         : st.label;
 
     let action = "";
     if (isEng) {
-        if (st.open) {
+        if (uiOpen) {
             if (mineHere) {
                 action = `<div class="flex items-center gap-3">
                     <span class="text-sm font-black text-emerald-700">✓ 이 팀에 지원함</span>
-                    <button onclick="cancelFromDetail()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-4 py-2 rounded-lg text-sm transition-all">지원 취소</button>
+                    ${st.open ? `<button onclick="cancelFromDetail()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-4 py-2 rounded-lg text-sm transition-all">지원 취소</button>` : ""}
                 </div>`;
             } else if (full) {
                 action = `<span class="text-sm font-black text-rose-500">마감</span>`;
             } else {
                 action = `<button onclick="applyFromDetail('${escapeHtml(teamId)}')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-lg text-sm transition-all">${myTeam ? "이 팀으로 변경" : "이 팀에 지원"}</button>`;
             }
-        } else if (st.preview) {
-            // 미리보기: 지원 버튼은 보이되 클릭 시 안내만(실제 지원 불가)
-            action = `<button onclick="previewNotice()" class="bg-neutral-300 text-white font-bold px-5 py-2.5 rounded-lg text-sm cursor-not-allowed" title="지원 시작 전 미리보기">이 팀에 지원 <span class="text-[10px] font-semibold">(시작 전)</span></button>`;
         } else if (mineHere) {
             action = `<span class="text-sm font-black text-emerald-700">✓ 이 팀에 지원함</span>`;
         }
     }
 
-    return `
-        <div class="bg-white border border-neutral-200 rounded-2xl p-5 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    const panel = `
+        <div class="bg-white border border-neutral-200 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
                 <p class="text-xs font-bold uppercase tracking-wider text-neutral-500">공학생 지원</p>
                 <p class="text-lg font-extrabold">${escapeHtml(slotsLine)}</p>
-                ${isEng && st.open && myTeam && !mineHere ? `<p class="text-xs text-neutral-400 mt-1">현재 ${escapeHtml(teamMeta(myTeam).name || myTeam)}에 지원되어 있습니다.</p>` : ""}
+                ${isEng && uiOpen && myTeam && !mineHere ? `<p class="text-xs text-neutral-400 mt-1">현재 ${escapeHtml(teamMeta(myTeam).name || myTeam)}에 지원되어 있습니다.</p>` : ""}
             </div>
             <div>${action}</div>
         </div>`;
+
+    // 미리보기 구간: 실제 지원 화면과 동일 모양 위에 회색 20% 레이어를 덮어 선택 불가 처리
+    if (st.preview) {
+        return `
+            <div class="relative mb-8">
+                <div class="pointer-events-none select-none">${panel}</div>
+                <div class="absolute inset-0 bg-neutral-500/20 rounded-2xl cursor-not-allowed flex items-start justify-end p-2.5" onclick="previewNotice()">
+                    <span class="bg-white/90 text-amber-700 text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm">실제 지원 시작 전</span>
+                </div>
+            </div>`;
+    }
+    return `<div class="mb-8">${panel}</div>`;
 }
 window.teamDetailApplyPanel = teamDetailApplyPanel;
 
