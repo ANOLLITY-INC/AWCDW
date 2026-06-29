@@ -15,12 +15,12 @@
 
 ## ▶ 재개 지점 (다음에 바로 할 일)
 
-**⚠️ 관리자가 라이브에서 직접 눌러야 할 것**(2026-06-24~29 배치 — 작업 환경에서 Firestore 직접 쓰기 불가):
-- 팀 관리 → **「↻ 사용자 관리 기준 동기화」** (팀원 명단을 users 기준으로 갱신)
+**⚠️ 관리자가 라이브에서 직접 눌러야 할 것**(작업 환경에서 Firestore 직접 쓰기 불가):
+- **사용자 관리 또는 팀 배치 관리 → 「⤓ Excel 기준 일괄 동기화」 1회** (2026-06-29 신규) — 팀배분 Excel 기준으로 teams/계정/공개 화면을 한 번에 통일. 실행 후 상단 **미매칭(계정 없는 학생·교수) 리포트** 확인 → 가입 후 배정 또는 이름 표기 보정.
 - 팀 배치 관리 → **「지도교수 공개」** (공개/결과 보드에 지도교수 표시하려면 ON)
-- 사용자 관리 → **「↻ 팀 배정 동기화」** (필요 시)
+- (구) 팀 관리 「↻ 사용자 관리 기준 동기화」·사용자 관리 「↻ 팀 배정 동기화」 — Excel 동기화에 포함되므로 평소엔 불필요.
 - **검수 필요:** 부산 숙소 호실·비밀번호(순서 임시배정 값) — 체크인 전 운영진 확인.
-- 위 동기화/공개가 선행돼야 **결과 발표 보드**의 팀원·지도교수가 최신으로 표시됨.
+- **GitHub 푸시 대기:** 커밋 `d5dacb3`·`209a430`·`7726869` 아직 origin 미푸시(사용자 승인 후).
 
 **Phase 1~4 전부 완료 ✅**(2026-06-08~09, `?v=12`). 인증·역할 / 작품(업로드·PDF인라인·커버) / 피드백 / 공학생 선착순 지원·배정까지 구현·배포됨. 핵심 흐름 라이브 정상 확인됨(업로드까지). **2026-06-24~29 배치**(팀배정 동기화·결과발표 보드·팀 배치 관리/현황·지도교수 공개·숙소 재배정·일정) 구현·배포됨 — 상세는 아래 Changelog + `WORKLOG_2026-06-29.md`.
 
@@ -41,6 +41,17 @@
 ---
 
 ## ✅ 완료 내역 (Changelog)
+
+### 2026-06-29 — 팀배분 Excel 기준 통일 + 모든 팀 화면 계정 기준 일치 (busan_workshop_intensive_ver, 라이브 배포됨)
+> 전체 상세는 `WORKLOG_2026-06-29.md` §10~12. JS 캐시버전: **teams-data `?v=31` / auth `?v=32` / works `?v=32` / main `?v=32`**. 커밋 `d5dacb3`·`209a430`·`7726869`.
+
+- [x] **팀배분 기준 마스터(Excel) 코드 내장** (`teams-data.js`) — 루트 `2026 적층제조융합설계 워크숍_팀배분 관련 정리.xlsx`(전체학생 팀분배 표)를 `MASTER_ASSIGNMENT`로 내장. 9팀(A·B(=B+H)·C·D·E·F·G·I·J), 팀별 **디자이너2 + 공학생 + 지도교수(디자인/공학)**, 총 디18+공28=46명. `masterTeamDoc()` + 공통 헬퍼 `teamDesigners/teamEngineers/teamRoster/teamProfessorNames`.
+- [x] **데이터 모델 통일** — `teams.members`=디자이너, **신규 `teams.engineers`**=공학생, **신규 `teams.professorsRoster`**(+designProfs/engProfs)=Excel 지도교수, `capacity`=공학생 수.
+- [x] **「⤓ Excel 기준 일괄 동기화」 버튼**(`auth.js syncFromMaster`, 사용자 관리·팀 배치 관리 헤더) — ① teams에 마스터 반영(마스터에 없는 H팀 명단 비움) → ② 이름 일치 계정의 `teamId` reconcile(공학생 engineers도 매칭, applications uid 우선) → ③ **`syncTeamsFromUsers`로 teams 문서를 계정 기준으로 재구성**(공개 화면·결과 보드까지 일치) → ④ **계정 없는 학생/교수 미매칭 리포트**(상단 앰버 패널, `masterSyncReport`).
+- [x] **팀 배치 관리·팀 배치 현황을 사용자 관리(계정) 기준으로 통일** — `effStudentTeam`(teamId>지원배정>이름폴백) + `pickTeamMembers`로 디자이너·공학생·지도교수 산출. `renderTeamStatus`가 admin일 때 users 로드 → 관리자는 계정 기준 전체 표시. `teamProfessorNames`는 계정 기반(advisingProfessors)만 사용.
+- [x] **차수별 진행결과 발표 보드/상세 팀원 명단도 동일 기준** — 모든 팀 화면이 공유하는 단일 함수 **`teamRosterForDisplay`**(관리자=계정/그 외=teams 문서) + `loadTeamRosterCtx`. `renderResultTeamsBoard`·결과 팀 상세가 이를 사용 → 배치 현황/관리와 항상 일치. 권한(`canUploadCat` 등)은 원래 계정 teamId 기준이라 **'보이는 팀원=실제 권한 보유자'** 로 일치.
+- [x] **개인정보 보호 강화** — 팀배분 xlsx·`부산 숙소 배정표.jpg`를 `.gitignore` + `firebase.json` hosting ignore 양쪽에 추가(공개 리포·호스팅 제외).
+- ⚠️ firestore.rules 변경 불필요(teams write=admin, 필드 제약 없음). 라이브 데이터 정합성은 관리자가 **「⤓ Excel 기준 일괄 동기화」 1회** 실행해야 함.
 
 ### 2026-06-24~29 — 팀배정 동기화·결과발표 보드·배치 관리·숙소 재배정 (busan_workshop_intensive_ver, 라이브 배포됨)
 > 전체 상세는 루트 **`WORKLOG_2026-06-29.md`**. JS 캐시버전: auth `?v=29` / works `?v=27` / apply `?v=26` / busan-info `?v=27` / main `?v=27`.
