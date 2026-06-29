@@ -1116,10 +1116,17 @@ async function syncFromMaster() {
     const ops = reconcileTeamIds(teamsNow, users, apps);
     for (const op of ops) {
         await fsUpdate(`users/${op.uid}`, { teamId: op.teamId });
+        const lu = users.find(u => u._docId === op.uid);
+        if (lu) lu.teamId = op.teamId; // 로컬 캐시도 갱신(아래 재구성·리포트 일관성)
         if (currentUser && op.uid === currentUser.uid) {
             currentProfile = Object.assign({}, currentProfile, { teamId: op.teamId });
         }
     }
+
+    // 3.5) 팀 문서(members=디자이너 / engineers=공학생 / advisingProfessors)를
+    //      방금 갱신한 계정(users)의 소속 팀 기준으로 재구성한다.
+    //      → 공개 '팀 배치 현황'·결과 보드까지 '사용자 관리'와 동일하게 통일.
+    try { await syncTeamsFromUsers(); } catch (_) {}
 
     // 4) 계정 없는(이름 매칭 실패) 인원 리포트 -------------------
     const accountNames = new Set(
@@ -1599,12 +1606,36 @@ let teamPlaceApps = [];
 
 // 학생의 실제 소속 팀 판정: teamId > 지원(applications) > 팀 명단(이름)
 function tpEffectiveTeam(u) {
+    return effStudentTeam(u, teamPlaceTeams, teamPlaceApps);
+}
+
+// 학생(디자이너·공학생)의 소속 팀 판정 — '사용자 관리'와 동일 기준.
+//  teamId > 지원(applications) 배정 > 팀 명단(이름) 순.
+function effStudentTeam(u, teams, apps) {
     if (u.teamId) return u.teamId;
-    const app = teamPlaceApps.find(a => a.engineerId === u._docId && a.status === "assigned" && a.assignedTeamId);
+    const app = (apps || []).find(a => a.engineerId === u._docId && a.status === "assigned" && a.assignedTeamId);
     if (app) return app.assignedTeamId;
     const nm = String(u.name == null ? "" : u.name).trim();
-    const t = nm ? teamPlaceTeams.find(x => (x.members || []).some(m => String(m).trim() === nm)) : null;
-    return t ? (t.id || t._docId) : null;
+    if (nm && teams) {
+        const t = teams.find(x => {
+            const names = (typeof teamRoster === "function") ? teamRoster(x) : (x.members || []).concat(x.engineers || []);
+            return names.some(m => String(m).trim() === nm);
+        });
+        if (t) return t.id || t._docId;
+    }
+    return null;
+}
+
+// 팀별 구성(디자이너·공학생·지도교수)을 '사용자 관리'와 동일하게 계정(users) 기준으로 산출.
+//  · 디자이너/공학생 = 역할 + 소속 팀(effStudentTeam) 일치 계정
+//  · 지도교수        = 역할 professor + advisingTeamIds 에 팀 포함
+function pickTeamMembers(tid, users, apps, teams) {
+    const nm = u => (String(u.name == null ? "" : u.name).trim() || u.email || "(이름 없음)");
+    return {
+        designers: (users || []).filter(u => u.role === "designer" && effStudentTeam(u, teams, apps) === tid).map(nm),
+        engineers: (users || []).filter(u => u.role === "engineer" && effStudentTeam(u, teams, apps) === tid).map(nm),
+        profs:     (users || []).filter(u => u.role === "professor" && (u.advisingTeamIds || []).includes(tid)).map(nm),
+    };
 }
 
 async function renderTeamPlace() {
@@ -1661,19 +1692,11 @@ function drawTeamPlace() {
     // 팀별 카드 ------------------------------------------------
     const teamCards = teamPlaceTeams.map(t => {
         const tid = t.id || t._docId;
-        const designers = (typeof teamDesigners === "function") ? teamDesigners(t) : (t.members || []);
-        // 공학생: 기준 명단(engineers) ∪ 실제 지원배정(applications) — 이름 기준 중복 제거
-        const appEng = teamPlaceApps
-            .filter(a => a.status === "assigned" && a.assignedTeamId === tid)
-            .map(a => a.engineerName || "(이름 없음)");
-        const engineers = Array.from(new Set(
-            ((typeof teamEngineers === "function") ? teamEngineers(t) : (t.engineers || [])).concat(appEng)
-        ));
-        // 지도교수: 계정 기반(advisingTeamIds) ∪ 기준 명단(professorsRoster) — 이름 기준 중복 제거
-        const accProfs = teamPlaceUsers
-            .filter(u => u.role === "professor" && (u.advisingTeamIds || []).includes(tid))
-            .map(u => u.name || u.email || "교수");
-        const profs = Array.from(new Set(accProfs.concat(t.professorsRoster || [])));
+        // '사용자 관리'와 동일하게 계정(users) 기준으로 팀 구성 산출
+        const rm = pickTeamMembers(tid, teamPlaceUsers, teamPlaceApps, teamPlaceTeams);
+        const designers = rm.designers;
+        const engineers = rm.engineers;
+        const profs = rm.profs;
         const capN = cap(t);
         const engFull = engineers.length >= capN;
 
@@ -1886,29 +1909,40 @@ async function renderTeamStatus() {
     // 공학생 배정은 로그인 사용자만 읽을 수 있음(applications 규칙)
     if (currentUser) { try { apps = await fsQuery("applications"); } catch (_) { apps = []; } }
     if (typeof loadAppSettings === "function") { try { await loadAppSettings(); } catch (_) {} } // professorsPublic
-    drawTeamStatus(teams, apps);
+    // 관리자는 '사용자 관리'와 동일한 계정 기준으로 표시하기 위해 users 를 읽는다(규칙상 admin 만 전체 read).
+    let users = null;
+    if (currentProfile && currentProfile.role === "admin") {
+        try { users = await fsQuery("users"); } catch (_) { users = null; }
+    }
+    drawTeamStatus(teams, apps, users);
 }
 window.renderTeamStatus = renderTeamStatus;
 
-function drawTeamStatus(teams, apps) {
+function drawTeamStatus(teams, apps, users) {
     const page = document.getElementById("team-status-page");
     if (!page) return;
     const loggedIn = !!currentUser;
+    const isAdminView = Array.isArray(users); // 관리자: 계정(users) 기준 표시
     const profPub = (typeof professorsPublic !== "undefined") ? professorsPublic : false;
     const chip = (text, cls) => `<span class="text-xs font-bold px-2.5 py-1 rounded-lg ${cls}">${escapeHtml(text)}</span>`;
 
     const cards = teams.map(t => {
         const tid = t.id || t._docId;
-        const designers = (typeof teamDesigners === "function") ? teamDesigners(t) : (t.members || []);
-        // 공학생: 기준 명단(engineers) ∪ 지원배정(applications) — 이름 기준 중복 제거
-        const appEng = (apps || [])
-            .filter(a => a.status === "assigned" && a.assignedTeamId === tid)
-            .map(a => a.engineerName || "(이름 없음)");
-        const engineers = Array.from(new Set(
-            ((typeof teamEngineers === "function") ? teamEngineers(t) : (t.engineers || [])).concat(appEng)
-        ));
-        // 지도교수: 계정 기반 우선, 없으면 기준 명단(professorsRoster)
-        const profs = (typeof teamProfessorNames === "function") ? teamProfessorNames(t) : (t.advisingProfessors || []);
+        let designers, engineers, profs;
+        if (isAdminView) {
+            // '사용자 관리'와 동일하게 계정 기준으로 산출
+            const rm = pickTeamMembers(tid, users, apps, teams);
+            designers = rm.designers; engineers = rm.engineers; profs = rm.profs;
+        } else {
+            designers = (typeof teamDesigners === "function") ? teamDesigners(t) : (t.members || []);
+            const appEng = (apps || [])
+                .filter(a => a.status === "assigned" && a.assignedTeamId === tid)
+                .map(a => a.engineerName || "(이름 없음)");
+            engineers = Array.from(new Set(
+                ((typeof teamEngineers === "function") ? teamEngineers(t) : (t.engineers || [])).concat(appEng)
+            ));
+            profs = (typeof teamProfessorNames === "function") ? teamProfessorNames(t) : (t.advisingProfessors || []);
+        }
 
         const section = (title, items, emptyText, cls) => `
             <div>
@@ -1918,12 +1952,13 @@ function drawTeamStatus(teams, apps) {
                 </div>
             </div>`;
 
-        const engineerSection = loggedIn
-            ? section("공학생", engineers, "지원자 없음", "bg-emerald-50 text-emerald-700")
+        // 관리자는 항상(로그인·공개 여부 무관) 계정 기준 전체 표시 — 사용자 관리와 동일
+        const engineerSection = (loggedIn || isAdminView)
+            ? section("공학생", engineers, isAdminView ? "없음" : "지원자 없음", "bg-emerald-50 text-emerald-700")
             : `<div><p class="text-[11px] font-black uppercase tracking-wider text-neutral-400 mb-1.5">공학생</p>
                  <span class="text-xs text-neutral-400">로그인 시 표시됩니다.</span></div>`;
 
-        const profSection = profPub
+        const profSection = (profPub || isAdminView)
             ? section("지도 교수", profs, "미배정", "bg-violet-50 text-violet-700")
             : `<div><p class="text-[11px] font-black uppercase tracking-wider text-neutral-400 mb-1.5">지도 교수</p>
                  <span class="text-xs text-neutral-400">아직 공개되지 않았습니다.</span></div>`;

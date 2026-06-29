@@ -62,8 +62,10 @@ function teamDesigners(t) { return (t && t.members) || []; }
 function teamEngineers(t) { return (t && t.engineers) || []; }
 // 팀 전체 인원(디자이너 + 공학생)
 function teamRoster(t) { return teamDesigners(t).concat(teamEngineers(t)); }
-// 지도교수: 계정 기반(advisingProfessors) 우선, 없으면 마스터(professorsRoster)
+// 지도교수: '사용자 관리'(계정)와 동일하게 계정 기반(advisingProfessors)만 사용.
+//  · advisingProfessors 는 교수 계정의 advisingTeamIds 를 rebuildTeamProfessors 가
+//    공개 설정에 따라 팀 문서에 비정규화해 둔 값(공개 read 용).
+//  · 마스터(professorsRoster)는 동기화 리포트·참고용으로만 보관하고 화면엔 쓰지 않는다.
 function teamProfessorNames(t) {
-    const acc = (t && t.advisingProfessors) || [];
-    return acc.length ? acc : ((t && t.professorsRoster) || []);
+    return (t && t.advisingProfessors) || [];
 }
