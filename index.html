@@ -57,6 +57,8 @@
     <!-- ==================== PAGE: TEAM ADMIN (admin only) ==================== -->
     <div id="team-admin-page" class="hidden fade-in min-h-screen"></div>
     <div id="user-admin-page" class="hidden fade-in min-h-screen"></div>
+    <div id="team-place-page" class="hidden fade-in min-h-screen"></div>
+    <div id="team-status-page" class="hidden fade-in min-h-screen"></div>
 
     <!-- 팀 상세 / 작품 갤러리 / 작품 상세 (Phase 2 — works.js 가 렌더) -->
     <div id="team-detail-page" class="hidden fade-in min-h-screen"></div>
@@ -251,11 +253,41 @@
                     <h3 class="text-2xl font-black mb-2 tracking-tight">디자인팀 온라인 사전주제제안</h3>
                     <p class="text-sm opacity-90 mb-8 leading-relaxed">워크숍에 참여하는 디자이너들의 주제 제안 내용과 전공 매칭을 위한 페이지로 이동합니다.</p>
                 </div>
-                <button onclick="navigateTo('teams')" class="w-full text-center bg-white text-black font-black text-sm py-4 rounded-xl group-hover:bg-yellow-300 transition-colors inline-block uppercase tracking-wider font-eng">
+                <button onclick="openProposalBoard()" class="w-full text-center bg-white text-black font-black text-sm py-4 rounded-xl group-hover:bg-yellow-300 transition-colors inline-block uppercase tracking-wider font-eng">
                     팀별 주제제안 확인하기 &rarr;
                 </button>
             </div>
-            
+
+            <!-- Core Links Card 3: Workshop Result Board (차수별 진행 결과 발표) -->
+            <div class="group border-2 border-current bg-neutral-900 text-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1" id="nav-results">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-[10px] font-black uppercase tracking-widest bg-white text-neutral-900 px-2 py-1 rounded">Interactive Portal</span>
+                        <svg class="w-5 h-5 text-neutral-400 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-black mb-2 tracking-tight">워크숍 차수별 진행 결과 발표</h3>
+                    <p class="text-sm opacity-90 mb-8 leading-relaxed">각 팀이 워크숍 차수별 진행 결과를 발표·공유하는 페이지입니다. 배정된 팀원과 담당 지도교수가 글을 작성할 수 있습니다.</p>
+                </div>
+                <button onclick="openResultsBoard()" class="w-full text-center bg-white text-black font-black text-sm py-4 rounded-xl group-hover:bg-yellow-300 transition-colors inline-block uppercase tracking-wider font-eng">
+                    팀별 진행 결과 보기 &rarr;
+                </button>
+            </div>
+
+            <!-- Core Links Card 4: Team Status (모든 사용자 열람) -->
+            <div class="group border-2 border-current bg-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1" id="nav-status">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-[10px] font-black uppercase tracking-widest bg-emerald-600 text-white px-2 py-1 rounded">View Only</span>
+                        <svg class="w-5 h-5 text-neutral-400 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 10-4-4 4 4 0 004 4zm6 0a4 4 0 10-3-6.7"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-black mb-2 tracking-tight">팀 배치 현황</h3>
+                    <p class="text-sm opacity-70 mb-8 leading-relaxed">팀별 디자이너·공학생·지도 교수 구성을 한눈에 확인할 수 있는 페이지입니다. (모든 참가자 열람 가능)</p>
+                </div>
+                <button onclick="navigateTo('team-status')" class="w-full text-center bg-emerald-600 text-white font-black text-sm py-4 rounded-xl group-hover:bg-emerald-700 transition-colors inline-block uppercase tracking-wider font-eng">
+                    팀 배치 확인하기 &rarr;
+                </button>
+            </div>
+
         </section>
 
         <!-- ADDITIONAL DETAILS GRID (Page Link Placeholders) -->
@@ -512,6 +544,11 @@
                 </div>
                 <div class="flex flex-col">
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
+                        <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">-</div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4">서명부 작성 후 대기</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-700 mb-1">통합기계관</span><span class="block">1층 114호</span></div>
+                    </div>
+                    <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">09:00~10:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4">학교로 이동</div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">-</div>
@@ -531,8 +568,8 @@
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">13:00~15:00</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600">팀별 발표 및 지도교수단 피드백</div>
-                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-700 mb-1">통합기계관</span><span class="block">1층 114호</span></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600">팀별 활동: 기초 폼보드 목업 제작(Study Mock-Up)</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-700 mb-1">통합기계관</span><span class="block">1층 A-Space, 3층 C-Space</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">15:00~16:00</div>
@@ -541,8 +578,8 @@
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">16:00~18:00</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600">팀별 활동: 기초 폼보드 목업 제작(Study Mock-Up)</div>
-                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-700 mb-1">통합기계관</span><span class="block">1층 A-Space, 3층 C-Space</span></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600">팀별 발표 및 지도교수단 피드백</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-700 mb-1">통합기계관</span><span class="block">1층 114호</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">18:00~19:00</div>
@@ -567,6 +604,11 @@
                     <span class="text-lg font-bold opacity-70 mb-0.5">2026.06.26. (금)</span>
                 </div>
                 <div class="flex flex-col">
+                    <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
+                        <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">-</div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4">서명부 작성 후 대기</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-700 mb-1">통합기계관</span><span class="block">1층 114호</span></div>
+                    </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">09:00~10:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4">학교로 이동</div>
@@ -847,7 +889,7 @@
         </header>
 
         <!-- ==================== OVERVIEW DASHBOARD (3 Columns Layout) ==================== -->
-        <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
+        <section id="teams-stats" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
             <div class="border border-neutral-200 bg-white p-5 rounded-xl transition-all" id="stat-1">
                 <p class="font-eng text-xs uppercase opacity-50 tracking-wider">Total Teams</p>
                 <p class="text-3xl font-extrabold font-eng mt-1" id="stat-teams">10</p>
@@ -912,18 +954,18 @@
 
     <!-- ==================== JavaScript (외부 파일로 분리) ==================== -->
     <!-- 1) 팀 데이터 (로컬 폴백 + 시드 원본 / 추후 Firestore로 완전 이전) -->
-    <script src="js/teams-data.js?v=21"></script>
+    <script src="js/teams-data.js?v=30"></script>
     <!-- 2) 인증 & 역할 (로그인/회원가입/대시보드/페이지 가드) -->
-    <script src="js/auth.js?v=21"></script>
+    <script src="js/auth.js?v=30"></script>
     <!-- 3) 작품 기능 (팀 상세·작품 목록/상세·업로드, Phase 2) -->
-    <script src="js/works.js?v=21"></script>
+    <script src="js/works.js?v=30"></script>
     <!-- 4) 피드백 (작품 상세의 교수 피드백, Phase 3) -->
     <script src="js/feedback.js?v=21"></script>
     <!-- 5) 공학생 지원/배정 (Phase 4) -->
-    <script src="js/apply.js?v=24"></script>
+    <script src="js/apply.js?v=26"></script>
     <!-- 6) 부산 1차 워크숍 안내 (버스/숙소/캠퍼스맵 — 데이터·검색) -->
-    <script src="js/busan-info.js?v=22"></script>
+    <script src="js/busan-info.js?v=27"></script>
     <!-- 7) 화면 로직 (페이지 전환, 렌더링, 테마, 검색, Firestore 로드) -->
-    <script src="js/main.js?v=24"></script>
+    <script src="js/main.js?v=30"></script>
 </body>
 </html>

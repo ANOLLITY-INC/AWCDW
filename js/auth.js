@@ -421,26 +421,30 @@ window.handleSocial = handleSocial;
 const DASHBOARD_MENUS = {
     admin: [
         { t: "사용자 관리", d: "가입자 역할·소속팀 배정", ready: true, go: "user-admin" },
+        { t: "팀 배치 관리", d: "팀별 구성·교수·미배정 학생 배정", ready: true, go: "team-place" },
         { t: "팀 관리", d: "디자인팀 생성·수정·삭제", ready: true, go: "team-admin" },
         { t: "지원 현황", d: "공학생 지원·배정 관리", ready: true, onclick: "openApplicants()" },
-        { t: "팀 배정 현황판", d: "공개 팀 보드 보기", ready: true, go: "teams" },
+        { t: "팀 배정 현황판", d: "공개 팀 보드 보기", ready: true, onclick: "openProposalBoard()" },
+        { t: "차수별 진행 결과", d: "워크숍 진행 결과 발표 보드", ready: true, onclick: "openResultsBoard()" },
     ],
     professor: [
         { t: "작품 열람", d: "전체 작품 보기", ready: true, onclick: "openWorksGallery()" },
         { t: "피드백 작성", d: "작품 열어 피드백 남기기", ready: true, onclick: "openWorksGallery()" },
         { t: "지원자 명단", d: "공학생 지원 현황", ready: true, onclick: "openApplicants()" },
-        { t: "팀 보드", d: "전체 팀 현황", ready: true, go: "teams" },
+        { t: "팀 보드", d: "전체 팀 현황", ready: true, onclick: "openProposalBoard()" },
+        { t: "차수별 진행 결과", d: "워크숍 진행 결과 발표 보드", ready: true, onclick: "openResultsBoard()" },
     ],
     designer: [
         { t: "작품 업로드", d: "우리 팀 작품 제출", ready: true, onclick: "goMyDesignerUpload()" },
         { t: "피드백 확인", d: "우리 팀 작품·피드백 보기", ready: true, onclick: "goMyTeam()" },
-        { t: "팀 보드", d: "전체 팀 현황", ready: true, go: "teams" },
+        { t: "팀 보드", d: "전체 팀 현황", ready: true, onclick: "openProposalBoard()" },
+        { t: "차수별 진행 결과", d: "워크숍 진행 결과 발표 보드", ready: true, onclick: "openResultsBoard()" },
     ],
     engineer: [
-        { t: "팀 지원", d: "팀 보드에서 신청", ready: true, onclick: "navigateTo('teams')" },
+        { t: "팀 지원", d: "팀 보드에서 신청", ready: true, onclick: "openProposalBoard()" },
         { t: "지원 현황", d: "내 배정 결과 확인", ready: true, onclick: "openApply()" },
         { t: "작품 둘러보기", d: "공개 작품 보기", ready: true, onclick: "openWorksGallery()" },
-        { t: "팀 보드", d: "전체 팀 현황", ready: true, go: "teams" },
+        { t: "차수별 진행 결과", d: "워크숍 진행 결과 발표 보드", ready: true, onclick: "openResultsBoard()" },
     ],
 };
 
@@ -626,6 +630,7 @@ window.saveProfile = saveProfile;
 // ------------------------------------------------------------
 
 let teamAdminTeams = [];          // 현재 로드된 팀 목록(_docId 포함)
+let teamAdminUsers = [];          // 교수 배정 표시용 사용자 목록
 let teamAdminEditingId = null;    // null=폼 닫힘 / ""=새 팀 추가 / "A"=기존 팀 편집
 let teamAdminError = "";          // 폼 영역에 표시할 오류 메시지
 
@@ -657,6 +662,8 @@ async function renderTeamAdmin() {
     page.innerHTML = `<div class="max-w-7xl mx-auto px-6 py-24 text-center text-neutral-400 font-bold">팀 목록 불러오는 중…</div>`;
     try {
         teamAdminTeams = await fsQuery("teams", "id"); // [{_docId, id, name, code, members}]
+        // 교수 지도 팀 표시용 사용자 목록(admin 만 read 허용). 실패해도 팀 목록은 표시.
+        try { teamAdminUsers = await fsQuery("users"); } catch (_) { teamAdminUsers = []; }
     } catch (e) {
         page.innerHTML = `
             <div class="max-w-md mx-auto px-6 py-20 text-center">
@@ -674,7 +681,17 @@ function drawTeamAdmin() {
     const page = document.getElementById("team-admin-page");
     if (!page) return;
 
-    const rows = teamAdminTeams.map(t => `
+    // 팀별 지도 교수: users 중 advisingTeamIds 에 이 팀이 포함된 professor.
+    const profsForTeam = (tid) => (teamAdminUsers || []).filter(u =>
+        u.role === "professor" && (u.advisingTeamIds || []).includes(tid));
+
+    const rows = teamAdminTeams.map(t => {
+        const profs = profsForTeam(t.id || t._docId);
+        const profCell = profs.length
+            ? `<div class="flex flex-wrap gap-1">${profs.map(p =>
+                `<span class="text-xs font-bold bg-violet-50 text-violet-700 px-2 py-0.5 rounded">${escapeHtml(p.name || p.email || "교수")}</span>`).join("")}</div>`
+            : `<span class="text-xs text-neutral-400">미배정</span>`;
+        return `
         <tr class="border-b border-neutral-100 hover:bg-neutral-50">
             <td class="px-4 py-3 font-black font-eng">${escapeHtml(t.id)}</td>
             <td class="px-4 py-3 font-bold">${escapeHtml(t.name)}</td>
@@ -684,15 +701,17 @@ function drawTeamAdmin() {
                     ${(t.members || []).map(m => `<span class="text-xs font-bold bg-neutral-100 px-2 py-0.5 rounded">${escapeHtml(m)}</span>`).join("")}
                 </div>
             </td>
+            <td class="px-4 py-3">${profCell}</td>
             <td class="px-4 py-3 text-right whitespace-nowrap">
                 <button onclick="openTeamForm('${escapeHtml(t._docId)}')"
                     class="text-xs font-bold text-blue-600 hover:underline mr-3">수정</button>
                 <button onclick="deleteTeam('${escapeHtml(t._docId)}','${escapeHtml(t.name)}')"
                     class="text-xs font-bold text-rose-600 hover:underline">삭제</button>
             </td>
-        </tr>`).join("");
+        </tr>`;
+    }).join("");
 
-    const emptyRow = `<tr><td colspan="5" class="px-4 py-10 text-center text-neutral-400 font-bold">등록된 팀이 없습니다. ‘+ 새 팀 추가’로 시작하세요.</td></tr>`;
+    const emptyRow = `<tr><td colspan="6" class="px-4 py-10 text-center text-neutral-400 font-bold">등록된 팀이 없습니다. ‘+ 새 팀 추가’로 시작하세요.</td></tr>`;
 
     page.innerHTML = `
         <div class="max-w-7xl mx-auto px-6 py-12 lg:py-20">
@@ -706,19 +725,23 @@ function drawTeamAdmin() {
                     <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">팀 관리</h1>
                     <p class="text-sm mt-2 opacity-70">디자인팀을 화면에서 직접 생성·수정·삭제합니다. (총 ${teamAdminTeams.length}팀)</p>
                 </div>
-                <button onclick="openTeamForm('')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-3 rounded-xl transition-all">+ 새 팀 추가</button>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <button onclick="runSyncTeamsFromUsers()" title="사용자 관리의 소속 팀 정보를 기준으로 각 팀의 팀원(디자이너) 명단을 다시 맞춥니다." class="bg-neutral-900 hover:bg-blue-600 text-white text-sm font-bold px-4 py-3 rounded-xl transition-all whitespace-nowrap">↻ 사용자 관리 기준 동기화</button>
+                    <button onclick="openTeamForm('')" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-3 rounded-xl transition-all whitespace-nowrap">+ 새 팀 추가</button>
+                </div>
             </header>
 
             ${teamAdminEditingId !== null ? teamFormHtml() : ""}
 
             <div class="bg-white border border-neutral-200 rounded-2xl overflow-x-auto">
-                <table class="w-full text-sm text-left min-w-[720px]">
+                <table class="w-full text-sm text-left min-w-[860px]">
                     <thead class="bg-neutral-50 border-b border-neutral-200 text-[11px] uppercase tracking-wider text-neutral-500 font-bold">
                         <tr>
                             <th class="px-4 py-3">ID</th>
                             <th class="px-4 py-3">팀 이름</th>
                             <th class="px-4 py-3">코드</th>
                             <th class="px-4 py-3">팀원</th>
+                            <th class="px-4 py-3">지도 교수</th>
                             <th class="px-4 py-3 text-right">관리</th>
                         </tr>
                     </thead>
@@ -825,6 +848,8 @@ async function saveTeam(e) {
     if (btn) { btn.disabled = true; btn.textContent = "저장 중…"; }
     try {
         await fsSet(`teams/${id}`, { id, name, code, members, capacity });
+        // 팀원(이름) → 학생 계정 teamId 동기화 (사용자 관리 화면과 일치)
+        try { await syncAllTeamIds(); } catch (_) { /* 동기화 실패는 저장을 막지 않음 */ }
         teamAdminEditingId = null;
         await renderTeamAdmin();   // Firestore 에서 다시 읽어 화면 갱신
         await refreshPublicTeams(); // 공개 팀 보드에도 반영
@@ -842,6 +867,8 @@ async function deleteTeam(docId, name) {
     if (!window.confirm(`"${name || docId}" 팀을 삭제할까요? 되돌릴 수 없습니다.`)) return;
     try {
         await fsDelete(`teams/${docId}`);
+        // 삭제된 팀에 속했던 학생들의 teamId 도 정리(미배정으로)
+        try { await syncAllTeamIds(); } catch (_) {}
         await renderTeamAdmin();
         await refreshPublicTeams();
     } catch (err) {
@@ -860,6 +887,330 @@ async function refreshPublicTeams() {
         if (typeof renderTeams === "function" && isCurrentPage("teams-page")) renderTeams();
     }
 }
+
+// ------------------------------------------------------------
+// 팀 배정 동기화 (지원자 명단 + 팀 명단  →  users.teamId)
+// ------------------------------------------------------------
+//  학생 계정의 소속 팀(users/{uid}.teamId)을 두 소스에 맞춘다.
+//   1) 지원자 명단 applications/{uid}.assignedTeamId — 공학생(uid 기준, 가장 정확)
+//   2) 팀 명단 teams.members(이름) — 디자이너(이름 일치, 공백 제거)
+//  지원자 명단(uid)이 이름 매칭보다 우선한다. 교수·관리자는 teamId 미사용 → 제외.
+// ------------------------------------------------------------
+
+// 위 두 소스 기준으로 각 user 가 가져야 할 teamId 를 계산해
+// 현재 값과 다른 항목만 [{uid, teamId}] 로 돌려준다.
+function reconcileTeamIds(teams, users, apps) {
+    // 1) uid → 배정 팀 (지원자 명단 — 가장 신뢰도 높음)
+    const uidToTeam = new Map();
+    (apps || []).forEach(a => {
+        if (a.status === "assigned" && a.assignedTeamId && a.engineerId) {
+            uidToTeam.set(a.engineerId, a.assignedTeamId);
+        }
+    });
+    // 2) 이름 → 팀 (팀 명단: 디자이너 members + 공학생 engineers)
+    const nameToTeam = new Map();
+    (teams || []).forEach(t => {
+        const tid = t.id || t._docId;
+        const names = (typeof teamRoster === "function")
+            ? teamRoster(t)
+            : (t.members || []).concat(t.engineers || []);
+        names.forEach(m => {
+            const key = String(m == null ? "" : m).trim();
+            if (key) nameToTeam.set(key, tid); // 한 이름이 여러 팀에 있으면 마지막 팀 우선
+        });
+    });
+    const ops = [];
+    (users || []).forEach(u => {
+        if (u.role === "professor" || u.role === "admin") return; // teamId 미사용
+        // 우선순위: 지원자 명단(uid) > 팀 명단(이름)
+        const want = uidToTeam.get(u._docId)
+            || nameToTeam.get(String(u.name == null ? "" : u.name).trim())
+            || null;
+        const have = u.teamId || null;
+        if (want !== have) ops.push({ uid: u._docId, teamId: want });
+    });
+    return ops;
+}
+
+// 사용자 관리(users) 기준으로 팀 관리(teams.members)를 다시 맞춘다 (users → teams 방향).
+//  · 각 팀 members = 그 팀 소속(teamId 일치) 학생 = '디자이너 + 공학생' 이름.
+//    (디자이너를 앞에, 공학생을 뒤에 두고 각 그룹 내 가나다순)
+//  · 지도교수(advisingProfessors)도 함께 최신화(공개 설정 반영).
+//  · 변경된 팀 수를 반환.
+async function syncTeamsFromUsers() {
+    const [teams, users] = await Promise.all([fsQuery("teams", "id"), fsQuery("users")]);
+    let changed = 0;
+    for (const t of teams) {
+        const tid = t.id || t._docId;
+        const pick = (role) => users
+            .filter(u => u.role === role && (u.teamId || null) === tid)
+            .map(u => String(u.name || u.email || "").trim())
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b));
+        const members = pick("designer");   // 디자이너 → members
+        const engineers = pick("engineer"); // 공학생   → engineers
+        const cur = t.members || [], curE = t.engineers || [];
+        const same = cur.length === members.length && cur.every((v, i) => v === members[i])
+            && curE.length === engineers.length && curE.every((v, i) => v === engineers[i]);
+        if (!same) { await fsUpdate(`teams/${tid}`, { members, engineers }); t.members = members; t.engineers = engineers; changed++; }
+    }
+    try { await rebuildTeamProfessors(teams, users); } catch (_) {}
+    return changed;
+}
+
+// 팀 관리 페이지 '사용자 관리 기준 동기화' 버튼 핸들러
+async function runSyncTeamsFromUsers() {
+    if (!window.confirm("사용자 관리의 소속 팀 정보를 기준으로 각 팀의 팀원(디자이너) 명단을 다시 맞춥니다.\n진행할까요?")) return;
+    try {
+        const n = await syncTeamsFromUsers();
+        await renderTeamAdmin();
+        if (typeof refreshPublicTeams === "function") await refreshPublicTeams();
+        window.alert(n > 0 ? `${n}개 팀의 팀원 명단을 동기화했습니다.` : "이미 모두 사용자 관리와 일치합니다.");
+    } catch (err) {
+        window.alert((err.code === "permission-denied")
+            ? "권한이 없습니다. 관리자(admin) 계정인지 확인하세요."
+            : (err.code || err.message || "동기화에 실패했습니다."));
+    }
+}
+window.runSyncTeamsFromUsers = runSyncTeamsFromUsers;
+
+// 사용자 관리의 '소속 팀' 드롭다운으로 학생을 옮길 때, 팀 명단(members)도 함께 갱신.
+// teams.members(이름)를 단일 진실 소스로 유지하기 위해 양방향으로 맞춘다.
+//  oldName/newName: 이전·현재 이름(이름도 같은 저장에서 바뀔 수 있음)
+async function syncUserNameIntoTeams(oldName, newName, oldTeamId, newTeamId) {
+    const nm = String(newName == null ? "" : newName).trim();
+    const onm = String(oldName == null ? "" : oldName).trim();
+    // 1) 이전 팀에서 이름 제거 (팀이 바뀌었거나 이름이 바뀐 경우)
+    if (oldTeamId && (oldTeamId !== newTeamId || onm !== nm)) {
+        const ot = (userAdminTeams || []).find(t => (t.id || t._docId) === oldTeamId);
+        if (ot) {
+            const members = (ot.members || []).filter(m => {
+                const v = String(m).trim();
+                return v !== onm && v !== nm;
+            });
+            await fsUpdate(`teams/${ot.id || ot._docId}`, { members });
+            ot.members = members; // 로컬 캐시도 갱신
+        }
+    }
+    // 2) 새 팀 명단에 이름 추가 (없을 때만)
+    if (newTeamId && nm) {
+        const nt = (userAdminTeams || []).find(t => (t.id || t._docId) === newTeamId);
+        const cur = nt ? (nt.members || []).map(m => String(m).trim()) : [];
+        if (!cur.includes(nm)) {
+            const members = (nt && nt.members ? nt.members.slice() : []);
+            members.push(nm);
+            await fsUpdate(`teams/${newTeamId}`, { members });
+            if (nt) nt.members = members;
+        }
+    }
+}
+
+// 팀별 지도 교수 이름을 팀 문서(teams.advisingProfessors)에 비정규화한다.
+//  · users 컬렉션은 일반 사용자가 읽을 수 없으므로(규칙상 admin/본인만),
+//    공개 '팀 배치 현황' 보드가 교수를 표시하려면 공개 읽기 가능한 teams 에 넣어둬야 한다.
+//  · 관리자 동작(교수 배정 저장·동기화·배치 관리 진입) 때마다 최신화한다.
+async function rebuildTeamProfessors(teams, users) {
+    // 관리자가 '공개'로 설정했을 때만 교수 명단을 팀 문서에 비정규화한다.
+    // 비공개 상태면 빈 배열로 정리해 공개/결과 보드에 노출되지 않게 한다.
+    const pub = (typeof professorsPublic !== "undefined") ? professorsPublic : false;
+    teams = teams || await fsQuery("teams", "id");
+    if (pub) users = users || await fsQuery("users");
+    for (const t of teams) {
+        const tid = t.id || t._docId;
+        const names = pub
+            ? users.filter(u => u.role === "professor" && (u.advisingTeamIds || []).includes(tid))
+                   .map(u => u.name || u.email || "교수")
+            : [];
+        const cur = t.advisingProfessors || [];
+        const same = cur.length === names.length && cur.every((v, i) => v === names[i]);
+        if (!same) {
+            try { await fsUpdate(`teams/${tid}`, { advisingProfessors: names }); t.advisingProfessors = names; }
+            catch (_) { /* 비정규화 실패는 치명적이지 않음 */ }
+        }
+    }
+}
+
+// 전체 사용자/팀/지원자 명단을 읽어 teamId 를 일괄 동기화. 변경한 사용자 수를 반환.
+async function syncAllTeamIds() {
+    const [teams, users, apps] = await Promise.all([
+        fsQuery("teams", "id"),
+        fsQuery("users"),
+        fsQuery("applications").catch(() => []), // 지원자 명단(로그인 사용자 read 허용)
+    ]);
+    try { await rebuildTeamProfessors(teams, users); } catch (_) {}
+    const ops = reconcileTeamIds(teams, users, apps);
+    for (const op of ops) {
+        await fsUpdate(`users/${op.uid}`, { teamId: op.teamId });
+        // 본인 계정이 바뀌면 화면 상태에도 즉시 반영
+        if (currentUser && op.uid === currentUser.uid) {
+            currentProfile = Object.assign({}, currentProfile, { teamId: op.teamId });
+        }
+    }
+    return ops.length;
+}
+
+// ------------------------------------------------------------
+// 팀배분 기준 마스터(Excel) → Firestore 일괄 동기화
+// ------------------------------------------------------------
+//  teams-data.js 의 MASTER_ASSIGNMENT(Excel 전체 명단)을 단일 기준으로 삼아
+//  모든 관리/공개 화면을 통일한다.
+//   · 각 팀 문서: members(디자이너)·engineers(공학생)·professorsRoster(지도교수
+//     이름)·designProfs·engProfs·capacity(공학생 수)·name·code 를 마스터로 맞춤.
+//   · 마스터에 없는 팀(예: 분리 전 H팀)은 명단을 비워 잔여 표시 제거.
+//   · 이름이 일치하는 계정의 소속 팀(teamId)도 reconcile 로 함께 맞춤.
+//   · 계정이 없는(이름 매칭 실패) 학생·교수는 리포트로 돌려준다(관리자 수동 처리).
+//  반환: { teamsChanged, usersChanged, unmatchedStudents[], unmatchedProfs[] }
+// ------------------------------------------------------------
+let masterSyncReport = null; // 직전 동기화 결과(미매칭 명단) — 관리 화면 상단에 표시
+
+async function syncFromMaster() {
+    if (typeof MASTER_ASSIGNMENT === "undefined") throw new Error("기준 명단(MASTER_ASSIGNMENT)을 찾을 수 없습니다.");
+    if (typeof loadAppSettings === "function") { try { await loadAppSettings(); } catch (_) {} }
+
+    const [teams, users, apps] = await Promise.all([
+        fsQuery("teams", "id"),
+        fsQuery("users"),
+        fsQuery("applications").catch(() => []),
+    ]);
+    const byId = new Map(teams.map(t => [(t.id || t._docId), t]));
+    const masterIds = new Set(MASTER_ASSIGNMENT.map(m => m.id));
+
+    let teamsChanged = 0;
+
+    // 1) 마스터 팀들을 teams 문서에 반영 -----------------------
+    for (const m of MASTER_ASSIGNMENT) {
+        const doc = masterTeamDoc(m); // {id,name,code,members,engineers,professorsRoster,designProfs,engProfs,capacity}
+        const cur = byId.get(m.id);
+        const next = {
+            name: doc.name, code: doc.code,
+            members: doc.members, engineers: doc.engineers,
+            professorsRoster: doc.professorsRoster,
+            designProfs: doc.designProfs, engProfs: doc.engProfs,
+            capacity: doc.capacity,
+        };
+        if (cur) {
+            await fsUpdate(`teams/${m.id}`, next);
+            Object.assign(cur, next);
+        } else {
+            await fsSet(`teams/${m.id}`, Object.assign({ id: m.id }, next));
+            byId.set(m.id, Object.assign({ id: m.id }, next));
+        }
+        teamsChanged++;
+    }
+
+    // 2) 마스터에 없는 팀(예: B+H 통합 전 H팀)의 잔여 명단 정리 ----
+    for (const t of teams) {
+        const tid = t.id || t._docId;
+        if (masterIds.has(tid)) continue;
+        const hasRoster = (t.members && t.members.length) || (t.engineers && t.engineers.length);
+        if (hasRoster) {
+            await fsUpdate(`teams/${tid}`, { members: [], engineers: [] });
+            t.members = []; t.engineers = [];
+            teamsChanged++;
+        }
+    }
+
+    // 3) 이름이 일치하는 계정의 소속 팀(teamId) reconcile ---------
+    //    (reconcileTeamIds 는 위에서 갱신한 teams 의 members+engineers 를 이름 기준으로 사용)
+    const teamsNow = Array.from(byId.values());
+    const ops = reconcileTeamIds(teamsNow, users, apps);
+    for (const op of ops) {
+        await fsUpdate(`users/${op.uid}`, { teamId: op.teamId });
+        if (currentUser && op.uid === currentUser.uid) {
+            currentProfile = Object.assign({}, currentProfile, { teamId: op.teamId });
+        }
+    }
+
+    // 4) 계정 없는(이름 매칭 실패) 인원 리포트 -------------------
+    const accountNames = new Set(
+        users.map(u => String(u.name == null ? "" : u.name).trim()).filter(Boolean)
+    );
+    const unmatchedStudents = [], unmatchedProfs = [];
+    MASTER_ASSIGNMENT.forEach(m => {
+        teamRoster(masterTeamDoc(m)).forEach(nm => {
+            const name = String(nm).trim();
+            if (name && !accountNames.has(name)) unmatchedStudents.push({ name, team: m.name });
+        });
+        m.designProfs.concat(m.engProfs).forEach(nm => {
+            // '김현준/김석민' 같이 슬래시로 묶인 경우는 masterTeamDoc 에서 이미 분리됨
+            const name = String(nm).trim();
+            if (name && !accountNames.has(name)) unmatchedProfs.push({ name, team: m.name });
+        });
+    });
+
+    masterSyncReport = {
+        teamsChanged, usersChanged: ops.length,
+        unmatchedStudents, unmatchedProfs,
+    };
+    return masterSyncReport;
+}
+
+// 미매칭 인원 리포트 패널 HTML(동기화 직후 관리 화면 상단에 표시)
+function masterSyncReportHtml() {
+    const r = masterSyncReport;
+    if (!r) return "";
+    const chips = (arr) => arr.length
+        ? arr.map(x => `<span class="inline-flex items-center gap-1 text-xs font-bold bg-white border border-amber-300 text-amber-800 px-2 py-1 rounded-lg">${escapeHtml(x.name)}<span class="text-[10px] font-normal text-amber-500">${escapeHtml(x.team)}</span></span>`).join(" ")
+        : `<span class="text-xs text-emerald-700 font-bold">모두 계정과 연결됨 ✅</span>`;
+    return `
+        <div class="rounded-2xl border-2 border-amber-400 bg-amber-50 p-5 mb-8">
+            <div class="flex items-start justify-between gap-3 mb-3">
+                <div>
+                    <p class="font-extrabold text-amber-900">Excel 기준 동기화 완료</p>
+                    <p class="text-xs text-amber-700 mt-0.5">팀 ${r.teamsChanged}건 반영 · 계정 소속 팀 ${r.usersChanged}명 갱신</p>
+                </div>
+                <button onclick="dismissMasterSyncReport()" class="text-amber-500 hover:text-amber-800 text-sm font-bold shrink-0">닫기 ✕</button>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div>
+                    <p class="text-[11px] font-black uppercase tracking-wider text-amber-700 mb-1.5">계정 없는 학생 (${r.unmatchedStudents.length})</p>
+                    <div class="flex flex-wrap gap-1.5">${chips(r.unmatchedStudents)}</div>
+                </div>
+                <div>
+                    <p class="text-[11px] font-black uppercase tracking-wider text-amber-700 mb-1.5">계정 없는 지도교수 (${r.unmatchedProfs.length})</p>
+                    <div class="flex flex-wrap gap-1.5">${chips(r.unmatchedProfs)}</div>
+                </div>
+            </div>
+            <p class="text-[11px] text-amber-600 mt-3">※ 위 인원은 가입 계정이 없거나 이름 표기(영문/띄어쓰기 등)가 달라 자동 매칭되지 않았습니다. 가입 후 ‘사용자 관리’에서 배정하거나, ‘팀 배치 관리 → 계정 없는 학생 직접 추가’로 명단에 넣어 주세요.</p>
+        </div>`;
+}
+
+function dismissMasterSyncReport() {
+    masterSyncReport = null;
+    if (isCurrentPage("user-admin-page")) drawUserAdmin();
+    else if (isCurrentPage("team-place-page")) drawTeamPlace();
+}
+window.dismissMasterSyncReport = dismissMasterSyncReport;
+
+// 관리 화면의 「Excel 기준 일괄 동기화」 버튼 핸들러
+async function runSyncFromMaster() {
+    const ok = window.confirm(
+        "‘2026 적층제조융합설계 워크숍_팀배분’ Excel 기준 명단으로 모든 팀 구성을 통일합니다.\n\n" +
+        "· 각 팀의 디자이너·공학생·지도교수·정원을 기준 명단으로 맞춥니다.\n" +
+        "· 이름이 일치하는 계정의 소속 팀도 함께 갱신됩니다.\n" +
+        "· 계정이 없거나 이름이 다른 인원은 동기화 후 목록으로 알려드립니다.\n\n진행할까요?"
+    );
+    if (!ok) return;
+    const btns = Array.from(document.querySelectorAll('button[onclick="runSyncFromMaster()"]'));
+    const origs = btns.map(b => b.textContent);
+    btns.forEach(b => { b.disabled = true; b.textContent = "동기화 중…"; });
+    try {
+        const r = await syncFromMaster();
+        if (typeof refreshPublicTeams === "function") await refreshPublicTeams();
+        if (isCurrentPage("team-place-page")) await renderTeamPlace();
+        else await renderUserAdmin();
+        const extra = (r.unmatchedStudents.length || r.unmatchedProfs.length)
+            ? `\n\n계정 없는 학생 ${r.unmatchedStudents.length}명 · 지도교수 ${r.unmatchedProfs.length}명 — 화면 상단 목록을 확인하세요.`
+            : "\n\n모든 인원이 계정과 연결되었습니다. ✅";
+        window.alert(`Excel 기준 동기화 완료.\n팀 ${r.teamsChanged}건 반영 · 계정 소속 팀 ${r.usersChanged}명 갱신.${extra}`);
+    } catch (err) {
+        btns.forEach((b, i) => { b.disabled = false; b.textContent = origs[i]; });
+        window.alert((err.code === "permission-denied")
+            ? "권한이 없습니다. 관리자(admin) 계정인지 확인하세요."
+            : ("동기화에 실패했습니다: " + (err.code || err.message || err)));
+    }
+}
+window.runSyncFromMaster = runSyncFromMaster;
 
 // ------------------------------------------------------------
 // 관리자: 사용자 관리 (User Management) — admin 전용
@@ -919,11 +1270,34 @@ async function renderUserAdmin() {
 }
 window.renderUserAdmin = renderUserAdmin;
 
+// '팀 배정 동기화' 버튼: teams.members(이름) → 학생 계정 teamId 일괄 반영
+async function runTeamSync() {
+    const btn = document.querySelector('#user-admin-page button[onclick="runTeamSync()"]');
+    const orig = btn ? btn.textContent : "";
+    if (btn) { btn.disabled = true; btn.textContent = "동기화 중…"; }
+    try {
+        const n = await syncAllTeamIds();
+        await renderUserAdmin(); // 최신 teamId 로 표 갱신
+        window.alert(n > 0 ? `${n}명의 소속 팀을 동기화했습니다.` : "이미 모두 동기화되어 있습니다.");
+    } catch (err) {
+        if (btn) { btn.disabled = false; btn.textContent = orig; }
+        window.alert("동기화에 실패했습니다: " + (err.code || err.message || err));
+    }
+}
+window.runTeamSync = runTeamSync;
+
 function teamLabel(teamId) {
     if (!teamId) return `<span class="text-xs text-neutral-400">미배정</span>`;
     const t = userAdminTeams.find(x => (x._docId || x.id) === teamId || x.id === teamId);
     const name = t ? (t.name || t.id) : teamId;
     return `<span class="text-xs font-bold bg-blue-50 text-blue-700 px-2 py-0.5 rounded">${escapeHtml(name)}</span>`;
+}
+// 팀 멤버 명단(이름)에서 사용자가 속한 팀 id 를 찾는다(아직 teamId 동기화 전 표시용).
+function teamIdByMemberName(name) {
+    const key = String(name == null ? "" : name).trim();
+    if (!key) return null;
+    const t = (userAdminTeams || []).find(x => (x.members || []).some(m => String(m).trim() === key));
+    return t ? (t.id || t._docId) : null;
 }
 // 표의 '소속 팀' 칸: 교수는 지도 팀(여러 개), 그 외는 소속 팀(하나)
 function teamCellHtml(u) {
@@ -932,7 +1306,13 @@ function teamCellHtml(u) {
         if (!adv.length) return `<span class="text-xs text-neutral-400">지도팀 없음</span>`;
         return `<div class="flex flex-wrap gap-1">${adv.map(teamLabel).join("")}</div>`;
     }
-    return teamLabel(u.teamId);
+    if (u.teamId) return teamLabel(u.teamId);
+    // teamId 는 비어 있지만 팀 명단에 이름이 있는 경우 → 동기화 필요 표시
+    const derived = teamIdByMemberName(u.name);
+    if (derived) {
+        return `${teamLabel(derived)} <span class="text-[10px] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded ml-1">미동기화</span>`;
+    }
+    return teamLabel(null);
 }
 
 function drawUserAdmin() {
@@ -974,9 +1354,17 @@ function drawUserAdmin() {
                     <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">사용자 관리</h1>
                     <p class="text-sm mt-2 opacity-70">가입자의 역할과 소속 팀을 배정합니다. (총 ${userAdminUsers.length}명)</p>
                 </div>
-                <input type="text" value="${escapeHtml(userAdminFilter)}" oninput="onUserFilter(this.value)" placeholder="이름·이메일·역할 검색"
-                    class="w-full md:w-64 border border-neutral-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+                <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                    <button onclick="runSyncFromMaster()" title="Excel 팀배분 기준 명단으로 모든 팀 구성·정원·계정 소속을 통일합니다."
+                        class="whitespace-nowrap bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-all">⤓ Excel 기준 일괄 동기화</button>
+                    <button onclick="runTeamSync()" title="팀 관리에서 배정한 팀원(이름)을 학생 계정의 소속 팀에 일괄 반영합니다."
+                        class="whitespace-nowrap bg-neutral-900 hover:bg-neutral-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-all">↻ 팀 배정 동기화</button>
+                    <input type="text" value="${escapeHtml(userAdminFilter)}" oninput="onUserFilter(this.value)" placeholder="이름·이메일·역할 검색"
+                        class="w-full md:w-64 border border-neutral-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+                </div>
             </header>
+
+            ${masterSyncReportHtml()}
 
             ${userAdminEditingId !== null ? userFormHtml() : ""}
 
@@ -1120,6 +1508,7 @@ async function saveUserAdmin(e) {
     e.preventDefault();
     const el = e.target.elements;
     const uid = userAdminEditingId;
+    const prevUser = userAdminUsers.find(x => x._docId === uid) || {};
     const role = el.role.value;
     // 교수: 지도 팀(여러 개) → advisingTeamIds, 소속 팀(teamId)은 비움.
     // 그 외: 소속 팀(teamId) 하나, 지도 팀은 비움.
@@ -1153,6 +1542,29 @@ async function saveUserAdmin(e) {
     if (btn) { btn.disabled = true; btn.textContent = "저장 중…"; }
     try {
         await fsUpdate(`users/${uid}`, data);
+        // 학생의 소속 팀(또는 이름)이 바뀌면 팀 명단(members)도 함께 맞춰 둔다.
+        if (role !== "professor") {
+            try { await syncUserNameIntoTeams(prevUser.name, data.name, prevUser.teamId || null, teamId); }
+            catch (_) { /* 명단 반영 실패는 사용자 저장을 막지 않음 */ }
+        }
+        // 공학생은 소속의 진실 소스가 지원(applications) 문서이므로, 팀 변경 시 함께 갱신.
+        //  (이걸 안 하면 동기화가 돌 때 지원 문서의 옛 팀으로 teamId 가 되돌아간다 → "변경 안 됨")
+        if (role === "engineer") {
+            try {
+                if (teamId) {
+                    await fsSet(`applications/${uid}`, {
+                        id: uid, engineerId: uid, engineerName: data.name || "",
+                        university: data.university || "", department: data.department || "",
+                        studentId: data.studentId || "", assignedTeamId: teamId, status: "assigned",
+                        preferences: [{ rank: 1, teamId }], createdAt: new Date(), updatedAt: new Date(),
+                    });
+                } else {
+                    try { await fsDelete(`applications/${uid}`); } catch (_) {} // 미배정 → 지원 삭제
+                }
+            } catch (_) { /* 지원 반영 실패는 사용자 저장을 막지 않음 */ }
+        }
+        // 교수 지도팀(또는 교수 관련 변경) 반영 → 팀 문서의 공개용 교수 명단 갱신
+        try { await rebuildTeamProfessors(); } catch (_) {}
         // 본인 프로필을 수정했으면 화면 상태에도 반영
         if (uid === currentUser.uid) {
             currentProfile = Object.assign({}, currentProfile, data);
@@ -1170,5 +1582,377 @@ async function saveUserAdmin(e) {
     }
 }
 window.saveUserAdmin = saveUserAdmin;
+
+// ============================================================
+//  관리자: 팀 배치 관리 (Team Placement) — admin 전용
+// ------------------------------------------------------------
+//  한 화면에서 팀별 구성(디자이너·지원 공학생·지도 교수)을 보고,
+//  아직 팀이 없는 학생을 바로 배정한다.
+//   · 디자이너 배정 → teams.members 에 이름 추가 + users.teamId 설정
+//   · 공학생 배정   → applications 문서 생성/갱신(assignedTeamId) + users.teamId 설정
+//     (공학생의 소속은 applications 가 진실 소스이므로 동기화 시에도 보존됨)
+// ============================================================
+
+let teamPlaceTeams = [];
+let teamPlaceUsers = [];
+let teamPlaceApps = [];
+
+// 학생의 실제 소속 팀 판정: teamId > 지원(applications) > 팀 명단(이름)
+function tpEffectiveTeam(u) {
+    if (u.teamId) return u.teamId;
+    const app = teamPlaceApps.find(a => a.engineerId === u._docId && a.status === "assigned" && a.assignedTeamId);
+    if (app) return app.assignedTeamId;
+    const nm = String(u.name == null ? "" : u.name).trim();
+    const t = nm ? teamPlaceTeams.find(x => (x.members || []).some(m => String(m).trim() === nm)) : null;
+    return t ? (t.id || t._docId) : null;
+}
+
+async function renderTeamPlace() {
+    const page = document.getElementById("team-place-page");
+    if (!page) return;
+    if (!currentUser || !currentProfile) {
+        page.innerHTML = `
+            <div class="max-w-md mx-auto px-6 py-20 text-center">
+                <p class="text-lg font-bold mb-4">로그인이 필요합니다.</p>
+                <button onclick="openAuth('login')" class="bg-blue-600 text-white font-bold px-6 py-3 rounded-xl">로그인 / 가입</button>
+                <div class="mt-4"><button onclick="navigateTo('landing')" class="text-sm text-neutral-500 hover:underline">메인으로</button></div>
+            </div>`;
+        return;
+    }
+    if (currentProfile.role !== "admin") {
+        page.innerHTML = `
+            <div class="max-w-md mx-auto px-6 py-20 text-center">
+                <p class="text-lg font-bold mb-2">관리자 전용 페이지입니다.</p>
+                <p class="text-sm text-neutral-500 mb-6">팀 배치 관리는 관리자(admin) 계정만 사용할 수 있습니다.</p>
+                <button onclick="navigateTo('dashboard')" class="bg-blue-600 text-white font-bold px-6 py-3 rounded-xl">내 대시보드로</button>
+            </div>`;
+        return;
+    }
+
+    page.innerHTML = `<div class="max-w-7xl mx-auto px-6 py-24 text-center text-neutral-400 font-bold">팀 배치 정보 불러오는 중…</div>`;
+    try {
+        if (typeof loadAppSettings === "function") { try { await loadAppSettings(); } catch (_) {} } // professorsPublic 최신화
+        teamPlaceTeams = await fsQuery("teams", "id");
+        teamPlaceUsers = await fsQuery("users");
+        teamPlaceApps = await fsQuery("applications").catch(() => []);
+        // 공개 '팀 배치 현황' 보드용 교수 명단을 팀 문서에 최신화(공개 설정 반영)
+        try { await rebuildTeamProfessors(teamPlaceTeams, teamPlaceUsers); } catch (_) {}
+    } catch (e) {
+        page.innerHTML = `
+            <div class="max-w-md mx-auto px-6 py-20 text-center">
+                <p class="text-lg font-bold text-rose-600 mb-2">불러오지 못했습니다.</p>
+                <p class="text-sm text-neutral-500 mb-6">${escapeHtml(e.code || e.message || e)}</p>
+                <button onclick="renderTeamPlace()" class="bg-blue-600 text-white font-bold px-6 py-3 rounded-xl">다시 시도</button>
+            </div>`;
+        return;
+    }
+    drawTeamPlace();
+}
+window.renderTeamPlace = renderTeamPlace;
+
+function drawTeamPlace() {
+    const page = document.getElementById("team-place-page");
+    if (!page) return;
+
+    const cap = (t) => (typeof teamCapacity === "function") ? teamCapacity(t) : (t.capacity || 3);
+    const chip = (text, cls) => `<span class="text-xs font-bold px-2.5 py-1 rounded-lg ${cls}">${escapeHtml(text)}</span>`;
+    const profPub = (typeof professorsPublic !== "undefined") ? professorsPublic : false;
+
+    // 팀별 카드 ------------------------------------------------
+    const teamCards = teamPlaceTeams.map(t => {
+        const tid = t.id || t._docId;
+        const designers = (typeof teamDesigners === "function") ? teamDesigners(t) : (t.members || []);
+        // 공학생: 기준 명단(engineers) ∪ 실제 지원배정(applications) — 이름 기준 중복 제거
+        const appEng = teamPlaceApps
+            .filter(a => a.status === "assigned" && a.assignedTeamId === tid)
+            .map(a => a.engineerName || "(이름 없음)");
+        const engineers = Array.from(new Set(
+            ((typeof teamEngineers === "function") ? teamEngineers(t) : (t.engineers || [])).concat(appEng)
+        ));
+        // 지도교수: 계정 기반(advisingTeamIds) ∪ 기준 명단(professorsRoster) — 이름 기준 중복 제거
+        const accProfs = teamPlaceUsers
+            .filter(u => u.role === "professor" && (u.advisingTeamIds || []).includes(tid))
+            .map(u => u.name || u.email || "교수");
+        const profs = Array.from(new Set(accProfs.concat(t.professorsRoster || [])));
+        const capN = cap(t);
+        const engFull = engineers.length >= capN;
+
+        const section = (title, items, emptyText, cls) => `
+            <div>
+                <p class="text-[11px] font-black uppercase tracking-wider text-neutral-400 mb-1.5">${title}</p>
+                <div class="flex flex-wrap gap-1.5">
+                    ${items.length ? items.map(x => chip(x, cls)).join("") : `<span class="text-xs text-neutral-400">${escapeHtml(emptyText)}</span>`}
+                </div>
+            </div>`;
+
+        return `
+            <div class="border border-neutral-200 bg-white rounded-2xl overflow-hidden">
+                <div class="flex items-center justify-between gap-2 px-5 py-3.5 border-b border-neutral-200 bg-neutral-50">
+                    <div class="min-w-0">
+                        <span class="font-black font-eng text-lg">${escapeHtml((t.code || tid).toUpperCase())}</span>
+                        <span class="text-sm font-bold ml-2">${escapeHtml(t.name || tid)}</span>
+                    </div>
+                    <span class="text-xs font-bold px-2.5 py-1 rounded-full whitespace-nowrap shrink-0 ${engFull ? "bg-rose-100 text-rose-700" : "bg-emerald-100 text-emerald-700"}">공학생 ${engineers.length}/${capN}</span>
+                </div>
+                <div class="p-5 space-y-3">
+                    ${section("디자이너", designers, "없음", "bg-blue-50 text-blue-700")}
+                    ${section("공학생 (지원 배정)", engineers, "지원자 없음", "bg-emerald-50 text-emerald-700")}
+                    ${section("지도 교수", profs, "미배정", "bg-violet-50 text-violet-700")}
+                </div>
+            </div>`;
+    }).join("");
+
+    // 미배정 학생 ----------------------------------------------
+    const unassigned = teamPlaceUsers
+        .filter(u => (u.role === "designer" || u.role === "engineer") && !tpEffectiveTeam(u))
+        .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+
+    const teamOpts = teamPlaceTeams.map(t => {
+        const id = t.id || t._docId;
+        return `<option value="${escapeHtml(id)}">${escapeHtml((t.name || id) + " (" + id + ")")}</option>`;
+    }).join("");
+
+    const unassignedRows = unassigned.length ? unassigned.map(u => `
+        <tr class="border-b border-neutral-100 hover:bg-neutral-50">
+            <td class="px-4 py-3">
+                <div class="font-bold">${escapeHtml(u.name || "(이름 없음)")}</div>
+                <div class="text-xs text-neutral-400">${escapeHtml(u.email || "")}</div>
+            </td>
+            <td class="px-4 py-3"><span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${u.role === "designer" ? "bg-blue-600" : "bg-emerald-600"} text-white">${escapeHtml(ROLE_LABELS[u.role] || u.role)}</span></td>
+            <td class="px-4 py-3 text-xs text-neutral-500">${escapeHtml([u.university, u.department, u.studentId].filter(Boolean).join(" · "))}</td>
+            <td class="px-4 py-3 text-right whitespace-nowrap">
+                <div class="inline-flex items-center gap-2">
+                    <select id="place-team-${escapeHtml(u._docId)}" class="border border-neutral-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-600">
+                        <option value="">팀 선택…</option>${teamOpts}
+                    </select>
+                    <button onclick="placeStudent('${escapeHtml(u._docId)}')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition-all">배정</button>
+                </div>
+            </td>
+        </tr>`).join("") : `<tr><td colspan="4" class="px-4 py-10 text-center text-neutral-400 font-bold">미배정 학생이 없습니다. 모두 팀에 배정되었습니다. 🎉</td></tr>`;
+
+    page.innerHTML = `
+        <div class="max-w-7xl mx-auto px-6 py-12 lg:py-20">
+            <header class="border-b-2 border-current pb-8 mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+                <div>
+                    <button onclick="navigateTo('dashboard')" class="mb-3 text-sm font-bold px-4 py-2.5 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-black inline-flex items-center gap-1.5 transition-all">← 대시보드</button>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-[10px] font-black uppercase tracking-widest bg-blue-600 text-white px-2.5 py-1 rounded-full">관리자</span>
+                        <span class="text-xs font-bold opacity-50 uppercase tracking-widest font-eng">Team Placement</span>
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">팀 배치 관리</h1>
+                    <p class="text-sm mt-2 opacity-70">팀별 구성(디자이너·지원 공학생·지도 교수)을 한눈에 보고, 미배정 학생을 바로 배정합니다.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                    <button onclick="runSyncFromMaster()" title="Excel 팀배분 기준 명단으로 모든 팀 구성·정원·계정 소속을 통일합니다."
+                        class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-all whitespace-nowrap">⤓ Excel 기준 일괄 동기화</button>
+                    <button onclick="renderTeamPlace()" title="최신 정보로 새로고침" class="bg-neutral-900 hover:bg-neutral-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-all whitespace-nowrap">↻ 새로고침</button>
+                </div>
+            </header>
+
+            ${masterSyncReportHtml()}
+
+            <div class="rounded-2xl border-2 ${profPub ? "border-violet-500 bg-violet-50" : "border-neutral-300 bg-white"} p-5 mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <p class="font-extrabold">${profPub ? "지도교수 명단 공개됨 ✅" : "지도교수 명단 비공개 (관리자만)"}</p>
+                    <p class="text-xs text-neutral-500 mt-1">공개하면 ‘팀 배치 현황’ 보드와 ‘차수별 진행 결과 발표’ 팀 화면에 지도교수가 표시됩니다. 비공개 시에는 표시되지 않습니다.</p>
+                </div>
+                <button onclick="toggleProfessorsPublic()" class="${profPub ? "bg-neutral-100 hover:bg-neutral-200 text-neutral-700" : "bg-violet-600 hover:bg-violet-700 text-white"} font-bold px-5 py-2.5 rounded-xl transition-all whitespace-nowrap">${profPub ? "비공개로 전환" : "지도교수 공개"}</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">${teamCards || '<p class="text-neutral-500">등록된 팀이 없습니다.</p>'}</div>
+
+            <div class="bg-white border-2 border-blue-600 rounded-2xl p-5 mb-10">
+                <p class="font-extrabold mb-1">계정 없는 학생 직접 추가</p>
+                <p class="text-xs text-neutral-500 mb-3">포털 계정이 없는 참가자를 이름으로 팀 명단에 추가합니다. (디자이너 명단에 표시됩니다)</p>
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <input id="place-add-name" type="text" placeholder="학생 이름" class="flex-1 border border-neutral-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    <select id="place-add-team" class="border border-neutral-300 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-600">
+                        <option value="">팀 선택…</option>${teamOpts}
+                    </select>
+                    <button onclick="addNameToTeam()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all whitespace-nowrap">+ 추가</button>
+                </div>
+            </div>
+
+            <h2 class="text-lg font-extrabold mb-1">미배정 학생 <span class="font-eng opacity-50">(${unassigned.length})</span></h2>
+            <p class="text-xs text-neutral-500 mb-4">아직 팀이 없는 디자이너·공학생입니다. 팀을 선택해 ‘배정’을 누르면 즉시 반영됩니다. (배정 변경·해제는 ‘사용자 관리’에서)</p>
+            <div class="bg-white border border-neutral-200 rounded-2xl overflow-x-auto">
+                <table class="w-full text-sm text-left min-w-[640px]">
+                    <thead class="bg-neutral-50 border-b border-neutral-200 text-[11px] uppercase tracking-wider text-neutral-500 font-bold">
+                        <tr>
+                            <th class="px-4 py-3">학생</th>
+                            <th class="px-4 py-3">역할</th>
+                            <th class="px-4 py-3">소속·학번</th>
+                            <th class="px-4 py-3 text-right">팀 배정</th>
+                        </tr>
+                    </thead>
+                    <tbody>${unassignedRows}</tbody>
+                </table>
+            </div>
+        </div>`;
+}
+window.drawTeamPlace = drawTeamPlace;
+
+async function placeStudent(uid) {
+    const sel = document.getElementById("place-team-" + uid);
+    const teamId = sel ? sel.value : "";
+    if (!teamId) { window.alert("배정할 팀을 선택하세요."); return; }
+    const u = teamPlaceUsers.find(x => x._docId === uid);
+    if (!u) return;
+    const btn = sel && sel.parentNode ? sel.parentNode.querySelector("button") : null;
+    const orig = btn ? btn.textContent : "";
+    if (btn) { btn.disabled = true; btn.textContent = "배정 중…"; }
+    try {
+        if (u.role === "engineer") {
+            // 공학생: 지원(applications) 문서 생성/갱신 — 동기화 시에도 소속 보존
+            await fsSet(`applications/${uid}`, {
+                id: uid, engineerId: uid, engineerName: u.name || "",
+                university: u.university || "", department: u.department || "",
+                studentId: u.studentId || "", assignedTeamId: teamId, status: "assigned",
+                preferences: [{ rank: 1, teamId }], createdAt: new Date(), updatedAt: new Date(),
+            });
+        } else {
+            // 디자이너: 팀 명단(members)에 이름 추가
+            const t = teamPlaceTeams.find(x => (x.id || x._docId) === teamId);
+            const nm = String(u.name == null ? "" : u.name).trim();
+            if (t && nm && !(t.members || []).map(m => String(m).trim()).includes(nm)) {
+                const members = (t.members || []).slice();
+                members.push(nm);
+                await fsUpdate(`teams/${teamId}`, { members });
+            }
+        }
+        await fsUpdate(`users/${uid}`, { teamId });
+        if (uid === currentUser.uid) { currentProfile = Object.assign({}, currentProfile, { teamId }); renderAuthBar(); }
+        await renderTeamPlace();
+    } catch (err) {
+        if (btn) { btn.disabled = false; btn.textContent = orig; }
+        window.alert((err.code === "permission-denied")
+            ? "권한이 없습니다. (관리자 전용)"
+            : (err.code || err.message || "배정에 실패했습니다."));
+    }
+}
+window.placeStudent = placeStudent;
+
+// 계정 없는 학생 이름을 팀 명단(members)에 직접 추가
+async function addNameToTeam() {
+    const nameEl = document.getElementById("place-add-name");
+    const teamEl = document.getElementById("place-add-team");
+    const name = nameEl ? nameEl.value.trim() : "";
+    const teamId = teamEl ? teamEl.value : "";
+    if (!name) { window.alert("이름을 입력하세요."); return; }
+    if (!teamId) { window.alert("팀을 선택하세요."); return; }
+    const t = teamPlaceTeams.find(x => (x.id || x._docId) === teamId);
+    if (!t) return;
+    const cur = (t.members || []).map(m => String(m).trim());
+    if (cur.includes(name)) { window.alert("이미 그 팀 명단에 있는 이름입니다."); return; }
+    try {
+        const members = (t.members || []).slice();
+        members.push(name);
+        await fsUpdate(`teams/${teamId}`, { members });
+        // 같은 이름의 미배정 계정이 있으면 소속 팀도 함께 맞춰 둔다(있을 때만).
+        const u = teamPlaceUsers.find(x => String(x.name || "").trim() === name && !x.teamId);
+        if (u) { try { await fsUpdate(`users/${u._docId}`, { teamId }); } catch (_) {} }
+        await renderTeamPlace();
+    } catch (err) {
+        window.alert((err.code === "permission-denied")
+            ? "권한이 없습니다. (관리자 전용)"
+            : (err.code || err.message || "추가에 실패했습니다."));
+    }
+}
+window.addNameToTeam = addNameToTeam;
+
+// ============================================================
+//  공개: 팀 배치 현황 (Team Status) — 모든 사용자 열람(읽기 전용)
+// ------------------------------------------------------------
+//  · teams(공개 읽기)에서 디자이너 명단과 지도 교수(비정규화된 advisingProfessors)를,
+//    로그인 사용자는 applications 에서 팀별 공학생까지 확인할 수 있다.
+//  · 쓰기 기능 없음(관리는 관리자의 '팀 배치 관리'에서).
+// ============================================================
+async function renderTeamStatus() {
+    const page = document.getElementById("team-status-page");
+    if (!page) return;
+    page.innerHTML = `<div class="max-w-7xl mx-auto px-6 py-24 text-center text-neutral-400 font-bold">팀 배치 현황 불러오는 중…</div>`;
+    let teams = [], apps = [];
+    try {
+        teams = await fsQuery("teams", "id");
+    } catch (e) {
+        page.innerHTML = `
+            <div class="max-w-md mx-auto px-6 py-20 text-center">
+                <p class="text-lg font-bold text-rose-600 mb-2">불러오지 못했습니다.</p>
+                <p class="text-sm text-neutral-500 mb-6">${escapeHtml(e.code || e.message || e)}</p>
+                <button onclick="renderTeamStatus()" class="bg-blue-600 text-white font-bold px-6 py-3 rounded-xl">다시 시도</button>
+            </div>`;
+        return;
+    }
+    // 공학생 배정은 로그인 사용자만 읽을 수 있음(applications 규칙)
+    if (currentUser) { try { apps = await fsQuery("applications"); } catch (_) { apps = []; } }
+    if (typeof loadAppSettings === "function") { try { await loadAppSettings(); } catch (_) {} } // professorsPublic
+    drawTeamStatus(teams, apps);
+}
+window.renderTeamStatus = renderTeamStatus;
+
+function drawTeamStatus(teams, apps) {
+    const page = document.getElementById("team-status-page");
+    if (!page) return;
+    const loggedIn = !!currentUser;
+    const profPub = (typeof professorsPublic !== "undefined") ? professorsPublic : false;
+    const chip = (text, cls) => `<span class="text-xs font-bold px-2.5 py-1 rounded-lg ${cls}">${escapeHtml(text)}</span>`;
+
+    const cards = teams.map(t => {
+        const tid = t.id || t._docId;
+        const designers = (typeof teamDesigners === "function") ? teamDesigners(t) : (t.members || []);
+        // 공학생: 기준 명단(engineers) ∪ 지원배정(applications) — 이름 기준 중복 제거
+        const appEng = (apps || [])
+            .filter(a => a.status === "assigned" && a.assignedTeamId === tid)
+            .map(a => a.engineerName || "(이름 없음)");
+        const engineers = Array.from(new Set(
+            ((typeof teamEngineers === "function") ? teamEngineers(t) : (t.engineers || [])).concat(appEng)
+        ));
+        // 지도교수: 계정 기반 우선, 없으면 기준 명단(professorsRoster)
+        const profs = (typeof teamProfessorNames === "function") ? teamProfessorNames(t) : (t.advisingProfessors || []);
+
+        const section = (title, items, emptyText, cls) => `
+            <div>
+                <p class="text-[11px] font-black uppercase tracking-wider text-neutral-400 mb-1.5">${title}</p>
+                <div class="flex flex-wrap gap-1.5">
+                    ${items.length ? items.map(x => chip(x, cls)).join("") : `<span class="text-xs text-neutral-400">${escapeHtml(emptyText)}</span>`}
+                </div>
+            </div>`;
+
+        const engineerSection = loggedIn
+            ? section("공학생", engineers, "지원자 없음", "bg-emerald-50 text-emerald-700")
+            : `<div><p class="text-[11px] font-black uppercase tracking-wider text-neutral-400 mb-1.5">공학생</p>
+                 <span class="text-xs text-neutral-400">로그인 시 표시됩니다.</span></div>`;
+
+        const profSection = profPub
+            ? section("지도 교수", profs, "미배정", "bg-violet-50 text-violet-700")
+            : `<div><p class="text-[11px] font-black uppercase tracking-wider text-neutral-400 mb-1.5">지도 교수</p>
+                 <span class="text-xs text-neutral-400">아직 공개되지 않았습니다.</span></div>`;
+
+        return `
+            <div class="border border-neutral-200 bg-white rounded-2xl overflow-hidden">
+                <div class="px-5 py-3.5 border-b border-neutral-200 bg-neutral-50">
+                    <span class="font-black font-eng text-lg">${escapeHtml((t.code || tid).toUpperCase())}</span>
+                    <span class="text-sm font-bold ml-2">${escapeHtml(t.name || tid)}</span>
+                </div>
+                <div class="p-5 space-y-3">
+                    ${section("디자이너", designers, "없음", "bg-blue-50 text-blue-700")}
+                    ${engineerSection}
+                    ${profSection}
+                </div>
+            </div>`;
+    }).join("");
+
+    page.innerHTML = `
+        <div class="max-w-7xl mx-auto px-6 py-12 lg:py-20">
+            <header class="border-b-2 border-current pb-8 mb-8">
+                <button onclick="navigateTo('landing')" class="mb-3 text-sm font-bold px-4 py-2.5 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-black inline-flex items-center gap-1.5 transition-all">← 메인으로</button>
+                <span class="text-xs font-bold opacity-50 uppercase tracking-widest font-eng">Team Status</span>
+                <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mt-1">팀 배치 현황</h1>
+                <p class="text-sm mt-2 opacity-70">팀별 디자이너·공학생·지도 교수 구성입니다.${loggedIn ? "" : " (공학생 명단은 로그인 후 확인할 수 있습니다.)"}</p>
+            </header>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">${cards || '<p class="text-neutral-500">등록된 팀이 없습니다.</p>'}</div>
+        </div>`;
+}
+window.drawTeamStatus = drawTeamStatus;
 
 // initAuth 는 main.js 의 window.onload 에서 호출됩니다.

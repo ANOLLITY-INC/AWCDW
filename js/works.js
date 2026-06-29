@@ -23,11 +23,91 @@
 // ============================================================
 
 const VIS_LABELS = { public: "전체 공개", team_only: "팀 전용" };
+// 게시글 단계(제출 차수) — 보드 종류에 따라 다른 선택지 제공
+//  · proposal(사전주제제안): 중간제출 / 최종제출
+//  · result(워크숍 차수별 진행 결과): 1차 / 2차 / 3차 워크숍
 const WORK_PHASES = ["중간제출", "최종제출"];
+const WORK_PHASES_RESULT = ["1차 워크숍", "2차 워크숍", "3차 워크숍"];
+function workPhasesFor(cat) {
+    return ((cat || currentWorksCat()) === "result") ? WORK_PHASES_RESULT : WORK_PHASES;
+}
+
+// 첨부 파일당 최대 용량(MB). storage.rules 의 size 제한과 반드시 일치시킬 것.
+const MAX_FILE_MB = 50;
+const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
+// 업로드 전 클라이언트 검증: 용량 초과 파일이 있으면 그 이름을 반환(없으면 "")
+function oversizedFileMsg(fileList) {
+    const over = Array.from(fileList || []).filter(f => f && f.size > MAX_FILE_BYTES);
+    if (!over.length) return "";
+    const names = over.map(f => {
+        const mb = (f.size / (1024 * 1024)).toFixed(1);
+        return `“${f.name}” (${mb}MB)`;
+    }).join(", ");
+    return `파일이 너무 큽니다. 각 파일은 ${MAX_FILE_MB}MB 이하여야 합니다: ${names}`;
+}
 
 // 화면 상태
-let workCtx = { teamId: null, workId: null, notice: false, formOpen: false, formError: "" };
+//  cat: 현재 보고 있는 게시판 종류 — "proposal"(디자인팀 온라인 사전주제제안, 기본)
+//                                   | "result"(워크숍 차수별 진행 결과 발표)
+//  cat 은 workCtx 안에 두어 뒤로/앞으로 가기(history) 시에도 함께 보존된다.
+let workCtx = { teamId: null, workId: null, notice: false, formOpen: false, formError: "", cat: "proposal" };
 let teamWorksCache = []; // 현재 팀 상세에 로드된 작품들(_docId 포함)
+let teamDetailEngineers = []; // 결과 보드 팀 상세 헤더에 표시할 공학생 이름(지원 배정)
+
+// 현재 게시판 카테고리(없으면 proposal)
+function currentWorksCat() {
+    return (typeof workCtx !== "undefined" && workCtx && workCtx.cat) ? workCtx.cat : "proposal";
+}
+// 카테고리별 게시물 명칭(라벨)
+function catNoun() { return currentWorksCat() === "result" ? "진행 결과" : "작품"; }
+
+// 게시판 진입점 — 메인 페이지 카드/대시보드에서 호출
+function openProposalBoard() { workCtx = Object.assign({}, workCtx, { cat: "proposal" }); navigateTo("teams"); }
+function openResultsBoard() { workCtx = Object.assign({}, workCtx, { cat: "result" }); navigateTo("teams"); }
+window.openProposalBoard = openProposalBoard;
+window.openResultsBoard = openResultsBoard;
+
+// 팀 보드(#teams-page) 상단 제목/검색 placeholder 를 카테고리에 맞춰 갱신
+function applyBoardHeader() {
+    const cat = currentWorksCat();
+    const sub = document.getElementById("teams-sub");
+    const h1 = document.querySelector("#teams-page h1");
+    const search = document.getElementById("search");
+    const stats = document.getElementById("teams-stats");
+    const container = document.getElementById("teams-container");
+    let banner = document.getElementById("result-banner");
+    if (cat === "result") {
+        if (h1) h1.textContent = "Workshop Result Board";
+        if (sub) sub.textContent = "워크숍 차수별 진행 결과 발표 — 팀별 게시판";
+        if (search) search.placeholder = "팀·팀원 검색...";
+        if (stats) stats.classList.add("hidden");          // 결과 보드에서는 상단 통계 숨김
+        // 사전주제제안 보드(파랑)와 혼동되지 않도록 짙은 색(앰버 포인트) 배너 표시
+        if (!banner && container && container.parentNode) {
+            banner = document.createElement("div");
+            banner.id = "result-banner";
+            banner.className = "mb-8";
+            container.parentNode.insertBefore(banner, container);
+        }
+        if (banner) {
+            banner.innerHTML = `
+                <div class="rounded-2xl bg-neutral-900 text-white px-6 py-5 flex items-center gap-4">
+                    <span class="shrink-0 w-11 h-11 rounded-xl bg-amber-400 text-neutral-900 flex items-center justify-center text-xl font-black">📊</span>
+                    <div>
+                        <p class="text-[11px] font-black uppercase tracking-widest text-amber-300">Workshop Result Board</p>
+                        <p class="font-extrabold text-lg leading-tight">워크숍 차수별 진행 결과 발표</p>
+                        <p class="text-xs text-neutral-300 mt-0.5">팀 배치 현황 기준 · 팀을 선택해 차수별 진행 결과를 확인·작성하세요.</p>
+                    </div>
+                </div>`;
+        }
+    } else {
+        if (h1) h1.textContent = "Design Team Allocation";
+        if (sub) sub.textContent = "디자이너 사전주제제안 — 팀 배정 현황";
+        if (search) search.placeholder = "디자이너 이름 검색...";
+        if (stats) stats.classList.remove("hidden");        // 주제제안 보드는 통계 표시
+        if (banner) banner.remove();                        // 결과 보드 배너 제거
+    }
+}
+window.applyBoardHeader = applyBoardHeader;
 
 // ------------------------------------------------------------
 // 유틸 / 권한
@@ -38,15 +118,35 @@ function teamMeta(teamId) {
         || { id: teamId, name: teamId ? teamId + "팀" : "팀", code: "", members: [] };
 }
 function myRole() { return currentProfile ? currentProfile.role : null; }
-// 업로드(작품 생성)는 보안규칙상 "본인 팀 디자이너" 만 가능
-function canUploadTo(teamId) {
-    return !!currentProfile && myRole() === "designer" && currentProfile.teamId === teamId;
+// 담당 교수 여부(advisingTeamIds 에 해당 팀 포함)
+function isAdvisorOf(teamId) {
+    return myRole() === "professor"
+        && ((currentProfile && currentProfile.advisingTeamIds) || []).includes(teamId);
 }
-// 수정/삭제는 관리자 또는 그 팀 디자이너
+// 업로드(글 작성) 권한.
+//  · proposal(기본): 보안규칙상 "본인 팀 디자이너" 만 가능
+//  · result(진행 결과 발표): 그 팀에 배정된 학생(디자이너·공학) + 담당 교수
+function canUploadCat(teamId, cat) {
+    if (!currentProfile) return false;
+    if (cat === "result") {
+        return currentProfile.teamId === teamId || isAdvisorOf(teamId);
+    }
+    return myRole() === "designer" && currentProfile.teamId === teamId;
+}
+function canUploadTo(teamId) { return canUploadCat(teamId, currentWorksCat()); }
+// 수정/삭제 권한.
+//  · proposal: 관리자 또는 그 팀 디자이너
+//  · result: 관리자 · 작성자 본인 · 그 팀 배정 학생 · 담당 교수
 function canManageWork(work) {
     if (!currentProfile || !work) return false;
-    return myRole() === "admin"
-        || (myRole() === "designer" && currentProfile.teamId === work.teamId);
+    if (myRole() === "admin") return true;
+    const cat = work.category || "proposal";
+    if (cat === "result") {
+        return (currentUser && work.authorId === currentUser.uid)
+            || currentProfile.teamId === work.teamId
+            || isAdvisorOf(work.teamId);
+    }
+    return myRole() === "designer" && currentProfile.teamId === work.teamId;
 }
 function sortWorks(arr) {
     return (arr || []).slice().sort((a, b) =>
@@ -77,15 +177,18 @@ function coverOf(work) {
 // 팀의 작품: 권한자(admin/professor/소속 designer)는 teamId 로 전체,
 //            그 외(engineer/타팀/비로그인)는 공개 작품만 보고 teamId 로 필터.
 async function loadTeamWorks(teamId) {
+    const cat = currentWorksCat();
+    const inCat = (w) => ((w.category || "proposal") === cat);
     const role = myRole();
+    // 권한자: 관리자·교수 또는 그 팀에 배정된 학생(디자이너·공학 모두)
     const privileged = role === "admin" || role === "professor"
-        || (role === "designer" && currentProfile && currentProfile.teamId === teamId);
+        || (currentProfile && currentProfile.teamId === teamId);
     if (privileged) {
-        try { return sortWorks(await fsQueryWhere("works", "teamId", teamId)); }
+        try { return sortWorks((await fsQueryWhere("works", "teamId", teamId)).filter(inCat)); }
         catch (e) { if (e.code !== "permission-denied") throw e; /* 폴백 ↓ */ }
     }
     const pub = await fsQueryWhere("works", "visibility", "public");
-    return sortWorks(pub.filter(w => w.teamId === teamId));
+    return sortWorks(pub.filter(w => w.teamId === teamId).filter(inCat));
 }
 // 갤러리: 관리자·교수는 전체, 그 외는 공개 작품만.
 async function loadGalleryWorks() {
@@ -101,7 +204,8 @@ async function loadGalleryWorks() {
 // 진입점(전역) — 인라인 onclick / 대시보드 메뉴에서 호출
 // ------------------------------------------------------------
 function openTeamDetail(teamId, openForm) {
-    workCtx = { teamId, workId: null, notice: false, formOpen: !!openForm, formError: "" };
+    const cat = currentWorksCat(); // 현재 게시판 종류 유지
+    workCtx = { teamId, workId: null, notice: false, formOpen: !!openForm, formError: "", cat };
     navigateTo("team-detail");
 }
 window.openTeamDetail = openTeamDetail;
@@ -129,16 +233,18 @@ function goMyDesignerUpload() {
         return;
     }
     if (role !== "designer") { openPendingModal("작품 업로드"); return; }
+    workCtx.cat = "proposal";
     if (currentProfile.teamId) { openTeamDetail(currentProfile.teamId, true); }
-    else { workCtx = { teamId: null, workId: null, notice: true, formOpen: false, formError: "" }; navigateTo("team-detail"); }
+    else { workCtx = { teamId: null, workId: null, notice: true, formOpen: false, formError: "", cat: "proposal" }; navigateTo("team-detail"); }
 }
 window.goMyDesignerUpload = goMyDesignerUpload;
 
 // 디자이너 대시보드 "피드백 확인": 우리 팀 상세(작품·피드백)로 이동
 function goMyTeam() {
     if (!currentUser || !currentProfile) { openAuth("login"); return; }
+    workCtx.cat = "proposal";
     if (currentProfile.teamId) { openTeamDetail(currentProfile.teamId, false); }
-    else { workCtx = { teamId: null, workId: null, notice: true, formOpen: false, formError: "" }; navigateTo("team-detail"); }
+    else { workCtx = { teamId: null, workId: null, notice: true, formOpen: false, formError: "", cat: "proposal" }; navigateTo("team-detail"); }
 }
 window.goMyTeam = goMyTeam;
 
@@ -172,14 +278,52 @@ async function renderTeamDetail() {
     teamWorksCache = works;
     // 지원 상태(기간/정원/내 지원)를 받아와 지원 패널에 반영
     if (typeof refreshTeamApplyState === "function") { try { await refreshTeamApplyState(); } catch (_) {} }
+    // 결과 보드: 헤더에 팀 구성(공학생) 표시
+    //  기준 명단(teams.engineers) ∪ 지원배정(applications) — 이름 기준 중복 제거
+    teamDetailEngineers = [];
+    if (currentWorksCat() === "result") {
+        const metaTeam = teamMeta(teamId) || {};
+        const base = (typeof teamEngineers === "function") ? teamEngineers(metaTeam) : (metaTeam.engineers || []);
+        let appEng = [];
+        if (currentUser && typeof loadAllApplications === "function") {
+            try {
+                const apps = await loadAllApplications();
+                appEng = apps
+                    .filter(a => a.status === "assigned" && a.assignedTeamId === teamId)
+                    .map(a => a.engineerName || "(이름 없음)");
+            } catch (_) {}
+        }
+        teamDetailEngineers = Array.from(new Set(base.concat(appEng)));
+    }
     drawTeamDetail();
 }
 window.renderTeamDetail = renderTeamDetail;
 
 // 팀 상세 공통 셸(헤더 + 본문 슬롯)
 function teamDetailShell(meta, bodyHtml) {
-    const members = (meta.members || []).map(m =>
-        `<span class="text-xs font-bold bg-neutral-100 px-2.5 py-1 rounded-lg">${escapeHtml(m)}</span>`).join(" ");
+    const cat = currentWorksCat();
+    let rosterHtml;
+    if (cat === "result") {
+        // 결과 보드: 팀 배치 관리와 동일한 구성(디자이너·공학생·지도교수) 표시
+        const chip = (t, c) => `<span class="text-xs font-bold px-2.5 py-1 rounded-lg ${c}">${escapeHtml(t)}</span>`;
+        const grp = (label, items, c) => items.length
+            ? `<div class="flex flex-wrap items-center gap-1.5">
+                   <span class="text-[11px] font-black uppercase tracking-wider text-neutral-400 mr-1">${label}</span>
+                   ${items.map(x => chip(x, c)).join("")}</div>`
+            : "";
+        const profsPublic = (typeof professorsPublic !== "undefined") ? professorsPublic : false;
+        const parts = [
+            grp("디자이너", (meta.members || []), "bg-blue-50 text-blue-700"),
+            grp("공학생", (teamDetailEngineers || []), "bg-emerald-50 text-emerald-700"),
+            // 지도교수는 관리자가 공개한 경우에만 표시
+            profsPublic ? grp("지도교수", ((typeof teamProfessorNames === "function") ? teamProfessorNames(meta) : (meta.advisingProfessors || [])), "bg-violet-50 text-violet-700") : "",
+        ].filter(Boolean).join("");
+        rosterHtml = parts ? `<div class="space-y-2 mt-4">${parts}</div>` : "";
+    } else {
+        const members = (meta.members || []).map(m =>
+            `<span class="text-xs font-bold bg-neutral-100 px-2.5 py-1 rounded-lg">${escapeHtml(m)}</span>`).join(" ");
+        rosterHtml = members ? `<div class="flex flex-wrap gap-1.5 mt-4">${members}</div>` : "";
+    }
     return `
         <div class="max-w-7xl mx-auto px-6 py-12 lg:py-20">
             <header class="border-b-2 border-current pb-8 mb-8">
@@ -188,7 +332,7 @@ function teamDetailShell(meta, bodyHtml) {
                     <span class="text-xs font-bold opacity-50 uppercase tracking-widest font-eng">${escapeHtml(meta.code || ("Team " + (meta.id || "").toUpperCase()))}</span>
                 </div>
                 <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">${escapeHtml(meta.name || meta.id || "")}</h1>
-                ${members ? `<div class="flex flex-wrap gap-1.5 mt-4">${members}</div>` : ""}
+                ${rosterHtml}
             </header>
             ${bodyHtml}
         </div>`;
@@ -201,25 +345,28 @@ function drawTeamDetail() {
     const meta = teamMeta(teamId);
     const works = teamWorksCache;
 
-    // 작성 폼이 열려 있는 동안에는 "+ 새 작품 등록" 을 비활성화(혼동 방지)
+    const noun = catNoun();
+    // 작성 폼이 열려 있는 동안에는 "+ 새 등록" 을 비활성화(혼동 방지)
     const uploadBtn = canUploadTo(teamId)
         ? (workCtx.formOpen
             ? `<button disabled title="작성 중에는 사용할 수 없습니다" class="bg-neutral-200 text-neutral-400 text-sm font-bold px-5 py-2.5 rounded-xl cursor-not-allowed">작성 중…</button>`
-            : `<button onclick="openWorkForm(null)" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all">+ 새 작품 등록</button>`)
+            : `<button onclick="openWorkForm(null)" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all">+ 새 ${escapeHtml(noun)} 등록</button>`)
         : "";
 
     const cards = works.length ? works.map(w => workCardHtml(w)).join("") : `
         <div class="col-span-full py-16 text-center border border-dashed border-neutral-300 rounded-2xl bg-white">
-            <p class="text-neutral-500 font-bold">아직 등록된 작품이 없습니다.</p>
-            ${canUploadTo(teamId) ? `<p class="text-sm text-neutral-400 mt-1">‘+ 새 작품 등록’으로 첫 작품을 올려보세요.</p>` : ""}
+            <p class="text-neutral-500 font-bold">아직 등록된 ${escapeHtml(noun)}이 없습니다.</p>
+            ${canUploadTo(teamId) ? `<p class="text-sm text-neutral-400 mt-1">‘+ 새 ${escapeHtml(noun)} 등록’으로 첫 글을 올려보세요.</p>` : ""}
         </div>`;
 
-    const applyPanel = (typeof teamDetailApplyPanel === "function") ? teamDetailApplyPanel(teamId) : "";
+    // 공학생 지원 패널은 사전주제제안 보드에서만 표시(결과 발표 보드에서는 숨김)
+    const applyPanel = (currentWorksCat() !== "result" && typeof teamDetailApplyPanel === "function")
+        ? teamDetailApplyPanel(teamId) : "";
     const body = `
         ${workCtx.formOpen ? workFormHtml() : ""}
         ${applyPanel}
         <div class="flex items-center justify-between mb-5">
-            <h2 class="text-lg font-extrabold">작품 <span class="font-eng opacity-50">(${works.length})</span></h2>
+            <h2 class="text-lg font-extrabold">${escapeHtml(noun)} <span class="font-eng opacity-50">(${works.length})</span></h2>
             ${uploadBtn}
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">${cards}</div>`;
@@ -270,13 +417,14 @@ window.closeWorkForm = closeWorkForm;
 
 function workFormHtml() {
     const isNew = !workCtx.workId;
-    const w = isNew ? { title: "", description: "", content: "", visibility: "public", phase: "중간제출", attachments: [] }
+    const phases = workPhasesFor(currentWorksCat()); // 보드 종류별 단계 선택지
+    const w = isNew ? { title: "", description: "", content: "", visibility: "public", phase: phases[0], attachments: [] }
                     : (teamWorksCache.find(x => (x._docId || x.id) === workCtx.workId)
-                        || { title: "", description: "", content: "", visibility: "public", phase: "중간제출", attachments: [] });
+                        || { title: "", description: "", content: "", visibility: "public", phase: phases[0], attachments: [] });
 
     const visOpts = Object.keys(VIS_LABELS)
         .map(v => `<option value="${v}" ${w.visibility === v ? "selected" : ""}>${escapeHtml(VIS_LABELS[v])}</option>`).join("");
-    const phaseOpts = WORK_PHASES
+    const phaseOpts = phases
         .map(p => `<option value="${p}" ${w.phase === p ? "selected" : ""}>${escapeHtml(p)}</option>`).join("");
     const existing = (w.attachments || []).length
         ? `<p class="text-[11px] text-neutral-500 mt-1">현재 첨부 ${w.attachments.length}개 — 새 파일을 추가하면 기존 첨부에 더해집니다.</p>`
@@ -284,7 +432,7 @@ function workFormHtml() {
 
     return `
         <div class="bg-white border-2 border-blue-600 rounded-2xl p-6 mb-8 shadow-sm">
-            <h3 class="font-extrabold text-lg mb-4">${isNew ? "새 작품 등록" : "작품 수정"}</h3>
+            <h3 class="font-extrabold text-lg mb-4">${isNew ? `새 ${escapeHtml(catNoun())} 등록` : `${escapeHtml(catNoun())} 수정`}</h3>
             <form id="work-form" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-neutral-500 mb-1">제목 *</label>
@@ -307,7 +455,7 @@ function workFormHtml() {
                         <select name="visibility" class="w-full border border-neutral-300 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-600">${visOpts}</select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-neutral-500 mb-1">제출 단계</label>
+                        <label class="block text-xs font-bold text-neutral-500 mb-1">${currentWorksCat() === "result" ? "워크숍 차수" : "제출 단계"}</label>
                         <select name="phase" class="w-full border border-neutral-300 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-600">${phaseOpts}</select>
                     </div>
                 </div>
@@ -316,10 +464,10 @@ function workFormHtml() {
                     ${w.coverUrl ? `<img src="${escapeHtml(w.coverUrl)}" alt="" class="h-28 rounded-lg border border-neutral-200 object-cover mb-2">` : ""}
                     <input name="cover" type="file" accept="image/*"
                         class="w-full text-sm file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-neutral-100 file:font-bold file:text-neutral-700 hover:file:bg-neutral-200">
-                    <p class="text-[11px] text-neutral-400 mt-1">작품 상세 페이지 상단에 크게 표시됩니다.${w.coverUrl ? " 새 이미지를 올리면 교체됩니다." : ""}</p>
+                    <p class="text-[11px] text-neutral-400 mt-1">작품 상세 페이지 상단에 크게 표시됩니다. (${MAX_FILE_MB}MB 이하)${w.coverUrl ? " 새 이미지를 올리면 교체됩니다." : ""}</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-neutral-500 mb-1">첨부파일 (이미지 / PDF, 각 10MB 이하)</label>
+                    <label class="block text-xs font-bold text-neutral-500 mb-1">첨부파일 (이미지 / PDF, 각 ${MAX_FILE_MB}MB 이하)</label>
                     <input name="files" type="file" multiple accept="image/*,application/pdf"
                         class="w-full text-sm file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-neutral-100 file:font-bold file:text-neutral-700 hover:file:bg-neutral-200">
                     ${existing}
@@ -356,11 +504,14 @@ async function saveWork(e) {
     const teamId = workCtx.teamId;
     const isNew = !workCtx.workId;
 
+    const cat = currentWorksCat();
     const title = el.title.value.trim();
     workCtx.formError = "";
     if (!title) { workCtx.formError = "제목을 입력하세요."; drawTeamDetail(); return; }
     if (isNew && !canUploadTo(teamId)) {
-        workCtx.formError = "이 팀에 작품을 올릴 권한이 없습니다. (소속 팀 디자이너만 가능)";
+        workCtx.formError = (cat === "result")
+            ? "이 팀에 글을 올릴 권한이 없습니다. (배정된 팀원 또는 담당 교수만 가능)"
+            : "이 팀에 작품을 올릴 권한이 없습니다. (소속 팀 디자이너만 가능)";
         drawTeamDetail(); return;
     }
 
@@ -374,6 +525,10 @@ async function saveWork(e) {
     const files = el.files && el.files.files ? el.files.files : [];
     const coverFile = el.cover && el.cover.files ? el.cover.files[0] : null;
 
+    // 업로드 전 용량 검증 — 초과 시 Storage 에서 storage/unauthorized 로 거부되므로 먼저 막는다.
+    const sizeErr = oversizedFileMsg(coverFile ? [...files, coverFile] : files);
+    if (sizeErr) { workCtx.formError = sizeErr; drawTeamDetail(); return; }
+
     const btn = e.target.querySelector('button[type="submit"]');
     const orig = btn ? btn.textContent : "";
     if (btn) { btn.disabled = true; btn.textContent = (files.length || coverFile) ? "업로드 중…" : "저장 중…"; }
@@ -384,7 +539,7 @@ async function saveWork(e) {
             let coverUrl = "";
             if (coverFile) { const up = await uploadWorkFiles(teamId, workId, [coverFile]); if (up[0]) coverUrl = up[0].url; }
             await fsSet(`works/${workId}`, Object.assign({
-                id: workId, teamId, authorId: currentUser.uid,
+                id: workId, teamId, authorId: currentUser.uid, category: cat,
                 attachments, coverUrl, createdAt: new Date(), updatedAt: new Date(),
             }, data));
         } else {
@@ -454,6 +609,7 @@ async function renderWorkDetail() {
         return;
     }
     workCtx.teamId = work.teamId || workCtx.teamId;
+    workCtx.cat = work.category || workCtx.cat || "proposal"; // 카테고리 문맥 유지(갤러리 진입 대비)
     const meta = teamMeta(work.teamId);
 
     const coverHtml = work.coverUrl

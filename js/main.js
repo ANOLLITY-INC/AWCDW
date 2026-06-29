@@ -117,6 +117,8 @@ function navigateTo(pageId) {
     const pageDashboard = document.getElementById('dashboard-page');
     const pageTeamAdmin = document.getElementById('team-admin-page');
     const pageUserAdmin = document.getElementById('user-admin-page');
+    const pageTeamPlace = document.getElementById('team-place-page');
+    const pageTeamStatus = document.getElementById('team-status-page');
     const pageTeamDetail = document.getElementById('team-detail-page');
     const pageWorks = document.getElementById('works-page');
     const pageWorkDetail = document.getElementById('work-detail-page');
@@ -135,6 +137,8 @@ function navigateTo(pageId) {
     if (pageDashboard) pageDashboard.classList.add('hidden');
     if (pageTeamAdmin) pageTeamAdmin.classList.add('hidden');
     if (pageUserAdmin) pageUserAdmin.classList.add('hidden');
+    if (pageTeamPlace) pageTeamPlace.classList.add('hidden');
+    if (pageTeamStatus) pageTeamStatus.classList.add('hidden');
     if (pageTeamDetail) pageTeamDetail.classList.add('hidden');
     if (pageWorks) pageWorks.classList.add('hidden');
     if (pageWorkDetail) pageWorkDetail.classList.add('hidden');
@@ -158,6 +162,14 @@ function navigateTo(pageId) {
         return;
     } else if (pageId === 'user-admin') {
         if (pageUserAdmin) { if (typeof renderUserAdmin === 'function') renderUserAdmin(); pageUserAdmin.classList.remove('hidden'); }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    } else if (pageId === 'team-place') {
+        if (pageTeamPlace) { if (typeof renderTeamPlace === 'function') renderTeamPlace(); pageTeamPlace.classList.remove('hidden'); }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    } else if (pageId === 'team-status') {
+        if (pageTeamStatus) { if (typeof renderTeamStatus === 'function') renderTeamStatus(); pageTeamStatus.classList.remove('hidden'); }
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
     } else if (pageId === 'team-detail') {
@@ -206,6 +218,7 @@ function navigateTo(pageId) {
     } else if (pageId === 'teams') {
         pageTeams.classList.remove('hidden');
         document.getElementById('theme-select').value = currentTheme;
+        if (typeof applyBoardHeader === 'function') applyBoardHeader(); // 카테고리별 제목
         renderTeams();
         // 지원 기간/정원/내 지원 상태를 받아와 카드에 반영(보드에서 바로 지원)
         if (typeof refreshTeamApplyState === 'function') {
@@ -246,6 +259,12 @@ function closePendingModal() {
 function renderTeams(filter = '') {
     if (!teamsContainer) return;
     updateStats(); // 상단 통계는 항상 전체 teams 기준
+    // 워크숍 차수별 진행 결과 발표 보드: 팀 배치 현황 기준으로 팀 카드 표시(지원 정보 제외)
+    if (typeof currentWorksCat === 'function' && currentWorksCat() === 'result') {
+        const ab = document.getElementById('apply-banner'); if (ab) ab.remove();
+        renderResultTeamsBoard(filter);
+        return;
+    }
     renderApplyBanner(); // 공학생 지원 안내(로그인 공학생만)
     teamsContainer.innerHTML = '';
 
@@ -381,6 +400,75 @@ function renderTeams(filter = '') {
             teamsContainer.appendChild(row);
         });
     }
+}
+
+// 워크숍 차수별 진행 결과 발표 보드: 팀 배치 현황 기준 팀 카드(팀원 + 지도교수).
+//  · 팀원 = teams.members (사용자 관리 기준으로 동기화된 디자이너+공학생 명단)
+//  · 지도교수 = teams.advisingProfessors (관리자가 '지도교수 공개' 한 경우에만 표시)
+//  · 공학생 지원 정원/잔여 등 지원 관련 표시는 제외. 클릭 시 결과 상세로 이동.
+function renderResultTeamsBoard(filter = '') {
+    if (!teamsContainer) return;
+    const esc = (typeof escapeHtml === 'function') ? escapeHtml : (s => s);
+    const profPub = (typeof professorsPublic !== 'undefined') ? professorsPublic : false;
+    const q = (filter || '').toLowerCase();
+    const list = teams.filter(t => {
+        if (!q) return true;
+        const roster = (typeof teamRoster === 'function') ? teamRoster(t) : (t.members || []).concat(t.engineers || []);
+        return (t.name || '').toLowerCase().includes(q)
+            || (t.code || '').toLowerCase().includes(q)
+            || roster.some(m => String(m).toLowerCase().includes(q));
+    });
+    if (!list.length) {
+        if (noResults) noResults.classList.remove('hidden');
+        teamsContainer.classList.add('hidden');
+        return;
+    }
+    if (noResults) noResults.classList.add('hidden');
+    teamsContainer.classList.remove('hidden');
+    teamsContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6';
+    teamsContainer.innerHTML = '';
+
+    const chip = (txt, cls) => `<span class="text-xs font-bold px-2.5 py-1 rounded-lg ${cls}">${esc(txt)}</span>`;
+    list.forEach(team => {
+        // 팀원 = 디자이너(members) + 공학생(engineers)
+        const members = (typeof teamRoster === 'function') ? teamRoster(team) : (team.members || []).concat(team.engineers || []);
+        const profs = (typeof teamProfessorNames === 'function') ? teamProfessorNames(team) : (team.advisingProfessors || []);
+        const membersHtml = members.length
+            ? members.map(m => chip(m, 'bg-neutral-100 text-neutral-800')).join(' ')
+            : '<span class="text-xs text-neutral-400">팀원 없음</span>';
+        const profHtml = profPub
+            ? (profs.length ? profs.map(p => chip(p, 'bg-violet-50 text-violet-700')).join(' ') : '<span class="text-xs text-neutral-400">미배정</span>')
+            : '<span class="text-xs text-neutral-400">비공개</span>';
+        const card = document.createElement('div');
+        // 사전주제제안 보드(파랑)와 구분되도록 앰버/짙은 색 포인트 사용
+        card.className = 'print-card group bg-white border border-neutral-200 hover:border-amber-500 hover:shadow-md rounded-2xl p-6 transition-all flex flex-col relative overflow-hidden';
+        card.style.cursor = 'pointer';
+        card.innerHTML = `
+            <div class="absolute top-0 left-0 w-full h-[5px] bg-amber-400"></div>
+            <div class="flex items-center justify-between mb-4 mt-1">
+                <div>
+                    <span class="text-xs tracking-widest font-bold opacity-50 block">${esc(team.name || team.id)}</span>
+                    <h3 class="text-2xl font-black font-eng mt-1 tracking-tight leading-none">${esc(String(team.code || team.id || '').toUpperCase())}</h3>
+                </div>
+                <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 whitespace-nowrap">${members.length} 팀원</span>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <p class="text-[11px] font-black uppercase tracking-wider text-neutral-400 mb-1.5">팀원</p>
+                    <div class="flex flex-wrap gap-1.5">${membersHtml}</div>
+                </div>
+                <div>
+                    <p class="text-[11px] font-black uppercase tracking-wider text-neutral-400 mb-1.5">지도 교수</p>
+                    <div class="flex flex-wrap gap-1.5">${profHtml}</div>
+                </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-neutral-200/60 text-right">
+                <span class="text-[11px] font-bold uppercase tracking-wider opacity-40 group-hover:opacity-90 group-hover:text-amber-600 transition-all">진행 결과 보기 →</span>
+            </div>`;
+        card.setAttribute('role', 'button');
+        card.onclick = () => { if (typeof openTeamDetail === 'function') openTeamDetail(team.id); };
+        teamsContainer.appendChild(card);
+    });
 }
 
 // 3. Set Active View Structure (Grid / List)
@@ -555,7 +643,14 @@ async function seedTeams() {
         console.log(`[Firestore] 업로드 시작… (${teamsData.length}개) — REST, 관리자 권한 필요`);
         // SDK batch 대신 REST(fsSet) — Enterprise 에디션 SDK 지연 우회. 쓰기는 규칙상 admin 만.
         for (const t of teamsData) {
-            await fsSet(`teams/${t.id}`, { id: t.id, name: t.name, code: t.code, members: t.members });
+            // teamsData 는 이제 masterTeamDoc 형태(디자이너·공학생·지도교수·정원 포함)
+            await fsSet(`teams/${t.id}`, {
+                id: t.id, name: t.name, code: t.code,
+                members: t.members, engineers: t.engineers || [],
+                professorsRoster: t.professorsRoster || [],
+                designProfs: t.designProfs || [], engProfs: t.engProfs || [],
+                capacity: t.capacity || 0,
+            });
         }
         const check = await fsQuery('teams', 'id');
         console.log(`[Firestore] ✅ 업로드 완료! 현재 'teams' 문서 ${check.length}개 확인됨. 새로고침하세요.`);

@@ -24,6 +24,7 @@ const DEFAULT_TEAM_CAPACITY = 3;
 //   { rosterPublic:bool, applyStart:"YYYY-MM-DDTHH:mm", applyEnd:"..." }
 // ------------------------------------------------------------
 let rosterPublic = false;   // 지원자 명단 학생 공개 여부
+let professorsPublic = false; // 지도교수 명단 공개 여부(공개 보드·결과 보드 표시 제어)
 let previewStart = "";      // 지원 '미리보기' 시작 일시 — 이 시각부터 지원 UI는 보이되 실제 지원은 불가
 let applyStart = "";        // 지원 시작 일시(datetime-local 문자열, 로컬시간) — 실제 지원 가능
 let applyEnd = "";          // 지원 마감 일시
@@ -55,6 +56,7 @@ async function loadAppSettings() {
     try {
         const s = await fsGet("settings/app");
         rosterPublic = !!(s && s.rosterPublic);
+        professorsPublic = !!(s && s.professorsPublic);
         previewStart = (s && s.previewStart) || "";
         applyStart = (s && s.applyStart) || "";
         applyEnd = (s && s.applyEnd) || "";
@@ -82,6 +84,21 @@ async function toggleRosterPublic() {
     }
 }
 window.toggleRosterPublic = toggleRosterPublic;
+
+// 지도교수 명단 공개 토글(관리자) — 팀 배치 관리 페이지에서 사용.
+//  공개 시 teams.advisingProfessors 가 채워져 공개 보드/결과 보드에 표시됨.
+async function toggleProfessorsPublic() {
+    try {
+        await fsUpdate("settings/app", { professorsPublic: !professorsPublic }); // 다른 필드 보존
+        professorsPublic = !professorsPublic;
+        if (typeof renderTeamPlace === "function") await renderTeamPlace(); // 재로드 → 교수 명단 반영/해제
+    } catch (err) {
+        window.alert((err.code === "permission-denied")
+            ? "권한이 없습니다. (관리자 전용)"
+            : (err.code || err.message || "변경에 실패했습니다."));
+    }
+}
+window.toggleProfessorsPublic = toggleProfessorsPublic;
 
 // 미리보기 구간에 지원을 시도했을 때의 안내
 function previewNotice() {

@@ -42,18 +42,43 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // ---------- 작품 (Phase 2에서 화면 구현) ----------
+    // ---------- 작품 / 진행 결과 발표 ----------
+    //  category 필드로 두 게시판을 구분한다.
+    //   · 'proposal'(기본, 없으면 proposal 취급): 디자인팀 온라인 사전주제제안 — 소속 팀 디자이너만 작성.
+    //   · 'result': 워크숍 차수별 진행 결과 발표 — 그 팀에 배정된 학생(teamId 일치) + 담당 교수가 작성.
     match /works/{workId} {
-      // public 은 모두, team_only/professor_only 는 로그인 + 권한자
+      // 담당 교수 여부(advisingTeamIds 에 팀 포함)
+      function advisesTeam(tid) {
+        return isProfessor()
+               && ('advisingTeamIds' in userDoc())
+               && (tid in userDoc().advisingTeamIds);
+      }
+      // 그 팀에 배정된 학생(디자이너·공학 공통 — users.teamId 일치)
+      function assignedToTeam(tid) {
+        return hasProfile() && userDoc().get('teamId', '') == tid;
+      }
+      function reqCat() { return request.resource.data.get('category', 'proposal'); }
+      function resCat() { return resource.data.get('category', 'proposal'); }
+
+      // public 은 모두, team_only 는 로그인 + 권한자(관리자·교수·그 팀 배정 학생)
       allow read: if resource.data.visibility == 'public'
                   || (signedIn() && (
-                        isAdmin() || isProfessor()
-                        || (isDesigner() && userDoc().teamId == resource.data.teamId)
+                        isAdmin() || isProfessor() || assignedToTeam(resource.data.teamId)
                      ));
-      allow create: if isDesigner()
-                    && userDoc().teamId == request.resource.data.teamId;
+      allow create: if
+                    (reqCat() != 'result'
+                       && isDesigner()
+                       && userDoc().teamId == request.resource.data.teamId)
+                    || (reqCat() == 'result'
+                       && (assignedToTeam(request.resource.data.teamId)
+                           || advisesTeam(request.resource.data.teamId)));
       allow update, delete: if isAdmin()
-                    || (isDesigner() && userDoc().teamId == resource.data.teamId);
+                    || (resCat() != 'result'
+                          && isDesigner() && userDoc().teamId == resource.data.teamId)
+                    || (resCat() == 'result'
+                          && (request.auth.uid == resource.data.authorId
+                              || assignedToTeam(resource.data.teamId)
+                              || advisesTeam(resource.data.teamId)));
     }
 
     // ---------- 피드백 (Phase 3) ----------
@@ -87,9 +112,11 @@ service cloud.firestore {
     //  · create/update/delete: 본인(engineer) 또는 관리자.
     match /applications/{appId} {
       allow read: if signedIn();
-      allow create: if isEngineer()
-                    && appId == request.auth.uid
-                    && request.resource.data.engineerId == request.auth.uid;
+      allow create: if (isEngineer()
+                       && appId == request.auth.uid
+                       && request.resource.data.engineerId == request.auth.uid)
+                    // 관리자가 팀 배치 관리에서 공학생을 직접 배정(문서 ID = 해당 학생 uid)
+                    || (isAdmin() && appId == request.resource.data.engineerId);
       allow update: if isAdmin()
                     || (isEngineer()
                         && request.auth.uid == resource.data.engineerId

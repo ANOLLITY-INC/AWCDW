@@ -7,7 +7,8 @@ rules_version = '2';
 //  · 읽기: 공개 (작품 첨부는 getDownloadURL 토큰 URL 로 <img>/링크 표시).
 //    작품 자체의 공개범위(public/team_only)는 Firestore works 문서 규칙으로
 //    제어하고, 첨부 바이너리는 URL 을 아는 사람만 접근 가능하게 둔다.
-//  · 쓰기: 로그인 사용자만(디자이너·관리자). 10MB 제한 + 이미지/PDF 만.
+//  · 쓰기: 로그인 사용자만(디자이너·관리자). 50MB 제한 + 이미지/PDF 만.
+//    ※ 제한값 변경 시 js/works.js 의 MAX_FILE_MB 도 동일하게 맞출 것.
 //  ※ 세분화(소속팀 디자이너만 쓰기 등)는 firestore.get() 으로 강화 가능(후순위).
 // ============================================================
 service firebase.storage {
@@ -16,7 +17,7 @@ service firebase.storage {
     match /works/{teamId}/{allPaths=**} {
       allow read: if true;
       allow write: if request.auth != null
-                   && request.resource.size < 10 * 1024 * 1024
+                   && request.resource.size < 50 * 1024 * 1024
                    && (request.resource.contentType.matches('image/.*')
                        || request.resource.contentType == 'application/pdf');
     }

@@ -8,13 +8,21 @@
 - **참고(원본) 사이트:** https://anollity-inc.github.io/AWCDW/
 - **Firebase 프로젝트:** `amcdw-9d10e` · CLI 로그인: anollity23@gmail.com
 - **Firestore DB:** `database1` (named, Enterprise/Blaze) — `(default)` 아님 ⚠️
-- **최종 업데이트:** 2026-06-09
+- **작업 브랜치:** `busan_workshop_intensive_ver`
+- **최종 업데이트:** 2026-06-29
 
 ---
 
 ## ▶ 재개 지점 (다음에 바로 할 일)
 
-**Phase 1~4 전부 완료 ✅**(2026-06-08~09, `?v=12`). 인증·역할 / 작품(업로드·PDF인라인·커버) / 피드백 / 공학생 선착순 지원·배정까지 구현·배포됨. 핵심 흐름 라이브 정상 확인됨(업로드까지).
+**⚠️ 관리자가 라이브에서 직접 눌러야 할 것**(2026-06-24~29 배치 — 작업 환경에서 Firestore 직접 쓰기 불가):
+- 팀 관리 → **「↻ 사용자 관리 기준 동기화」** (팀원 명단을 users 기준으로 갱신)
+- 팀 배치 관리 → **「지도교수 공개」** (공개/결과 보드에 지도교수 표시하려면 ON)
+- 사용자 관리 → **「↻ 팀 배정 동기화」** (필요 시)
+- **검수 필요:** 부산 숙소 호실·비밀번호(순서 임시배정 값) — 체크인 전 운영진 확인.
+- 위 동기화/공개가 선행돼야 **결과 발표 보드**의 팀원·지도교수가 최신으로 표시됨.
+
+**Phase 1~4 전부 완료 ✅**(2026-06-08~09, `?v=12`). 인증·역할 / 작품(업로드·PDF인라인·커버) / 피드백 / 공학생 선착순 지원·배정까지 구현·배포됨. 핵심 흐름 라이브 정상 확인됨(업로드까지). **2026-06-24~29 배치**(팀배정 동기화·결과발표 보드·팀 배치 관리/현황·지도교수 공개·숙소 재배정·일정) 구현·배포됨 — 상세는 아래 Changelog + `WORKLOG_2026-06-29.md`.
 
 **다음 = Phase 5 (마감 품질·고도화).** 우선순위 제안:
 1. **모바일 반응형 점검** — ⚠️ 특히 「사용자 관리·팀 관리·지원자 명단」의 표(table)가 모바일에서 가로로 넘침. 카드형 또는 가로 스크롤 처리.
@@ -33,6 +41,21 @@
 ---
 
 ## ✅ 완료 내역 (Changelog)
+
+### 2026-06-24~29 — 팀배정 동기화·결과발표 보드·배치 관리·숙소 재배정 (busan_workshop_intensive_ver, 라이브 배포됨)
+> 전체 상세는 루트 **`WORKLOG_2026-06-29.md`**. JS 캐시버전: auth `?v=29` / works `?v=27` / apply `?v=26` / busan-info `?v=27` / main `?v=27`.
+
+- [x] **학생 팀배정 동기화** (`auth.js`) — `users.teamId`를 **지원자 명단(applications, 공학생·uid 우선) + 팀 명단(teams.members, 디자이너·이름)** 기준으로 맞춤(`reconcileTeamIds`/`syncAllTeamIds`). 사용자 관리 「↻ 팀 배정 동기화」 버튼, 드롭다운↔members 양방향(`syncUserNameIntoTeams`), "미동기화" 배지.
+- [x] **팀 관리 보강** — 「지도 교수」 열(users.advisingTeamIds 실시간) + 「↻ 사용자 관리 기준 동기화」 버튼(`syncTeamsFromUsers`: 각 팀 members = 그 팀 **디자이너+공학생**).
+- [x] **워크숍 차수별 진행 결과 발표 보드 신설** — works에 `category`('proposal'|'result') 추가(`workCtx.cat`). 메인 카드 + 대시보드 메뉴. 권한: result=배정 학생+담당 교수 / proposal=소속 디자이너(`canUploadCat`/`canManageWork`). 단계 옵션 result=**1·2·3차 워크숍**. `firestore.rules` works 카테고리별 정비(`...data.get('category','proposal')`), 읽기 배정 학생까지 확대.
+- [x] **결과 보드 팀 보드 = 팀 배치 현황 기준** (`main.js renderResultTeamsBoard`) — 팀원+지도교수 표시, 지원 정원/배너 제거, **상단 통계 숨김 + 앰버 색상**으로 주제제안(파랑)과 구분.
+- [x] **팀 배치 관리 페이지(`team-place`, 관리자)** — 팀별 디자이너·공학생(지원)·지도교수 한 화면, 미배정 배정(`placeStudent`: 공학생=applications/디자이너=members), 「계정 없는 학생 직접 추가」(`addNameToTeam`). `firestore.rules` applications create에 **admin 허용** 추가.
+- [x] **팀 배치 현황 페이지(`team-status`, 전체 공개)** — 디자이너+공학생(로그인 시)+지도교수(공개 시). 일반 사용자는 users 못 읽으므로 교수를 공개 읽기용 **`teams.advisingProfessors`로 비정규화**(`rebuildTeamProfessors`).
+- [x] **지도교수 명단 공개 토글** — `settings/app.professorsPublic`(기본 **비공개**), `apply.js toggleProfessorsPublic`, 팀 배치 관리 버튼. 공개 시에만 advisingProfessors 채움(비공개면 비움).
+- [x] **공학생 팀 변경 버그 수정** — `saveUserAdmin`이 공학생 팀 변경 시 **applications.assignedTeamId도 갱신**(안 하면 동기화가 옛 팀으로 되돌림). ⚠️ B+H팀 실제 팀 id=`"B"`(이름만 변경, H 비움).
+- [x] **부산 숙소 호실·비밀번호** (`busan-info.js`) — `부산 숙소 배정표.jpg`(A=ST/C=S/D=SR) → `URBANSTAY_ROOM_DETAIL`, 이름 검색 시 호실+객실 비번 박스, **엘리베이터 7878#는 상단 별도 칸**. 배정표 이미지는 `firebase.json` ignore. **방 재배정(06-25):** B(W레지던스) 11명→어반스테이 S/SR, **황세현만 B 유지**(순서 임시배정 — **검수 필요**).
+- [x] **부산 Day 2 일정** — 13:00~15:00 ↔ 16:00~18:00 내용·장소 swap, Day2·Day3 맨 위 "서명부 작성 후 대기(1층 114호)" 행 추가.
+- ⚠️ **라이브 Firestore 직접 쓰기 불가**(작업 환경 자격증명 차단) → 데이터 동기화/병합/공개는 **관리자 UI 버튼**으로 실행. teams 읽기는 공개라 REST runQuery로 점검 가능.
 
 ### 2026-06 — Firebase 전환 & 배포
 - [x] 단일 HTML(`AWCDW_26.06.02.html`, 백업 보존)을 구조 분리
