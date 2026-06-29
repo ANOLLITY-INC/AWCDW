@@ -52,7 +52,9 @@ function oversizedFileMsg(fileList) {
 //  cat 은 workCtx 안에 두어 뒤로/앞으로 가기(history) 시에도 함께 보존된다.
 let workCtx = { teamId: null, workId: null, notice: false, formOpen: false, formError: "", cat: "proposal" };
 let teamWorksCache = []; // 현재 팀 상세에 로드된 작품들(_docId 포함)
-let teamDetailEngineers = []; // 결과 보드 팀 상세 헤더에 표시할 공학생 이름(지원 배정)
+let teamDetailEngineers = []; // 결과 보드 팀 상세 헤더에 표시할 공학생(팀 배치 현황과 동일 기준)
+let teamDetailDesigners = []; // 결과 보드 팀 상세 헤더에 표시할 디자이너
+let teamDetailProfs = [];     // 결과 보드 팀 상세 헤더에 표시할 지도교수
 
 // 현재 게시판 카테고리(없으면 proposal)
 function currentWorksCat() {
@@ -63,7 +65,12 @@ function catNoun() { return currentWorksCat() === "result" ? "진행 결과" : "
 
 // 게시판 진입점 — 메인 페이지 카드/대시보드에서 호출
 function openProposalBoard() { workCtx = Object.assign({}, workCtx, { cat: "proposal" }); navigateTo("teams"); }
-function openResultsBoard() { workCtx = Object.assign({}, workCtx, { cat: "result" }); navigateTo("teams"); }
+async function openResultsBoard() {
+    workCtx = Object.assign({}, workCtx, { cat: "result" });
+    // 팀 구성을 '팀 배치 현황/관리'와 동일 기준으로 표시하기 위한 컨텍스트(관리자=계정) 로드
+    if (typeof loadTeamRosterCtx === "function") { try { await loadTeamRosterCtx(); } catch (_) {} }
+    navigateTo("teams");
+}
 window.openProposalBoard = openProposalBoard;
 window.openResultsBoard = openResultsBoard;
 
@@ -278,22 +285,21 @@ async function renderTeamDetail() {
     teamWorksCache = works;
     // 지원 상태(기간/정원/내 지원)를 받아와 지원 패널에 반영
     if (typeof refreshTeamApplyState === "function") { try { await refreshTeamApplyState(); } catch (_) {} }
-    // 결과 보드: 헤더에 팀 구성(공학생) 표시
-    //  기준 명단(teams.engineers) ∪ 지원배정(applications) — 이름 기준 중복 제거
+    // 결과 보드: 헤더에 팀 구성 표시 — '팀 배치 현황/관리'와 동일 기준(관리자=계정).
     teamDetailEngineers = [];
+    teamDetailDesigners = [];
+    teamDetailProfs = [];
     if (currentWorksCat() === "result") {
         const metaTeam = teamMeta(teamId) || {};
-        const base = (typeof teamEngineers === "function") ? teamEngineers(metaTeam) : (metaTeam.engineers || []);
-        let appEng = [];
-        if (currentUser && typeof loadAllApplications === "function") {
-            try {
-                const apps = await loadAllApplications();
-                appEng = apps
-                    .filter(a => a.status === "assigned" && a.assignedTeamId === teamId)
-                    .map(a => a.engineerName || "(이름 없음)");
-            } catch (_) {}
-        }
-        teamDetailEngineers = Array.from(new Set(base.concat(appEng)));
+        if (typeof loadTeamRosterCtx === "function") { try { await loadTeamRosterCtx(); } catch (_) {} }
+        const ctx = (typeof teamRosterCtx !== "undefined") ? teamRosterCtx : { users: null, apps: [] };
+        const teamsList = (typeof teams !== "undefined") ? teams : null;
+        const rm = (typeof teamRosterForDisplay === "function")
+            ? teamRosterForDisplay(metaTeam, ctx, teamsList)
+            : { designers: (metaTeam.members || []), engineers: (metaTeam.engineers || []), profs: (metaTeam.advisingProfessors || []) };
+        teamDetailDesigners = rm.designers || [];
+        teamDetailEngineers = rm.engineers || [];
+        teamDetailProfs = rm.profs || [];
     }
     drawTeamDetail();
 }
@@ -312,11 +318,12 @@ function teamDetailShell(meta, bodyHtml) {
                    ${items.map(x => chip(x, c)).join("")}</div>`
             : "";
         const profsPublic = (typeof professorsPublic !== "undefined") ? professorsPublic : false;
+        const isAdmin = (typeof currentProfile !== "undefined") && currentProfile && currentProfile.role === "admin";
         const parts = [
-            grp("디자이너", (meta.members || []), "bg-blue-50 text-blue-700"),
+            grp("디자이너", (teamDetailDesigners || []), "bg-blue-50 text-blue-700"),
             grp("공학생", (teamDetailEngineers || []), "bg-emerald-50 text-emerald-700"),
-            // 지도교수는 관리자가 공개한 경우에만 표시
-            profsPublic ? grp("지도교수", ((typeof teamProfessorNames === "function") ? teamProfessorNames(meta) : (meta.advisingProfessors || [])), "bg-violet-50 text-violet-700") : "",
+            // 지도교수: 관리자는 항상(계정 기준), 그 외는 공개 설정일 때만
+            (profsPublic || isAdmin) ? grp("지도교수", (teamDetailProfs || []), "bg-violet-50 text-violet-700") : "",
         ].filter(Boolean).join("");
         rosterHtml = parts ? `<div class="space-y-2 mt-4">${parts}</div>` : "";
     } else {

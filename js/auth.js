@@ -1638,6 +1638,47 @@ function pickTeamMembers(tid, users, apps, teams) {
     };
 }
 
+// ------------------------------------------------------------
+// 팀 구성 표시 — 모든 팀 화면(배치 관리/현황/결과 발표 보드·상세)이 공유하는 단일 함수
+// ------------------------------------------------------------
+//  관리자(ctx.users 가 배열)면 '사용자 관리'와 동일한 계정 기준(pickTeamMembers),
+//  그 외(비관리자·공개)면 teams 문서(동기화된 명단) 기준으로 {designers,engineers,profs} 반환.
+//  → 결과 발표 보드를 팀 배치 현황·관리와 항상 일치시키기 위함.
+let teamRosterCtx = { users: null, apps: [] };
+
+async function loadTeamRosterCtx() {
+    let apps = [];
+    if (currentUser) { try { apps = await fsQuery("applications"); } catch (_) { apps = []; } }
+    let users = null;
+    if (currentProfile && currentProfile.role === "admin") {
+        try { users = await fsQuery("users"); } catch (_) { users = null; }
+    }
+    teamRosterCtx = { users, apps };
+    return teamRosterCtx;
+}
+window.loadTeamRosterCtx = loadTeamRosterCtx;
+
+function teamRosterForDisplay(t, ctx, teamsList) {
+    const tid = t.id || t._docId;
+    const users = ctx && ctx.users;
+    const apps = (ctx && ctx.apps) || [];
+    if (Array.isArray(users)) {
+        // 관리자: 계정(users) 기준 — 사용자 관리와 동일
+        return pickTeamMembers(tid, users, apps, teamsList || null);
+    }
+    // 비관리자·공개: teams 문서 기준(동기화된 명단) + 지원배정 보강
+    const designers = (typeof teamDesigners === "function") ? teamDesigners(t) : (t.members || []);
+    const appEng = apps
+        .filter(a => a.status === "assigned" && a.assignedTeamId === tid)
+        .map(a => a.engineerName || "(이름 없음)");
+    const engineers = Array.from(new Set(
+        ((typeof teamEngineers === "function") ? teamEngineers(t) : (t.engineers || [])).concat(appEng)
+    ));
+    const profs = (typeof teamProfessorNames === "function") ? teamProfessorNames(t) : (t.advisingProfessors || []);
+    return { designers, engineers, profs };
+}
+window.teamRosterForDisplay = teamRosterForDisplay;
+
 async function renderTeamPlace() {
     const page = document.getElementById("team-place-page");
     if (!page) return;

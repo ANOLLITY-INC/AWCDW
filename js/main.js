@@ -429,14 +429,21 @@ function renderResultTeamsBoard(filter = '') {
     teamsContainer.innerHTML = '';
 
     const chip = (txt, cls) => `<span class="text-xs font-bold px-2.5 py-1 rounded-lg ${cls}">${esc(txt)}</span>`;
+    // 팀 구성은 '팀 배치 현황/관리'와 동일한 단일 함수로 산출(관리자=계정 기준).
+    const ctx = (typeof teamRosterCtx !== 'undefined') ? teamRosterCtx : { users: null, apps: [] };
+    const isAdmin = (typeof currentProfile !== 'undefined') && currentProfile && currentProfile.role === 'admin';
     list.forEach(team => {
-        // 팀원 = 디자이너(members) + 공학생(engineers)
-        const members = (typeof teamRoster === 'function') ? teamRoster(team) : (team.members || []).concat(team.engineers || []);
-        const profs = (typeof teamProfessorNames === 'function') ? teamProfessorNames(team) : (team.advisingProfessors || []);
+        const rm = (typeof teamRosterForDisplay === 'function')
+            ? teamRosterForDisplay(team, ctx, teams)
+            : { designers: (team.members || []), engineers: (team.engineers || []), profs: (team.advisingProfessors || []) };
+        // 팀원 = 디자이너 + 공학생
+        const members = rm.designers.concat(rm.engineers);
+        const profs = rm.profs || [];
         const membersHtml = members.length
             ? members.map(m => chip(m, 'bg-neutral-100 text-neutral-800')).join(' ')
             : '<span class="text-xs text-neutral-400">팀원 없음</span>';
-        const profHtml = profPub
+        // 지도교수: 관리자는 항상 표시(계정 기준), 그 외는 공개 설정일 때만
+        const profHtml = (isAdmin || profPub)
             ? (profs.length ? profs.map(p => chip(p, 'bg-violet-50 text-violet-700')).join(' ') : '<span class="text-xs text-neutral-400">미배정</span>')
             : '<span class="text-xs text-neutral-400">비공개</span>';
         const card = document.createElement('div');
