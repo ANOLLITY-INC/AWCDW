@@ -112,6 +112,7 @@ function navigateTo(pageId) {
     const page1 = document.getElementById('landing-page');
     const pageOnline = document.getElementById('schedule-online-page');
     const pageBusan = document.getElementById('schedule-busan-page');
+    const pageCau = document.getElementById('schedule-cau-page');
     const pageTeams = document.getElementById('teams-page');
     const pageAuth = document.getElementById('auth-page');
     const pageDashboard = document.getElementById('dashboard-page');
@@ -132,6 +133,7 @@ function navigateTo(pageId) {
     page1.classList.add('hidden');
     pageOnline.classList.add('hidden');
     pageBusan.classList.add('hidden');
+    if (pageCau) pageCau.classList.add('hidden');
     pageTeams.classList.add('hidden');
     if (pageAuth) pageAuth.classList.add('hidden');
     if (pageDashboard) pageDashboard.classList.add('hidden');
@@ -215,6 +217,10 @@ function navigateTo(pageId) {
     } else if (pageId === 'schedule-busan') {
         pageBusan.classList.remove('hidden');
         document.getElementById('theme-select-busan').value = currentTheme;
+    } else if (pageId === 'schedule-cau') {
+        if (pageCau) pageCau.classList.remove('hidden');
+        const cauSel = document.getElementById('theme-select-cau');
+        if (cauSel) cauSel.value = currentTheme;
     } else if (pageId === 'teams') {
         pageTeams.classList.remove('hidden');
         document.getElementById('theme-select').value = currentTheme;
@@ -502,20 +508,25 @@ function changeTheme(theme) {
     const landingDot = document.getElementById('landing-dot');
     const onlineDot = document.getElementById('theme-dot-online');
     const busanDot = document.getElementById('theme-dot-busan');
+    const cauDot = document.getElementById('theme-dot-cau');
     const stats = ['stat-1', 'stat-2', 'stat-3'];
     const busanCards = ['busan-card-1', 'busan-card-2', 'busan-card-3'];
+    const cauCards = ['cau-card-1', 'cau-card-2', 'cau-card-3'];
     const onlineCards = ['online-card-1'];
     const navMnm = document.getElementById('nav-mnm');
     const navTeams = document.getElementById('nav-teams');
-    const schedules = ['tab-3', 'tab-4'];
+    const schedules = ['tab-4'];
     const tab1 = document.getElementById('tab-1');
     const tab2 = document.getElementById('tab-2');
+    const tab3 = document.getElementById('tab-3');
 
     // Sync theme selectors
     document.getElementById('theme-select').value = theme;
     document.getElementById('theme-select-landing').value = theme;
     document.getElementById('theme-select-online').value = theme;
     document.getElementById('theme-select-busan').value = theme;
+    const _cauSel = document.getElementById('theme-select-cau');
+    if (_cauSel) _cauSel.value = theme;
 
     // Base configurations reset
     body.className = "min-h-screen transition-colors duration-500 ";
@@ -523,7 +534,7 @@ function changeTheme(theme) {
     stats.forEach(id => {
         document.getElementById(id).className = "border p-5 rounded-xl transition-all ";
     });
-    [...busanCards, ...onlineCards].forEach(id => {
+    [...busanCards, ...cauCards, ...onlineCards].forEach(id => {
         if(document.getElementById(id)) {
             document.getElementById(id).className = "print-card p-6 md:p-8 rounded-2xl transition-all ";
         }
@@ -535,9 +546,10 @@ function changeTheme(theme) {
         landingDot.className = "inline-block w-3 h-3 bg-blue-600 rounded-full animate-pulse";
         onlineDot.className = "inline-block w-3 h-3 bg-blue-600 rounded-full animate-pulse";
         busanDot.className = "inline-block w-3 h-3 bg-blue-600 rounded-full animate-pulse";
+        if (cauDot) cauDot.className = "inline-block w-3 h-3 bg-blue-600 rounded-full animate-pulse";
 
         stats.forEach(id => { document.getElementById(id).className += "border-neutral-200 bg-white"; });
-        [...busanCards, ...onlineCards].forEach(id => {
+        [...busanCards, ...cauCards, ...onlineCards].forEach(id => {
             if(document.getElementById(id)) document.getElementById(id).className += "border border-neutral-200 bg-white";
         });
 
@@ -549,6 +561,7 @@ function changeTheme(theme) {
         });
         tab1.className = "group border border-neutral-300 bg-white hover:border-blue-600 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden";
         tab2.className = "group border border-neutral-300 bg-white hover:border-blue-600 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden";
+        if (tab3) tab3.className = "group border border-neutral-300 bg-white hover:border-blue-600 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden";
     }
     else if (theme === 'dark') {
         body.className += "bg-[#121214] text-[#F3F4F6]";
@@ -556,9 +569,10 @@ function changeTheme(theme) {
         landingDot.className = "inline-block w-3 h-3 bg-lime-400 rounded-full animate-pulse";
         onlineDot.className = "inline-block w-3 h-3 bg-lime-400 rounded-full animate-pulse";
         busanDot.className = "inline-block w-3 h-3 bg-lime-400 rounded-full animate-pulse";
+        if (cauDot) cauDot.className = "inline-block w-3 h-3 bg-lime-400 rounded-full animate-pulse";
 
         stats.forEach(id => { document.getElementById(id).className += "border-neutral-800 bg-[#1F1F23]"; });
-        [...busanCards, ...onlineCards].forEach(id => {
+        [...busanCards, ...cauCards, ...onlineCards].forEach(id => {
             if(document.getElementById(id)) document.getElementById(id).className += "border border-neutral-800 bg-[#1F1F23]";
         });
 
@@ -570,6 +584,7 @@ function changeTheme(theme) {
         });
         tab1.className = "group border border-neutral-800 bg-[#1F1F23] text-white hover:border-blue-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden";
         tab2.className = "group border border-neutral-800 bg-[#1F1F23] text-white hover:border-blue-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden";
+        if (tab3) tab3.className = "group border border-neutral-800 bg-[#1F1F23] text-white hover:border-blue-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden";
     }
     else if (theme === 'bauhaus') {
         body.className += "bg-[#EAEAEA] text-black";
@@ -577,9 +592,10 @@ function changeTheme(theme) {
         landingDot.className = "inline-block w-3 h-3 bg-red-600 rounded-full";
         onlineDot.className = "inline-block w-3 h-3 bg-red-600 rounded-full";
         busanDot.className = "inline-block w-3 h-3 bg-red-600 rounded-full";
+        if (cauDot) cauDot.className = "inline-block w-3 h-3 bg-red-600 rounded-full";
 
         stats.forEach(id => { document.getElementById(id).className += "border-2 border-black bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"; });
-        [...busanCards, ...onlineCards].forEach(id => {
+        [...busanCards, ...cauCards, ...onlineCards].forEach(id => {
             if(document.getElementById(id)) document.getElementById(id).className += "border-2 border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]";
         });
 
@@ -591,6 +607,7 @@ function changeTheme(theme) {
         });
         tab1.className = "group border-2 border-black bg-white hover:bg-blue-100 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden";
         tab2.className = "group border-2 border-black bg-white hover:bg-blue-100 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden";
+        if (tab3) tab3.className = "group border-2 border-black bg-white hover:bg-blue-100 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden";
     }
 
     renderTeams(searchInput.value);
