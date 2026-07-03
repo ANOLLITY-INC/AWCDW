@@ -128,6 +128,8 @@ function navigateTo(pageId) {
     const pageBusInfo = document.getElementById('bus-info-page');
     const pageAccommodation = document.getElementById('accommodation-page');
     const pageCampusMap = document.getElementById('campus-map-page');
+    const pageCauFacility = document.getElementById('cau-facility-page');
+    const pageCauDorm = document.getElementById('cau-dorm-page');
 
     // Hide all first
     page1.classList.add('hidden');
@@ -149,6 +151,8 @@ function navigateTo(pageId) {
     if (pageBusInfo) pageBusInfo.classList.add('hidden');
     if (pageAccommodation) pageAccommodation.classList.add('hidden');
     if (pageCampusMap) pageCampusMap.classList.add('hidden');
+    if (pageCauFacility) pageCauFacility.classList.add('hidden');
+    if (pageCauDorm) pageCauDorm.classList.add('hidden');
 
     if (pageId === 'auth') {
         if (pageAuth) { renderAuthPage(); pageAuth.classList.remove('hidden'); }
@@ -204,6 +208,14 @@ function navigateTo(pageId) {
         return;
     } else if (pageId === 'campus-map') {
         if (pageCampusMap) { pageCampusMap.classList.remove('hidden'); }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    } else if (pageId === 'cau-facility') {
+        if (pageCauFacility) { pageCauFacility.classList.remove('hidden'); }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    } else if (pageId === 'cau-dorm') {
+        if (pageCauDorm) { if (typeof renderCauDorm === 'function') renderCauDorm(); pageCauDorm.classList.remove('hidden'); }
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
     }
