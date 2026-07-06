@@ -250,9 +250,9 @@
                     <span class="text-xl font-bold text-emerald-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
                 </button>
 
-                <!-- CAU Tab 3: 중앙대학교 캠퍼스 맵 (준비중) -->
-                <button onclick="openPendingModal('중앙대학교 캠퍼스 맵')" class="group border border-neutral-300 bg-white hover:border-indigo-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-cau-3">
-                    <div class="absolute top-0 right-0 bg-amber-400 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">준비중</div>
+                <!-- CAU Tab 3: 중앙대학교 캠퍼스 맵 -->
+                <button onclick="navigateTo('cau-campus-map')" class="group border border-neutral-300 bg-white hover:border-indigo-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-cau-3">
+                    <div class="absolute top-0 right-0 bg-indigo-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">New</div>
                     <div>
                         <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">CAU 03</p>
                         <h4 class="font-extrabold text-sm mt-1 text-indigo-700 group-hover:text-indigo-800 transition-colors">중앙대학교 캠퍼스 맵</h4>
@@ -950,7 +950,7 @@
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-neutral-200 text-neutral-700 mb-1">기숙사</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
-                        <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">09:00~11:00</div>
+                        <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">09:00~12:00</div>
                         <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">팀별 활동 — 구체·상세 설계 완성 및 발표자료 준비</div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mr-1">메이커스페이스</span></span>
@@ -958,21 +958,21 @@
                         </div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
-                        <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">11:00~12:30</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-purple-600">
-                            조별 발표 및 지도교수단 피드백
+                        <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">12:00~13:00</div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4">점심식사</div>
+                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-neutral-200 text-neutral-700 mb-1">기숙사</span></div>
+                    </div>
+                    <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
+                        <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">13:00~15:30</div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-purple-600 break-keep">
+                            조별 발표 및 지도교수단 피드백 + 외부 연사 특강
                             <p class="text-sm font-semibold opacity-80 mt-1 text-purple-500">전체 팀 필참</p>
                         </div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mb-1">207동 102호</span></div>
                     </div>
-                    <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
-                        <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">12:30~13:30</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4">점심식사</div>
-                        <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-neutral-200 text-neutral-700 mb-1">기숙사</span></div>
-                    </div>
                     <div class="flex flex-col md:flex-row py-4">
-                        <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">13:30~14:00</div>
-                        <div class="md:w-1/2 font-black text-xl md:px-4">정리 및 향후 일정 공유 🏁</div>
+                        <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">15:30~16:30</div>
+                        <div class="md:w-1/2 font-black text-xl md:px-4 break-keep">폐회식 및 향후 일정 공유 🏁</div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mb-1">207동 102호</span></div>
                     </div>
                 </div>
@@ -1045,10 +1045,8 @@
                     </div>
                 </div>
                 <ul class="space-y-3 text-sm">
-                    <li class="flex items-start gap-2.5"><span class="shrink-0 inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mt-0.5">207동 102호</span><span class="font-semibold">대형 강의실 <span class="opacity-60 font-medium">(개회식·발표·전체 활동)</span></span></li>
-                    <li class="flex items-start gap-2.5"><span class="shrink-0 inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mt-0.5">메이커스페이스</span><span class="font-semibold">3D 프린팅 + 팀 활동 <span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 ml-1">1~5조</span></span></li>
-                    <li class="flex items-start gap-2.5"><span class="shrink-0 inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-700 mt-0.5">207동 313호</span><span class="font-semibold">물리실험실 <span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 ml-1">6~13조</span></span></li>
-                    <li class="flex items-start gap-2.5"><span class="shrink-0 inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-700 mt-0.5">207동 202호</span><span class="font-semibold">컴퓨터실</span></li>
+                    <li class="flex items-start gap-2.5"><span class="shrink-0 inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mt-0.5">207동 102호</span><span class="font-semibold">대형 강의실 <span class="opacity-60 font-medium">(개회식·발표 등 전체 활동·팀별 활동)</span></span></li>
+                    <li class="flex items-start gap-2.5"><span class="shrink-0 inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mt-0.5">메이커스페이스</span><span class="font-semibold">3D 프린팅 + 팀 활동</span></li>
                 </ul>
             </section>
 
@@ -1130,7 +1128,7 @@
                 <!-- 운영 시간 요약 바 -->
                 <div class="rounded-xl bg-teal-50 border border-teal-200 p-4 mb-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div><p class="text-[11px] font-black uppercase tracking-widest text-teal-600">정규 운영</p><p class="text-lg font-black text-teal-900">09:00 ~ 16:00</p></div>
-                    <div><p class="text-[11px] font-black uppercase tracking-widest text-teal-600">3D 프린터 출력 시작</p><p class="text-lg font-black text-teal-900">~ 16:00 까지</p></div>
+                    <div><p class="text-[11px] font-black uppercase tracking-widest text-teal-600">3D 프린터 사용 신청</p><p class="text-sm font-black text-teal-900 mt-1 break-keep">1회차 10:00~11:00 · 2회차 14:00~15:00</p></div>
                     <div><p class="text-[11px] font-black uppercase tracking-widest text-teal-600">이용 제한</p><p class="text-sm font-black text-teal-900 mt-1 break-keep">12:00~13:00 점심 · 13:00~14:00 장비 점검</p></div>
                 </div>
 
@@ -1149,8 +1147,26 @@
                     <!-- 3D 프린터 사용 -->
                     <div class="rounded-xl border border-neutral-200 bg-neutral-50 p-5">
                         <p class="font-extrabold text-sm mb-3 flex items-center gap-2"><span class="text-base">🖨️</span> 3D 프린터 사용</p>
+                        <p class="text-xs opacity-70 font-semibold mb-3 break-keep">사용 신청은 하루 <b>2회차</b>로 나누어 받으며, 회차별로 <b>출력 시간·종료 시각 제한</b>이 있습니다.</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                            <div class="rounded-lg bg-white border border-teal-200 p-3">
+                                <p class="text-[11px] font-black uppercase tracking-widest text-teal-600 mb-1">1회차 (오전)</p>
+                                <p class="text-sm font-black text-teal-900">신청 10:00~11:00</p>
+                                <ul class="mt-2 space-y-1 text-xs break-keep">
+                                    <li class="flex gap-1.5"><span class="shrink-0 font-black text-teal-600">·</span><span><b>3시간 이하</b> 출력물만 가능</span></li>
+                                    <li class="flex gap-1.5"><span class="shrink-0 font-black text-teal-600">·</span><span>당일 <b>13:00 이내 종료</b></span></li>
+                                </ul>
+                            </div>
+                            <div class="rounded-lg bg-white border border-teal-200 p-3">
+                                <p class="text-[11px] font-black uppercase tracking-widest text-teal-600 mb-1">2회차 (오후)</p>
+                                <p class="text-sm font-black text-teal-900">신청 14:00~15:00</p>
+                                <ul class="mt-2 space-y-1 text-xs break-keep">
+                                    <li class="flex gap-1.5"><span class="shrink-0 font-black text-teal-600">·</span><span><b>17시간 이하</b> 출력물만 가능</span></li>
+                                    <li class="flex gap-1.5"><span class="shrink-0 font-black text-teal-600">·</span><span>다음날 <b>09:00 이내 종료</b></span></li>
+                                </ul>
+                            </div>
+                        </div>
                         <ul class="space-y-2.5 text-sm break-keep">
-                            <li class="flex gap-2.5"><span class="shrink-0 font-black text-teal-600">·</span><span><b>출력 시작은 16:00까지</b> — 오후 출력은 장시간(약 9시간) 가동되므로 일정에 참고하여 사용</span></li>
                             <li class="flex gap-2.5"><span class="shrink-0 font-black text-teal-600">·</span><span><b>점검 시간 이용 불가</b> — 12:00~13:00(점심)·13:00~14:00은 안정적 출력을 위한 프린터 점검·장비 휴식</span></li>
                             <li class="flex gap-2.5"><span class="shrink-0 font-black text-teal-600">·</span><span><b>필라멘트·베드는 운영진 지원</b> — 출력 안정성을 위해 필라멘트 장착 및 빌드 플레이트(베드) 탈부착은 운영진이 직접 지원</span></li>
                         </ul>
@@ -1194,6 +1210,62 @@
                     <input type="text" id="cau-dorm-search" oninput="cauDormSearch(this.value)" placeholder="이름 검색..." class="w-full text-sm pl-9 pr-4 py-2.5 bg-white border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-black">
                 </div>
                 <div id="cau-dorm-result"></div>
+            </div>
+        </main>
+
+        <footer class="mt-16 pt-8 border-t border-neutral-300 text-xs opacity-50">
+            <p>© 2026 Additive Manufacturing Collaborative Design Workshop. COSS&ByunSeoHee. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- ==================== PAGE: CAU CAMPUS MAP (중앙대 캠퍼스 맵) ==================== -->
+    <div id="cau-campus-map-page" class="hidden fade-in max-w-5xl mx-auto px-6 py-12 lg:py-20">
+        <header class="border-b-2 border-current pb-8 mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <button onclick="navigateTo('landing')" class="no-print mr-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-black text-sm font-bold px-4 py-2.5 rounded-lg inline-flex items-center gap-1.5 transition-all">
+                        &larr; Back to Home
+                    </button>
+                    <span class="inline-block w-3 h-3 bg-indigo-500 rounded-full animate-pulse"></span>
+                    <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">CAU Guide 03</p>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">중앙대학교 캠퍼스 맵</h1>
+                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">2차 워크숍 주요 장소 안내 · 중앙대학교 서울캠퍼스</p>
+            </div>
+            <button onclick="navigateTo('cau-facility')" class="no-print inline-flex items-center gap-1.5 text-sm font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-lg px-4 py-2.5 transition-all shrink-0">🏠 시설 이용 안내 &rarr;</button>
+        </header>
+
+        <main class="space-y-8">
+            <!-- 워크숍 주요 장소 범례 -->
+            <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
+                <h2 class="text-xl font-extrabold mb-4">워크숍 주요 장소</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="rounded-xl border border-red-200 bg-red-50 p-4">
+                        <span class="inline-block text-[10px] font-black px-2 py-0.5 rounded bg-red-600 text-white uppercase tracking-wider mb-2">메인 venue</span>
+                        <p class="font-extrabold text-red-900">207동 (붉은 원)</p>
+                        <p class="text-xs opacity-70 font-semibold mt-1">메이커스페이스(3D 프린팅·팀 활동) · 강의실 102호(개회식·발표 등 전체 활동)</p>
+                    </div>
+                    <div class="rounded-xl border border-purple-200 bg-purple-50 p-4">
+                        <span class="inline-block text-[10px] font-black px-2 py-0.5 rounded bg-purple-600 text-white uppercase tracking-wider mb-2">숙소·식사</span>
+                        <p class="font-extrabold text-purple-900">308·309관 (보라 원)</p>
+                        <p class="text-xs opacity-70 font-semibold mt-1">기숙사(309관 · 방 배정) · 식당(308관 카페테리아)</p>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-wrap gap-2 text-xs font-semibold">
+                    <span class="inline-flex items-center gap-1 rounded-lg bg-neutral-100 px-3 py-1.5"><span class="font-black text-neutral-500">🚪 정문</span> · 흑석역 방면</span>
+                    <span class="inline-flex items-center gap-1 rounded-lg bg-neutral-100 px-3 py-1.5"><span class="font-black text-neutral-500">🚪 중문</span> · 캠퍼스 중앙</span>
+                    <span class="inline-flex items-center gap-1 rounded-lg bg-neutral-100 px-3 py-1.5"><span class="font-black text-neutral-500">🚪 후문</span></span>
+                </div>
+            </div>
+
+            <!-- 캠퍼스 맵 이미지 -->
+            <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
+                <h2 class="text-xl font-extrabold mb-1">주요 장소 표기 지도</h2>
+                <p class="text-sm opacity-60 font-semibold mb-4"><span class="text-red-600 font-bold">붉은 원</span> = 207동(메인 venue) · <span class="text-purple-600 font-bold">보라 원</span> = 308·309관(기숙사·식당)</p>
+                <a href="cau-campus-map.png" target="_blank" rel="noopener" class="block rounded-xl overflow-hidden border border-neutral-300 hover:border-indigo-400 transition-colors">
+                    <img src="cau-campus-map.png" alt="중앙대학교 서울캠퍼스 맵 - 207동·308/309관 표기" class="w-full h-auto" loading="lazy">
+                </a>
+                <p class="text-xs opacity-50 mt-3">※ 이미지를 누르면 새 창에서 크게 볼 수 있습니다. (출처: 중앙대학교 공식 캠퍼스 맵)</p>
             </div>
         </main>
 
@@ -1521,6 +1593,6 @@
     <!-- 6-2) 중앙대 2차 워크숍 안내 (기숙사 방 배정 — 데이터·검색) -->
     <script src="js/cau-info.js?v=1"></script>
     <!-- 7) 화면 로직 (페이지 전환, 렌더링, 테마, 검색, Firestore 로드) -->
-    <script src="js/main.js?v=34"></script>
+    <script src="js/main.js?v=35"></script>
 </body>
 </html>
