@@ -9,11 +9,16 @@
 - **Firebase 프로젝트:** `amcdw-9d10e` · CLI 로그인: anollity23@gmail.com
 - **Firestore DB:** `database1` (named, Enterprise/Blaze) — `(default)` 아님 ⚠️
 - **작업 브랜치:** `busan_workshop_intensive_ver`
-- **최종 업데이트:** 2026-06-29
+- **최종 업데이트:** 2026-08-17
 
 ---
 
 ## ▶ 재개 지점 (다음에 바로 할 일)
+
+**🔵 2026-08-17 — 3차 워크숍(한기대) 안내 3페이지 작업분: 커밋·배포 대기** — 상세 `WORKLOG_2026-08-17.md`, 쉬운 요약 `쉬운설명_지금상황.md`
+- ① **일정 원본 2개 불일치 확정 필요**(Day2 오전·Day3 전체·등록 장소) → 한쪽 기준으로 상세일정+캠퍼스맵 범례 통일
+- ② **KUT 04 탭「기숙사 배정·시설 이용」= 자료 미수령**으로 아직 준비 중 모달 (중앙대 `cau-info.js` 패턴으로 제작 예정)
+- ③ 작업 트리 미커밋(index.html·main.js·works.js·busan-info.js·.gitignore·firebase.json + kut 이미지·PDF 3개) → 커밋 → `git push -u origin busan_workshop_intensive_ver` → `firebase deploy --only hosting`
 
 **⚠️ 관리자가 라이브에서 직접 눌러야 할 것**(작업 환경에서 Firestore 직접 쓰기 불가):
 - **사용자 관리 또는 팀 배치 관리 → 「⤓ Excel 기준 일괄 동기화」 1회** (2026-06-29 신규) — 팀배분 Excel 기준으로 teams/계정/공개 화면을 한 번에 통일. 실행 후 상단 **미매칭(계정 없는 학생·교수) 리포트** 확인 → 가입 후 배정 또는 이름 표기 보정.
@@ -41,6 +46,19 @@
 ---
 
 ## ✅ 완료 내역 (Changelog)
+
+### 2026-08-17 — 3차 워크숍(한국기술교육대) 안내 페이지 3종 (busan_workshop_intensive_ver, **미커밋·미배포**)
+
+- [x] `#schedule-kut-page` — 3차 워크숍 상세일정(Day1~3 + Next 카드: 대한기계학회 학술대회·CO-SHOW·논문집), 장소 배지 6종 범례, 비상연락처 배너, 테마/인쇄 컨트롤
+- [x] `#kut-directions-page` — 오시는 길(제1캠퍼스≠제2캠퍼스 경고, 주소·카카오맵, 교통편 5종, 약도 `kut-directions.jpg`)
+- [x] `#kut-campus-map-page` — 캠퍼스 맵(주요 장소 4카드 + 맵 이미지 `kut-campus-map.jpg`)
+- [x] 랜딩: 로드맵 05번 카드 「상세일정 보기」 버튼, Schedule 04 탭 연결, `KOREATECH WORKSHOP GUIDE` 4탭 섹션 신설(4번째=준비 중)
+- [x] `main.js v36` 라우트 3개 + 테마(`kut-*`) 반영, 세부일정 탭 스타일 `setTabs()` 헬퍼로 통합
+- [x] `works.js v33` 결과 보드 단계에 「진행상황 중간발표」 추가
+- [x] `busan-info.js v28` 숙소 미이용 9명 배정 완료(`BUSAN_ROOM_UNUSED=[]`), W레지던스(B) 폐지, A-9(911호) 추가
+- [x] `한국기술교육대학교 관련/` 폴더 `.gitignore` + `firebase.json` ignore 등록
+- [x] 로컬 검증(포트 3111): 라우팅·3테마·이미지·PDF 200·콘솔 무오류
+- [ ] 일정 원본 2개 불일치 확정 · KUT 04 기숙사 페이지 · 커밋/푸시/배포
 
 ### 2026-06-29 — 팀배분 Excel 기준 통일 + 모든 팀 화면 계정 기준 일치 (busan_workshop_intensive_ver, 라이브 배포됨)
 > 전체 상세는 `WORKLOG_2026-06-29.md` §10~12. JS 캐시버전: **teams-data `?v=31` / auth `?v=32` / works `?v=32` / main `?v=32`**. 커밋 `d5dacb3`·`209a430`·`7726869`.

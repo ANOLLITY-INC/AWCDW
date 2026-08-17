@@ -31,6 +31,7 @@
       "SYSTEM_DESIGN.md",
       "PROGRESS.md",
       "WORKLOG_*.md",
+      "쉬운설명_*.md",
       "firestore.rules",
       "storage.rules",
       "firebase-debug.log",
@@ -44,6 +45,7 @@
       "부산캠퍼스 _ 캠퍼스맵 _ 캠퍼스 _ 학교소개 _ 부산대학교_files/**",
       "부산대학교 관련/**",
       "중앙대학교 관련/**",
+      "한국기술교육대학교 관련/**",
       "_xlsx_dump.txt",
       "_busan_data.json"
     ]

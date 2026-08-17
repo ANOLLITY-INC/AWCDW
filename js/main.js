@@ -131,6 +131,9 @@ function navigateTo(pageId) {
     const pageCauFacility = document.getElementById('cau-facility-page');
     const pageCauDorm = document.getElementById('cau-dorm-page');
     const pageCauCampusMap = document.getElementById('cau-campus-map-page');
+    const pageKut = document.getElementById('schedule-kut-page');
+    const pageKutDirections = document.getElementById('kut-directions-page');
+    const pageKutCampusMap = document.getElementById('kut-campus-map-page');
 
     // Hide all first
     page1.classList.add('hidden');
@@ -155,6 +158,9 @@ function navigateTo(pageId) {
     if (pageCauFacility) pageCauFacility.classList.add('hidden');
     if (pageCauDorm) pageCauDorm.classList.add('hidden');
     if (pageCauCampusMap) pageCauCampusMap.classList.add('hidden');
+    if (pageKut) pageKut.classList.add('hidden');
+    if (pageKutDirections) pageKutDirections.classList.add('hidden');
+    if (pageKutCampusMap) pageKutCampusMap.classList.add('hidden');
 
     if (pageId === 'auth') {
         if (pageAuth) { renderAuthPage(); pageAuth.classList.remove('hidden'); }
@@ -224,6 +230,14 @@ function navigateTo(pageId) {
         if (pageCauCampusMap) { pageCauCampusMap.classList.remove('hidden'); }
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
+    } else if (pageId === 'kut-directions') {
+        if (pageKutDirections) { pageKutDirections.classList.remove('hidden'); }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    } else if (pageId === 'kut-campus-map') {
+        if (pageKutCampusMap) { pageKutCampusMap.classList.remove('hidden'); }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
     }
 
     if (pageId === 'landing') {
@@ -239,6 +253,10 @@ function navigateTo(pageId) {
         if (pageCau) pageCau.classList.remove('hidden');
         const cauSel = document.getElementById('theme-select-cau');
         if (cauSel) cauSel.value = currentTheme;
+    } else if (pageId === 'schedule-kut') {
+        if (pageKut) pageKut.classList.remove('hidden');
+        const kutSel = document.getElementById('theme-select-kut');
+        if (kutSel) kutSel.value = currentTheme;
     } else if (pageId === 'teams') {
         pageTeams.classList.remove('hidden');
         document.getElementById('theme-select').value = currentTheme;
@@ -527,16 +545,20 @@ function changeTheme(theme) {
     const onlineDot = document.getElementById('theme-dot-online');
     const busanDot = document.getElementById('theme-dot-busan');
     const cauDot = document.getElementById('theme-dot-cau');
+    const kutDot = document.getElementById('theme-dot-kut');
     const stats = ['stat-1', 'stat-2', 'stat-3'];
     const busanCards = ['busan-card-1', 'busan-card-2', 'busan-card-3'];
     const cauCards = ['cau-card-1', 'cau-card-2', 'cau-card-3'];
+    const kutCards = ['kut-card-1', 'kut-card-2', 'kut-card-3', 'kut-card-next'];
     const onlineCards = ['online-card-1'];
     const navMnm = document.getElementById('nav-mnm');
     const navTeams = document.getElementById('nav-teams');
-    const schedules = ['tab-4'];
-    const tab1 = document.getElementById('tab-1');
-    const tab2 = document.getElementById('tab-2');
-    const tab3 = document.getElementById('tab-3');
+    // 세부 일정 탭 4개(온라인/부산/중앙대/한기대) — 모두 같은 스타일
+    const scheduleTabs = ['tab-1', 'tab-2', 'tab-3', 'tab-4'];
+    const setTabs = (cls) => scheduleTabs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.className = cls;
+    });
 
     // Sync theme selectors
     document.getElementById('theme-select').value = theme;
@@ -545,6 +567,8 @@ function changeTheme(theme) {
     document.getElementById('theme-select-busan').value = theme;
     const _cauSel = document.getElementById('theme-select-cau');
     if (_cauSel) _cauSel.value = theme;
+    const _kutSel = document.getElementById('theme-select-kut');
+    if (_kutSel) _kutSel.value = theme;
 
     // Base configurations reset
     body.className = "min-h-screen transition-colors duration-500 ";
@@ -552,7 +576,7 @@ function changeTheme(theme) {
     stats.forEach(id => {
         document.getElementById(id).className = "border p-5 rounded-xl transition-all ";
     });
-    [...busanCards, ...cauCards, ...onlineCards].forEach(id => {
+    [...busanCards, ...cauCards, ...kutCards, ...onlineCards].forEach(id => {
         if(document.getElementById(id)) {
             document.getElementById(id).className = "print-card p-6 md:p-8 rounded-2xl transition-all ";
         }
@@ -565,21 +589,17 @@ function changeTheme(theme) {
         onlineDot.className = "inline-block w-3 h-3 bg-blue-600 rounded-full animate-pulse";
         busanDot.className = "inline-block w-3 h-3 bg-blue-600 rounded-full animate-pulse";
         if (cauDot) cauDot.className = "inline-block w-3 h-3 bg-blue-600 rounded-full animate-pulse";
+        if (kutDot) kutDot.className = "inline-block w-3 h-3 bg-blue-600 rounded-full animate-pulse";
 
         stats.forEach(id => { document.getElementById(id).className += "border-neutral-200 bg-white"; });
-        [...busanCards, ...cauCards, ...onlineCards].forEach(id => {
+        [...busanCards, ...cauCards, ...kutCards, ...onlineCards].forEach(id => {
             if(document.getElementById(id)) document.getElementById(id).className += "border border-neutral-200 bg-white";
         });
 
         navMnm.className = "group border-2 border-current bg-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1";
         navTeams.className = "group border-2 border-current bg-[#0055FF] text-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1";
 
-        schedules.forEach(id => {
-            document.getElementById(id).className = "group border border-neutral-300 bg-white hover:border-black p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md";
-        });
-        tab1.className = "group border border-neutral-300 bg-white hover:border-blue-600 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden";
-        tab2.className = "group border border-neutral-300 bg-white hover:border-blue-600 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden";
-        if (tab3) tab3.className = "group border border-neutral-300 bg-white hover:border-blue-600 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden";
+        setTabs("group border border-neutral-300 bg-white hover:border-blue-600 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden");
     }
     else if (theme === 'dark') {
         body.className += "bg-[#121214] text-[#F3F4F6]";
@@ -588,21 +608,17 @@ function changeTheme(theme) {
         onlineDot.className = "inline-block w-3 h-3 bg-lime-400 rounded-full animate-pulse";
         busanDot.className = "inline-block w-3 h-3 bg-lime-400 rounded-full animate-pulse";
         if (cauDot) cauDot.className = "inline-block w-3 h-3 bg-lime-400 rounded-full animate-pulse";
+        if (kutDot) kutDot.className = "inline-block w-3 h-3 bg-lime-400 rounded-full animate-pulse";
 
         stats.forEach(id => { document.getElementById(id).className += "border-neutral-800 bg-[#1F1F23]"; });
-        [...busanCards, ...cauCards, ...onlineCards].forEach(id => {
+        [...busanCards, ...cauCards, ...kutCards, ...onlineCards].forEach(id => {
             if(document.getElementById(id)) document.getElementById(id).className += "border border-neutral-800 bg-[#1F1F23]";
         });
 
         navMnm.className = "group border-2 border-neutral-800 bg-[#1F1F23] rounded-2xl p-8 flex flex-col justify-between transition-all hover:border-lime-400 hover:shadow-2xl hover:shadow-lime-950/20 hover:-translate-y-1";
         navTeams.className = "group border-2 border-[#1F1F23] bg-[#0055FF] text-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:border-lime-400 hover:shadow-2xl hover:shadow-lime-950/20 hover:-translate-y-1";
 
-        schedules.forEach(id => {
-            document.getElementById(id).className = "group border border-neutral-800 bg-[#1F1F23] text-white hover:border-lime-400 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md";
-        });
-        tab1.className = "group border border-neutral-800 bg-[#1F1F23] text-white hover:border-blue-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden";
-        tab2.className = "group border border-neutral-800 bg-[#1F1F23] text-white hover:border-blue-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden";
-        if (tab3) tab3.className = "group border border-neutral-800 bg-[#1F1F23] text-white hover:border-blue-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden";
+        setTabs("group border border-neutral-800 bg-[#1F1F23] text-white hover:border-blue-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden");
     }
     else if (theme === 'bauhaus') {
         body.className += "bg-[#EAEAEA] text-black";
@@ -611,21 +627,17 @@ function changeTheme(theme) {
         onlineDot.className = "inline-block w-3 h-3 bg-red-600 rounded-full";
         busanDot.className = "inline-block w-3 h-3 bg-red-600 rounded-full";
         if (cauDot) cauDot.className = "inline-block w-3 h-3 bg-red-600 rounded-full";
+        if (kutDot) kutDot.className = "inline-block w-3 h-3 bg-red-600 rounded-full";
 
         stats.forEach(id => { document.getElementById(id).className += "border-2 border-black bg-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"; });
-        [...busanCards, ...cauCards, ...onlineCards].forEach(id => {
+        [...busanCards, ...cauCards, ...kutCards, ...onlineCards].forEach(id => {
             if(document.getElementById(id)) document.getElementById(id).className += "border-2 border-black bg-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]";
         });
 
         navMnm.className = "group border-2 border-black bg-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1";
         navTeams.className = "group border-2 border-black bg-red-500 text-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(239,68,68,1)] hover:-translate-y-1";
 
-        schedules.forEach(id => {
-            document.getElementById(id).className = "group border-2 border-black bg-white hover:bg-yellow-300 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]";
-        });
-        tab1.className = "group border-2 border-black bg-white hover:bg-blue-100 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden";
-        tab2.className = "group border-2 border-black bg-white hover:bg-blue-100 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden";
-        if (tab3) tab3.className = "group border-2 border-black bg-white hover:bg-blue-100 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden";
+        setTabs("group border-2 border-black bg-white hover:bg-blue-100 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden");
     }
 
     renderTeams(searchInput.value);

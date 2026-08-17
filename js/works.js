@@ -25,9 +25,9 @@
 const VIS_LABELS = { public: "전체 공개", team_only: "팀 전용" };
 // 게시글 단계(제출 차수) — 보드 종류에 따라 다른 선택지 제공
 //  · proposal(사전주제제안): 중간제출 / 최종제출
-//  · result(워크숍 차수별 진행 결과): 1차 / 2차 / 3차 워크숍
+//  · result(워크숍 차수별 진행 결과): 1차 / 2차 / 3차 워크숍 / 진행상황 중간발표
 const WORK_PHASES = ["중간제출", "최종제출"];
-const WORK_PHASES_RESULT = ["1차 워크숍", "2차 워크숍", "3차 워크숍"];
+const WORK_PHASES_RESULT = ["1차 워크숍", "2차 워크숍", "3차 워크숍", "진행상황 중간발표"];
 function workPhasesFor(cat) {
     return ((cat || currentWorksCat()) === "result") ? WORK_PHASES_RESULT : WORK_PHASES;
 }
