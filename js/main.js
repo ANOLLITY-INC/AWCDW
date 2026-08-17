@@ -542,7 +542,7 @@ function setView(view) {
 const LANDING_TABS = {
     'tab-busan-1': 'amber', 'tab-busan-2': 'emerald', 'tab-busan-3': 'indigo', 'tab-busan-4': 'blue',
     'tab-cau-1': 'teal', 'tab-cau-2': 'emerald', 'tab-cau-3': 'indigo', 'tab-cau-4': 'blue',
-    'tab-kut-1': 'sky', 'tab-kut-2': 'indigo', 'tab-kut-3': 'blue', 'tab-kut-4': 'emerald',
+    'tab-kut-1': 'sky', 'tab-kut-2': 'emerald', 'tab-kut-3': 'indigo', 'tab-kut-4': 'blue',
     'tab-1': 'blue', 'tab-2': 'blue', 'tab-3': 'blue', 'tab-4': 'blue'
 };
 const TAB_BASE = "group p-5 rounded-xl flex items-center justify-between text-left transition-all relative overflow-hidden";
@@ -571,6 +571,60 @@ function styleLandingTabs(theme) {
             if (eyebrow) eyebrow.className = "text-[10px] font-bold uppercase tracking-widest text-neutral-400";
             if (title) title.className = `font-extrabold text-sm mt-1 text-${c}-700 group-hover:text-${c}-800 transition-colors`;
             if (arrow) arrow.className = `text-xl font-bold text-${c}-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all`;
+        }
+    });
+}
+
+// 워크숍 로드맵 카드 8개 — 차수 구분을 위해 카드별 키컬러(`data-color`)를 쓰고,
+// 안내 탭과 같은 규칙(다크 = 어두운 카드 + 선명한 테두리 + 밝은 글씨)으로 테마 전환한다.
+function styleRoadmapCards(theme) {
+    document.querySelectorAll('#schedule-grid > div[data-step]').forEach(card => {
+        const c = card.dataset.color || 'blue';
+        const active = card.dataset.step === '5';
+        const q = (role) => card.querySelector('[data-role="' + role + '"]');
+        const base = "bg-white p-6 rounded-2xl relative transition-all group";
+        const set = (role, cls) => { const el = q(role); if (el) el.className = cls; };
+        const badgeBase = "text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block";
+        const pulse = active ? " animate-pulse" : "";
+        const titleMb = q('desc') ? "mb-1" : "mb-2";
+        const dateMb = q('desc') ? " mb-2" : "";
+
+        if (theme === 'dark') {
+            card.className = (active
+                ? `border-2 border-${c}-400 shadow-lg shadow-black/40 scale-[1.02]`
+                : `border border-${c}-500 hover:border-${c}-300 hover:shadow-lg hover:shadow-black/40`)
+                + ` bg-[#1F1F23] p-6 rounded-2xl relative transition-all group`;
+            set('num', `text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-${c}-300 opacity-25`);
+            set('badge', `${badgeBase} bg-${c}-900 text-${c}-100${pulse}`);
+            set('title', `font-extrabold text-base ${titleMb} text-white`);
+            set('date', `text-xs font-semibold${dateMb} text-neutral-400`);
+            set('desc', `text-[11px] leading-relaxed font-medium p-2.5 rounded-lg bg-neutral-900 border border-neutral-800 text-neutral-300`);
+            set('note', `font-bold text-[10px] block mt-1 text-${c}-200`);
+            set('sub', `text-[10px] font-bold mt-2 text-neutral-400`);
+        } else if (theme === 'bauhaus') {
+            card.className = (active
+                ? `border-2 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] scale-[1.02]`
+                : `border-2 border-black hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]`)
+                + ` ${base}`;
+            set('num', `text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-${c}-500 opacity-25`);
+            set('badge', `${badgeBase} bg-${c}-100 text-${c}-700${pulse}`);
+            set('title', `font-extrabold text-base ${titleMb} text-neutral-900`);
+            set('date', `text-xs font-semibold${dateMb} text-neutral-500`);
+            set('desc', `text-[11px] leading-relaxed font-medium p-2.5 rounded-lg bg-neutral-50 border-2 border-black text-neutral-700`);
+            set('note', `font-bold text-[10px] block mt-1 text-${c}-600`);
+            set('sub', `text-[10px] font-bold mt-2 text-neutral-600`);
+        } else {
+            card.className = (active
+                ? `border-2 border-${c}-500 shadow-[0_0_20px_rgba(0,0,0,0.08)] scale-[1.02]`
+                : `border border-neutral-200 hover:border-${c}-500 hover:shadow-md`)
+                + ` ${base}`;
+            set('num', `text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-${c}-500 opacity-20`);
+            set('badge', `${badgeBase} bg-${c}-100 text-${c}-700${pulse}`);
+            set('title', `font-extrabold text-base ${titleMb} text-neutral-900`);
+            set('date', `text-xs font-semibold${dateMb} text-neutral-500`);
+            set('desc', `text-[11px] leading-relaxed font-medium p-2.5 rounded-lg bg-neutral-50 border border-neutral-100 text-neutral-600`);
+            set('note', `font-bold text-[10px] block mt-1 text-${c}-600`);
+            set('sub', `text-[10px] font-bold mt-2 text-neutral-500`);
         }
     });
 }
@@ -678,6 +732,7 @@ function changeTheme(theme) {
     body.classList.add('theme-' + theme);
 
     styleLandingTabs(theme);
+    styleRoadmapCards(theme);
 
     renderTeams(searchInput.value);
 }

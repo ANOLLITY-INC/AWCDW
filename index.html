@@ -107,76 +107,77 @@
                 </h2>
             </div>
 
-            <!-- text-neutral-900 고정: 카드는 항상 흰 배경이라(테마 무관) 다크모드에서도 제목이 묻히지 않게 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-neutral-900" id="schedule-grid">
-                <!-- 1 -->
-                <div class="border border-neutral-200 bg-white p-6 rounded-2xl relative transition-all hover:border-blue-600 group" data-step="1">
-                    <span class="text-3xl font-black font-eng opacity-10 absolute right-4 top-4 group-hover:opacity-30 transition-opacity">01</span>
-                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 mb-3 inline-block">온라인 아이디어</span>
-                    <h4 class="font-extrabold text-base mb-2">디자인팀 온라인 사전주제제안</h4>
-                    <p class="text-xs text-neutral-500 font-semibold">2026.05.02.(토) ~ 06.22.(월)</p>
+            <!-- 카드별 키컬러는 data-color, 테마별 배경·테두리·글자색은 main.js styleRoadmapCards() 가 부여.
+                 (HTML 에 적힌 클래스는 라이트 테마 기준 초기값) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="schedule-grid">
+                <!-- 01 -->
+                <div class="border border-neutral-200 hover:border-violet-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="1" data-color="violet">
+                    <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-violet-500 opacity-20">01</span>
+                    <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-violet-100 text-violet-700">온라인 아이디어</span>
+                    <h4 data-role="title" class="font-extrabold text-base mb-2 text-neutral-900">디자인팀 온라인 사전주제제안</h4>
+                    <p data-role="date" class="text-xs font-semibold text-neutral-500">2026.05.02.(토) ~ 06.22.(월)</p>
                 </div>
 
-                <!-- 2 -->
-                <div class="border border-neutral-200 bg-white p-6 rounded-2xl relative transition-all hover:border-blue-600 group" data-step="2">
-                    <span class="text-3xl font-black font-eng opacity-10 absolute right-4 top-4 group-hover:opacity-30 transition-opacity">02</span>
-                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 mb-3 inline-block">온라인 사전</span>
-                    <h4 class="font-extrabold text-base mb-2" id="step2-title">온라인 사전 워크숍 운영</h4>
-                    <p class="text-xs text-neutral-500 font-semibold">2026.06.22.(월) ~ 06.23(화)</p>
+                <!-- 02 -->
+                <div class="border border-neutral-200 hover:border-cyan-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="2" data-color="cyan">
+                    <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-cyan-500 opacity-20">02</span>
+                    <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-cyan-100 text-cyan-700">온라인 사전</span>
+                    <h4 data-role="title" id="step2-title" class="font-extrabold text-base mb-2 text-neutral-900">온라인 사전 워크숍 운영</h4>
+                    <p data-role="date" class="text-xs font-semibold text-neutral-500">2026.06.22.(월) ~ 06.23(화)</p>
                 </div>
 
-                <!-- 3 -->
-                <div class="border border-neutral-200 bg-white p-6 rounded-2xl relative transition-all hover:border-blue-600 group" data-step="3">
-                    <span class="text-3xl font-black font-eng opacity-10 absolute right-4 top-4 group-hover:opacity-30 transition-opacity">03</span>
-                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 mb-3 inline-block">1차 오프라인</span>
-                    <h4 class="font-extrabold text-base mb-1">1차 워크숍 (부산대학교)</h4>
-                    <p class="text-xs text-neutral-400 font-semibold mb-2">2026.06.24(수) ~ 06.26(금)</p>
-                    <p class="text-[11px] leading-relaxed text-neutral-600 font-medium bg-neutral-50 p-2.5 rounded-lg border border-neutral-100">이론 교육, 팀 빌딩, 아이디어 및 컨셉 도출 <span class="text-blue-600 font-bold text-[10px] block mt-1">2박3일 &middot; 숙소 제공</span></p>
+                <!-- 03 -->
+                <div class="border border-neutral-200 hover:border-amber-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="3" data-color="amber">
+                    <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-amber-500 opacity-20">03</span>
+                    <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-amber-100 text-amber-700">1차 오프라인</span>
+                    <h4 data-role="title" class="font-extrabold text-base mb-1 text-neutral-900">1차 워크숍 (부산대학교)</h4>
+                    <p data-role="date" class="text-xs font-semibold mb-2 text-neutral-500">2026.06.24(수) ~ 06.26(금)</p>
+                    <p data-role="desc" class="text-[11px] leading-relaxed font-medium p-2.5 rounded-lg bg-neutral-50 border border-neutral-100 text-neutral-600">이론 교육, 팀 빌딩, 아이디어 및 컨셉 도출 <span data-role="note" class="font-bold text-[10px] block mt-1 text-amber-600">2박3일 &middot; 숙소 제공</span></p>
                 </div>
 
-                <!-- 4 -->
-                <div class="border border-neutral-200 bg-white p-6 rounded-2xl relative transition-all hover:border-blue-600 group" data-step="4">
-                    <span class="text-3xl font-black font-eng opacity-10 absolute right-4 top-4 group-hover:opacity-30 transition-opacity">04</span>
-                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 mb-3 inline-block">2차 오프라인</span>
-                    <h4 class="font-extrabold text-base mb-1">2차 워크숍 (중앙대학교)</h4>
-                    <p class="text-xs text-neutral-400 font-semibold mb-2">2026.07.08.(수) ~ 07.10.(금)</p>
-                    <p class="text-[11px] leading-relaxed text-neutral-600 font-medium bg-neutral-50 p-2.5 rounded-lg border border-neutral-100">제품 모델링 및 제작 <span class="text-blue-600 font-bold text-[10px] block mt-1">2박3일 &middot; 숙소 제공</span></p>
+                <!-- 04 -->
+                <div class="border border-neutral-200 hover:border-teal-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="4" data-color="teal">
+                    <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-teal-500 opacity-20">04</span>
+                    <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-teal-100 text-teal-700">2차 오프라인</span>
+                    <h4 data-role="title" class="font-extrabold text-base mb-1 text-neutral-900">2차 워크숍 (중앙대학교)</h4>
+                    <p data-role="date" class="text-xs font-semibold mb-2 text-neutral-500">2026.07.08.(수) ~ 07.10.(금)</p>
+                    <p data-role="desc" class="text-[11px] leading-relaxed font-medium p-2.5 rounded-lg bg-neutral-50 border border-neutral-100 text-neutral-600">제품 모델링 및 제작 <span data-role="note" class="font-bold text-[10px] block mt-1 text-teal-600">2박3일 &middot; 숙소 제공</span></p>
                 </div>
 
-                <!-- 5 (ACTIVE CURRENTLY - Pulse decoration) -->
-                <div class="border-2 border-blue-500 bg-white p-6 rounded-2xl relative transition-all shadow-[0_0_20px_rgba(59,130,246,0.15)] scale-[1.02]" data-step="5">
-                    <span class="text-3xl font-black font-eng text-blue-500 opacity-20 absolute right-4 top-4">05</span>
-                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-100 text-blue-800 mb-3 inline-block animate-pulse">● 이번 차수 진행</span>
-                    <h4 class="font-extrabold text-base mb-1 text-blue-900">3차 워크숍 (한국기술교육대)</h4>
-                    <p class="text-xs text-blue-600 font-bold mb-2">2026.08.19.(수) ~ 08.21.(금)</p>
-                    <p class="text-[11px] leading-relaxed text-neutral-600 font-medium bg-neutral-50 p-2.5 rounded-lg border border-neutral-100">사용자 평가 및 시제품 완성 <span class="text-blue-600 font-bold text-[10px] block mt-1">2박3일 &middot; 숙소 제공</span></p>
+                <!-- 05 -->
+                <div class="border-2 border-blue-500 shadow-[0_0_20px_rgba(0,0,0,0.08)] scale-[1.02] bg-white p-6 rounded-2xl relative transition-all group" data-step="5" data-color="blue">
+                    <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-blue-500 opacity-20">05</span>
+                    <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-blue-100 text-blue-700 animate-pulse">● 이번 차수 진행</span>
+                    <h4 data-role="title" class="font-extrabold text-base mb-1 text-neutral-900">3차 워크숍 (한국기술교육대)</h4>
+                    <p data-role="date" class="text-xs font-semibold mb-2 text-neutral-500">2026.08.19.(수) ~ 08.21.(금)</p>
+                    <p data-role="desc" class="text-[11px] leading-relaxed font-medium p-2.5 rounded-lg bg-neutral-50 border border-neutral-100 text-neutral-600">사용자 평가 및 시제품 완성 <span data-role="note" class="font-bold text-[10px] block mt-1 text-blue-600">2박3일 &middot; 숙소 제공</span></p>
                 </div>
 
-                <!-- 6 -->
-                <div class="border border-neutral-200 bg-white p-6 rounded-2xl relative transition-all hover:border-blue-600 group" data-step="6">
-                    <span class="text-3xl font-black font-eng opacity-10 absolute right-4 top-4 group-hover:opacity-30 transition-opacity">06</span>
-                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 mb-3 inline-block">최종 제출</span>
-                    <h4 class="font-extrabold text-base mb-2">최종보고서 및 전시 기획서 제출</h4>
-                    <p class="text-xs text-neutral-500 font-semibold">~ 2026.09.</p>
-                    <p class="text-[10px] text-blue-600 font-bold mt-2">대한기계학회논문집 구두발표 논문 투고, 재료비/전시비용 지원</p>
+                <!-- 06 -->
+                <div class="border border-neutral-200 hover:border-rose-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="6" data-color="rose">
+                    <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-rose-500 opacity-20">06</span>
+                    <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-rose-100 text-rose-700">최종 제출</span>
+                    <h4 data-role="title" class="font-extrabold text-base mb-2 text-neutral-900">최종보고서 및 전시 기획서 제출</h4>
+                    <p data-role="date" class="text-xs font-semibold text-neutral-500">~ 2026.09.</p>
+                    <p data-role="sub" class="text-[10px] font-bold mt-2 text-neutral-500">대한기계학회논문집 구두발표 논문 투고, 재료비/전시비용 지원</p>
                 </div>
 
-                <!-- 7 -->
-                <div class="border border-neutral-200 bg-white p-6 rounded-2xl relative transition-all hover:border-blue-600 group" data-step="7">
-                    <span class="text-3xl font-black font-eng opacity-10 absolute right-4 top-4 group-hover:opacity-30 transition-opacity">07</span>
-                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 mb-3 inline-block">학회 예선</span>
-                    <h4 class="font-extrabold text-base mb-2">대한기계학회 특별세션 예선 발표</h4>
-                    <p class="text-xs text-neutral-500 font-semibold">2026.11초 예정</p>
-                    <p class="text-[10px] text-neutral-500 mt-2">제주도 (장소 확정 예정)</p>
+                <!-- 07 -->
+                <div class="border border-neutral-200 hover:border-indigo-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="7" data-color="indigo">
+                    <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-indigo-500 opacity-20">07</span>
+                    <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-indigo-100 text-indigo-700">학회 예선</span>
+                    <h4 data-role="title" class="font-extrabold text-base mb-2 text-neutral-900">대한기계학회 특별세션 예선 발표</h4>
+                    <p data-role="date" class="text-xs font-semibold text-neutral-500">2026.11초 예정</p>
+                    <p data-role="sub" class="text-[10px] font-bold mt-2 text-neutral-500">제주도 (장소 확정 예정)</p>
                 </div>
 
-                <!-- 8 -->
-                <div class="border border-neutral-200 bg-white p-6 rounded-2xl relative transition-all hover:border-blue-600 group" data-step="8">
-                    <span class="text-3xl font-black font-eng opacity-10 absolute right-4 top-4 group-hover:opacity-30 transition-opacity">08</span>
-                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-neutral-100 text-neutral-600 mb-3 inline-block">최종 발표</span>
-                    <h4 class="font-extrabold text-base mb-2">최종발표회 (CO-SHOW)</h4>
-                    <p class="text-xs text-neutral-500 font-semibold">2026.11.18.(수) ~ 11.21.(토)</p>
-                    <p class="text-[10px] text-neutral-500 mt-2">광주광역시 김대중컨벤션센터</p>
+                <!-- 08 -->
+                <div class="border border-neutral-200 hover:border-emerald-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="8" data-color="emerald">
+                    <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-emerald-500 opacity-20">08</span>
+                    <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-emerald-100 text-emerald-700">최종 발표</span>
+                    <h4 data-role="title" class="font-extrabold text-base mb-2 text-neutral-900">최종발표회 (CO-SHOW)</h4>
+                    <p data-role="date" class="text-xs font-semibold text-neutral-500">2026.11.18.(수) ~ 11.21.(토)</p>
+                    <p data-role="sub" class="text-[10px] font-bold mt-2 text-neutral-500">광주광역시 김대중컨벤션센터</p>
                 </div>
             </div>
         </section>
@@ -292,34 +293,34 @@
                     <span class="text-xl font-bold text-sky-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
                 </button>
 
-                <!-- KUT Tab 2: 한국기술교육대학교 캠퍼스 맵 -->
-                <button onclick="navigateTo('kut-campus-map')" class="group border border-neutral-300 bg-white hover:border-indigo-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-kut-2">
-                    <div class="absolute top-0 right-0 bg-indigo-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">New</div>
+                <!-- KUT Tab 2: 기숙사 배정 · 시설 이용 안내 (자료 수령 전 — 준비중) -->
+                <button onclick="openPendingModal('3차 워크숍(한기대) 기숙사 배정 · 시설 이용')" class="group border border-neutral-300 bg-white hover:border-emerald-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-kut-2">
+                    <div class="absolute top-0 right-0 bg-amber-400 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">준비중</div>
                     <div>
                         <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">KUT 02</p>
+                        <h4 class="font-extrabold text-sm mt-1 text-emerald-700 group-hover:text-emerald-800 transition-colors">기숙사 배정 · 시설 이용 안내</h4>
+                    </div>
+                    <span class="text-xl font-bold text-emerald-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                </button>
+
+                <!-- KUT Tab 3: 한국기술교육대학교 캠퍼스 맵 -->
+                <button onclick="navigateTo('kut-campus-map')" class="group border border-neutral-300 bg-white hover:border-indigo-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-kut-3">
+                    <div class="absolute top-0 right-0 bg-indigo-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">New</div>
+                    <div>
+                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">KUT 03</p>
                         <h4 class="font-extrabold text-sm mt-1 text-indigo-700 group-hover:text-indigo-800 transition-colors">한국기술교육대학교 캠퍼스 맵</h4>
                     </div>
                     <span class="text-xl font-bold text-indigo-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
                 </button>
 
-                <!-- KUT Tab 3: 3차 워크숍(한기대) 상세일정 -->
-                <button onclick="navigateTo('schedule-kut')" class="group border border-neutral-300 bg-white hover:border-blue-600 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-kut-3">
+                <!-- KUT Tab 4: 3차 워크숍(한기대) 상세일정 -->
+                <button onclick="navigateTo('schedule-kut')" class="group border border-neutral-300 bg-white hover:border-blue-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-kut-4">
                     <div class="absolute top-0 right-0 bg-blue-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">New</div>
                     <div>
-                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">KUT 03</p>
+                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">KUT 04</p>
                         <h4 class="font-extrabold text-sm mt-1 text-blue-700 group-hover:text-blue-800 transition-colors">3차 워크숍(한기대) 상세일정</h4>
                     </div>
                     <span class="text-xl font-bold text-blue-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
-                </button>
-
-                <!-- KUT Tab 4: 기숙사·시설 안내 (자료 수령 전 — 준비중) -->
-                <button onclick="openPendingModal('3차 워크숍(한기대) 기숙사 배정 · 시설 이용')" class="group border border-neutral-300 bg-white hover:border-emerald-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-kut-4">
-                    <div class="absolute top-0 right-0 bg-amber-400 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">준비중</div>
-                    <div>
-                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">KUT 04</p>
-                        <h4 class="font-extrabold text-sm mt-1 text-emerald-700 group-hover:text-emerald-800 transition-colors">기숙사 배정 · 시설 이용 안내</h4>
-                    </div>
-                    <span class="text-xl font-bold text-emerald-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
                 </button>
 
             </div>
@@ -2029,20 +2030,24 @@
         </div>
     </div>
 
-    <!-- Tailwind JIT 세이프리스트: main.js styleLandingTabs() 가 테마 전환 시 동적으로 넣는
-         탭 키컬러 클래스들. 초기 HTML에 한 번 등장해야 CDN JIT이 확실히 생성한다(화면에는 안 보임). -->
-    <div aria-hidden="true" data-tailwind-safelist="landing-tabs" class="hidden
-         border-amber-500 border-emerald-500 border-indigo-500 border-blue-500 border-teal-500 border-sky-500
-         hover:border-amber-300 hover:border-emerald-300 hover:border-indigo-300 hover:border-blue-300 hover:border-teal-300 hover:border-sky-300
-         hover:border-amber-500 hover:border-emerald-500 hover:border-indigo-500 hover:border-blue-500 hover:border-teal-500 hover:border-sky-500
-         text-amber-200 text-emerald-200 text-indigo-200 text-blue-200 text-teal-200 text-sky-200
-         text-amber-300 text-emerald-300 text-indigo-300 text-blue-300 text-teal-300 text-sky-300
-         text-amber-600 text-emerald-600 text-indigo-600 text-blue-600 text-teal-600 text-sky-600
-         text-amber-700 text-emerald-700 text-indigo-700 text-blue-700 text-teal-700 text-sky-700
-         group-hover:text-amber-800 group-hover:text-emerald-800 group-hover:text-indigo-800 group-hover:text-blue-800 group-hover:text-teal-800 group-hover:text-sky-800
-         hover:bg-amber-100 hover:bg-emerald-100 hover:bg-indigo-100 hover:bg-blue-100 hover:bg-teal-100 hover:bg-sky-100
-         group-hover:text-white text-neutral-400 text-neutral-500
-         hover:shadow-black/40 hover:shadow-emerald-950/20 hover:border-emerald-300 border-emerald-500"></div>
+    <!-- Tailwind JIT 세이프리스트: main.js styleLandingTabs()/styleRoadmapCards() 가 테마 전환 시
+         동적으로 넣는 키컬러 클래스들. 초기 HTML 에 한 번 등장해야 CDN JIT 이 확실히 생성한다(화면에는 안 보임). -->
+    <div aria-hidden="true" data-tailwind-safelist="theme-colors" class="hidden
+         border-amber-400 border-blue-400 border-cyan-400 border-emerald-400 border-indigo-400 border-rose-400 border-sky-400 border-teal-400 border-violet-400
+         border-amber-500 border-blue-500 border-cyan-500 border-emerald-500 border-indigo-500 border-rose-500 border-sky-500 border-teal-500 border-violet-500
+         hover:border-amber-300 hover:border-blue-300 hover:border-cyan-300 hover:border-emerald-300 hover:border-indigo-300 hover:border-rose-300 hover:border-sky-300 hover:border-teal-300 hover:border-violet-300
+         hover:border-amber-500 hover:border-blue-500 hover:border-cyan-500 hover:border-emerald-500 hover:border-indigo-500 hover:border-rose-500 hover:border-sky-500 hover:border-teal-500 hover:border-violet-500
+         text-amber-100 text-blue-100 text-cyan-100 text-emerald-100 text-indigo-100 text-rose-100 text-sky-100 text-teal-100 text-violet-100
+         text-amber-200 text-blue-200 text-cyan-200 text-emerald-200 text-indigo-200 text-rose-200 text-sky-200 text-teal-200 text-violet-200
+         text-amber-300 text-blue-300 text-cyan-300 text-emerald-300 text-indigo-300 text-rose-300 text-sky-300 text-teal-300 text-violet-300
+         text-amber-500 text-blue-500 text-cyan-500 text-emerald-500 text-indigo-500 text-rose-500 text-sky-500 text-teal-500 text-violet-500
+         text-amber-600 text-blue-600 text-cyan-600 text-emerald-600 text-indigo-600 text-rose-600 text-sky-600 text-teal-600 text-violet-600
+         text-amber-700 text-blue-700 text-cyan-700 text-emerald-700 text-indigo-700 text-rose-700 text-sky-700 text-teal-700 text-violet-700
+         group-hover:text-amber-800 group-hover:text-blue-800 group-hover:text-cyan-800 group-hover:text-emerald-800 group-hover:text-indigo-800 group-hover:text-rose-800 group-hover:text-sky-800 group-hover:text-teal-800 group-hover:text-violet-800
+         bg-amber-100 bg-blue-100 bg-cyan-100 bg-emerald-100 bg-indigo-100 bg-rose-100 bg-sky-100 bg-teal-100 bg-violet-100
+         bg-amber-900 bg-blue-900 bg-cyan-900 bg-emerald-900 bg-indigo-900 bg-rose-900 bg-sky-900 bg-teal-900 bg-violet-900
+         hover:bg-amber-100 hover:bg-blue-100 hover:bg-cyan-100 hover:bg-emerald-100 hover:bg-indigo-100 hover:bg-rose-100 hover:bg-sky-100 hover:bg-teal-100 hover:bg-violet-100
+         group-hover:text-white text-neutral-300 text-neutral-400 text-neutral-500 text-neutral-600 text-neutral-700 text-neutral-900 bg-neutral-900 border-neutral-800 hover:shadow-black/40 hover:shadow-emerald-950/20 shadow-black/40"></div>
 
     <!-- ==================== Firebase (Compat SDK) ==================== -->
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -2068,6 +2073,6 @@
     <!-- 6-2) 중앙대 2차 워크숍 안내 (기숙사 방 배정 — 데이터·검색) -->
     <script src="js/cau-info.js?v=1"></script>
     <!-- 7) 화면 로직 (페이지 전환, 렌더링, 테마, 검색, Firestore 로드) -->
-    <script src="js/main.js?v=37"></script>
+    <script src="js/main.js?v=38"></script>
 </body>
 </html>
