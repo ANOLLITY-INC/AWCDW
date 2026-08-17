@@ -536,6 +536,45 @@ function setView(view) {
     renderTeams(searchInput.value);
 }
 
+// 랜딩 탭(안내 12개 + 세부 일정 4개) — 탭별 키컬러.
+// 테마 전환 시 카드 배경·테두리뿐 아니라 내부 글자색(라벨/제목/화살표)까지 함께 갱신해야
+// 다크에서 어두운 배경 위에 어두운 글씨가 얹혀 안 보이는 문제가 생기지 않는다.
+const LANDING_TABS = {
+    'tab-busan-1': 'amber', 'tab-busan-2': 'emerald', 'tab-busan-3': 'indigo', 'tab-busan-4': 'blue',
+    'tab-cau-1': 'teal', 'tab-cau-2': 'emerald', 'tab-cau-3': 'indigo', 'tab-cau-4': 'blue',
+    'tab-kut-1': 'sky', 'tab-kut-2': 'indigo', 'tab-kut-3': 'blue', 'tab-kut-4': 'emerald',
+    'tab-1': 'blue', 'tab-2': 'blue', 'tab-3': 'blue', 'tab-4': 'blue'
+};
+const TAB_BASE = "group p-5 rounded-xl flex items-center justify-between text-left transition-all relative overflow-hidden";
+
+function styleLandingTabs(theme) {
+    Object.keys(LANDING_TABS).forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const c = LANDING_TABS[id];
+        const eyebrow = el.querySelector('p.tracking-widest');
+        const title = el.querySelector('h4');
+        const arrow = el.querySelector(':scope > span');
+        if (theme === 'dark') {
+            // 검은 카드 + 선명한 키컬러 테두리 + 밝은 글씨
+            el.className = `${TAB_BASE} border bg-[#1F1F23] border-${c}-500 hover:border-${c}-300 hover:shadow-lg hover:shadow-black/40`;
+            if (eyebrow) eyebrow.className = "text-[10px] font-bold uppercase tracking-widest text-neutral-400";
+            if (title) title.className = `font-extrabold text-sm mt-1 text-${c}-200 group-hover:text-white transition-colors`;
+            if (arrow) arrow.className = `text-xl font-bold text-${c}-300 opacity-90 group-hover:opacity-100 group-hover:translate-x-1 transition-all`;
+        } else if (theme === 'bauhaus') {
+            el.className = `${TAB_BASE} border-2 border-black bg-white hover:bg-${c}-100 hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]`;
+            if (eyebrow) eyebrow.className = "text-[10px] font-bold uppercase tracking-widest text-neutral-500";
+            if (title) title.className = `font-extrabold text-sm mt-1 text-${c}-700 group-hover:text-${c}-800 transition-colors`;
+            if (arrow) arrow.className = `text-xl font-bold text-${c}-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all`;
+        } else {
+            el.className = `${TAB_BASE} border border-neutral-300 bg-white hover:border-${c}-500 hover:shadow-md`;
+            if (eyebrow) eyebrow.className = "text-[10px] font-bold uppercase tracking-widest text-neutral-400";
+            if (title) title.className = `font-extrabold text-sm mt-1 text-${c}-700 group-hover:text-${c}-800 transition-colors`;
+            if (arrow) arrow.className = `text-xl font-bold text-${c}-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all`;
+        }
+    });
+}
+
 // 4. Color Theme Presets
 function changeTheme(theme) {
     currentTheme = theme;
@@ -553,12 +592,7 @@ function changeTheme(theme) {
     const onlineCards = ['online-card-1'];
     const navMnm = document.getElementById('nav-mnm');
     const navTeams = document.getElementById('nav-teams');
-    // 세부 일정 탭 4개(온라인/부산/중앙대/한기대) — 모두 같은 스타일
-    const scheduleTabs = ['tab-1', 'tab-2', 'tab-3', 'tab-4'];
-    const setTabs = (cls) => scheduleTabs.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.className = cls;
-    });
+    const navStatus = document.getElementById('nav-status');
 
     // Sync theme selectors
     document.getElementById('theme-select').value = theme;
@@ -599,7 +633,7 @@ function changeTheme(theme) {
         navMnm.className = "group border-2 border-current bg-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1";
         navTeams.className = "group border-2 border-current bg-[#0055FF] text-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1";
 
-        setTabs("group border border-neutral-300 bg-white hover:border-blue-600 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden");
+        if (navStatus) navStatus.className = "group border-2 border-current bg-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1";
     }
     else if (theme === 'dark') {
         body.className += "bg-[#121214] text-[#F3F4F6]";
@@ -618,7 +652,7 @@ function changeTheme(theme) {
         navMnm.className = "group border-2 border-neutral-800 bg-[#1F1F23] rounded-2xl p-8 flex flex-col justify-between transition-all hover:border-lime-400 hover:shadow-2xl hover:shadow-lime-950/20 hover:-translate-y-1";
         navTeams.className = "group border-2 border-[#1F1F23] bg-[#0055FF] text-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:border-lime-400 hover:shadow-2xl hover:shadow-lime-950/20 hover:-translate-y-1";
 
-        setTabs("group border border-neutral-800 bg-[#1F1F23] text-white hover:border-blue-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden");
+        if (navStatus) navStatus.className = "group border-2 border-emerald-500 bg-[#1F1F23] rounded-2xl p-8 flex flex-col justify-between transition-all hover:border-emerald-300 hover:shadow-2xl hover:shadow-emerald-950/20 hover:-translate-y-1";
     }
     else if (theme === 'bauhaus') {
         body.className += "bg-[#EAEAEA] text-black";
@@ -637,8 +671,13 @@ function changeTheme(theme) {
         navMnm.className = "group border-2 border-black bg-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1";
         navTeams.className = "group border-2 border-black bg-red-500 text-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(239,68,68,1)] hover:-translate-y-1";
 
-        setTabs("group border-2 border-black bg-white hover:bg-blue-100 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden");
+        if (navStatus) navStatus.className = "group border-2 border-black bg-white rounded-2xl p-8 flex flex-col justify-between transition-all hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1";
     }
+
+    // CSS 에서 테마를 분기할 수 있도록 body 에 theme-* 클래스를 남긴다(.sched-note 등).
+    body.classList.add('theme-' + theme);
+
+    styleLandingTabs(theme);
 
     renderTeams(searchInput.value);
 }

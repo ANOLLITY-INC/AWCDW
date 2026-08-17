@@ -33,6 +33,10 @@
                 break-inside: avoid;
             }
         }
+        /* 일정표 보조 문구(담당자·세부 설명) — 부모 행의 강조색(파랑/주황)을 물려받으면
+           다크 테마의 어두운 카드 위에서 안 보이므로 중립 톤으로 고정. 테마별 톤은 body.theme-* 로 분기. */
+        .sched-note { color: #525252; }
+        body.theme-dark .sched-note { color: #d4d4d4; }
         /* 페이드인 애니메이션 */
         .fade-in {
             animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -82,7 +86,7 @@
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none uppercase">
                     2026 적층제조융합설계워크숍
                 </h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800" id="landing-sub">Additive Manufacturing Collaborative Design Workshop</p>
+                <p class="text-base mt-3 opacity-90 font-semibold" id="landing-sub">Additive Manufacturing Collaborative Design Workshop</p>
             </div>
             
             <!-- THEME SWITCHER -->
@@ -146,7 +150,6 @@
                     <h4 class="font-extrabold text-base mb-1 text-blue-900">3차 워크숍 (한국기술교육대)</h4>
                     <p class="text-xs text-blue-600 font-bold mb-2">2026.08.19.(수) ~ 08.21.(금)</p>
                     <p class="text-[11px] leading-relaxed text-neutral-600 font-medium bg-neutral-50 p-2.5 rounded-lg border border-neutral-100">사용자 평가 및 시제품 완성 <span class="text-blue-600 font-bold text-[10px] block mt-1">2박3일 &middot; 숙소 제공</span></p>
-                    <button onclick="navigateTo('schedule-kut')" class="no-print mt-3 w-full inline-flex items-center justify-center gap-1.5 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg px-3 py-2 transition-all">상세일정 보기 &rarr;</button>
                 </div>
 
                 <!-- 6 -->
@@ -284,7 +287,7 @@
                     <div class="absolute top-0 right-0 bg-sky-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">New</div>
                     <div>
                         <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">KUT 01</p>
-                        <h4 class="font-extrabold text-sm mt-1 text-sky-700 group-hover:text-sky-800 transition-colors">한기대 오시는 길</h4>
+                        <h4 class="font-extrabold text-sm mt-1 text-sky-700 group-hover:text-sky-800 transition-colors">한국기술교육대학교 오시는 길</h4>
                     </div>
                     <span class="text-xl font-bold text-sky-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
                 </button>
@@ -294,7 +297,7 @@
                     <div class="absolute top-0 right-0 bg-indigo-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">New</div>
                     <div>
                         <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">KUT 02</p>
-                        <h4 class="font-extrabold text-sm mt-1 text-indigo-700 group-hover:text-indigo-800 transition-colors">한기대 캠퍼스 맵</h4>
+                        <h4 class="font-extrabold text-sm mt-1 text-indigo-700 group-hover:text-indigo-800 transition-colors">한국기술교육대학교 캠퍼스 맵</h4>
                     </div>
                     <span class="text-xl font-bold text-indigo-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
                 </button>
@@ -309,14 +312,14 @@
                     <span class="text-xl font-bold text-blue-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
                 </button>
 
-                <!-- KUT Tab 4: 기숙사·시설 안내 (자료 수령 전 — 준비 중) -->
-                <button onclick="openPendingModal('3차 워크숍(한기대) 기숙사 배정 · 시설 이용')" class="group border border-neutral-300 bg-white hover:border-black p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md" id="tab-kut-4">
+                <!-- KUT Tab 4: 기숙사·시설 안내 (자료 수령 전 — 준비중) -->
+                <button onclick="openPendingModal('3차 워크숍(한기대) 기숙사 배정 · 시설 이용')" class="group border border-neutral-300 bg-white hover:border-emerald-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-kut-4">
+                    <div class="absolute top-0 right-0 bg-amber-400 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">준비중</div>
                     <div>
                         <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">KUT 04</p>
-                        <h4 class="font-extrabold text-sm mt-1 text-neutral-800">기숙사 배정 · 시설 이용 안내</h4>
-                        <p class="text-[10px] font-bold text-neutral-400 mt-0.5">자료 수령 후 공개 예정</p>
+                        <h4 class="font-extrabold text-sm mt-1 text-emerald-700 group-hover:text-emerald-800 transition-colors">기숙사 배정 · 시설 이용 안내</h4>
                     </div>
-                    <span class="text-xl font-bold opacity-30 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                    <span class="text-xl font-bold text-emerald-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
                 </button>
 
             </div>
@@ -461,7 +464,7 @@
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none uppercase">
                     디자인팀 온라인 사전주제제안 일정
                 </h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">2026.05.29 ~ 06.22 &middot; 온라인 진행</p>
+                <p class="text-base mt-3 opacity-90 font-semibold">2026.05.29 ~ 06.22 &middot; 온라인 진행</p>
             </div>
             
             <!-- CONTROLS -->
@@ -497,7 +500,7 @@
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">06.01 (월)</div>
                         <div class="md:w-3/4 font-bold text-lg md:px-4">
                             디자인전공 지도교수 소개 및 아이디에이션 일정 안내
-                            <p class="text-sm font-medium opacity-70 mt-1">디자인 브리프 온라인 소개</p>
+                            <p class="text-sm font-medium opacity-70 mt-1 sched-note">디자인 브리프 온라인 소개</p>
                         </div>
                     </div>
                     <!-- Event 3 -->
@@ -525,7 +528,7 @@
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80 text-purple-600">06.22 (월)</div>
                         <div class="md:w-3/4 font-bold text-lg md:px-4">
                             디자인전공 학생팀 온라인 발표 (대상: 공학전공 학생들)
-                            <p class="text-sm font-medium opacity-70 mt-1">이후 공학학생들이 선호하는 디자인팀에 직접 지원, 각 팀 선착순 2명으로 팀원 확정 예정 (투표 예정 기간:06.22-23)</p>
+                            <p class="text-sm font-medium opacity-70 mt-1 sched-note">이후 공학학생들이 선호하는 디자인팀에 직접 지원, 각 팀 선착순 2명으로 팀원 확정 예정 (투표 예정 기간:06.22-23)</p>
                         </div>
                     </div>
                 </div>
@@ -555,7 +558,7 @@
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none uppercase">
                     1차 워크숍 (부산대) 일정
                 </h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">2026.06.24(수) ~ 06.26(금) &middot; 부산대학교 통합기계관 등</p>
+                <p class="text-base mt-3 opacity-90 font-semibold">2026.06.24(수) ~ 06.26(금) &middot; 부산대학교 통합기계관 등</p>
                 <div class="flex flex-wrap items-center gap-2 mt-3">
                     <span class="text-xs font-bold opacity-50">장소 구분:</span>
                     <span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-700">통합기계관</span>
@@ -764,7 +767,7 @@
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none uppercase">
                     2차 워크숍 (중앙대) 일정
                 </h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">2026.07.08(수) ~ 07.10(금) &middot; 중앙대학교 207동 102호 · 메이커스페이스 등</p>
+                <p class="text-base mt-3 opacity-90 font-semibold">2026.07.08(수) ~ 07.10(금) &middot; 중앙대학교 207동 102호 · 메이커스페이스 등</p>
                 <div class="flex flex-wrap items-center gap-2 mt-3">
                     <span class="text-xs font-bold opacity-50">장소 구분:</span>
                     <span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700">207동 102호</span>
@@ -839,7 +842,7 @@
                         <div class="md:w-1/2 font-bold text-lg md:px-4 text-purple-600">
                             빠른 피드백 (스크럼 피드백)
                             <p class="text-sm font-semibold opacity-80 mt-1"><span class="text-purple-500">발표 팀:</span> A · B+H · C</p>
-                            <p class="text-sm font-medium opacity-70 mt-0.5">그 외 팀: 학생활동 — 목업 및 실험</p>
+                            <p class="text-sm font-medium opacity-70 mt-0.5 sched-note">그 외 팀: 학생활동 — 목업 및 실험</p>
                         </div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mr-1">207동 102호</span>발표</span>
@@ -851,7 +854,7 @@
                         <div class="md:w-1/2 font-bold text-lg md:px-4 text-purple-600">
                             빠른 피드백 (스크럼 피드백)
                             <p class="text-sm font-semibold opacity-80 mt-1"><span class="text-purple-500">발표 팀:</span> D · E · F</p>
-                            <p class="text-sm font-medium opacity-70 mt-0.5">그 외 팀: 학생활동 — 목업 및 실험</p>
+                            <p class="text-sm font-medium opacity-70 mt-0.5 sched-note">그 외 팀: 학생활동 — 목업 및 실험</p>
                         </div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mr-1">207동 102호</span>발표</span>
@@ -863,7 +866,7 @@
                         <div class="md:w-1/2 font-bold text-lg md:px-4 text-purple-600">
                             빠른 피드백 (스크럼 피드백)
                             <p class="text-sm font-semibold opacity-80 mt-1"><span class="text-purple-500">발표 팀:</span> G · I · J</p>
-                            <p class="text-sm font-medium opacity-70 mt-0.5">그 외 팀: 학생활동 — 목업 및 실험</p>
+                            <p class="text-sm font-medium opacity-70 mt-0.5 sched-note">그 외 팀: 학생활동 — 목업 및 실험</p>
                         </div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mr-1">207동 102호</span>발표</span>
@@ -908,7 +911,7 @@
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">09:00~12:00</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">팀별활동<p class="text-sm font-medium opacity-80 mt-1">- 구체·상세 설계 진행, 샘플 목업/가제품 출력 및 검토</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">팀별활동<p class="text-sm font-medium opacity-80 mt-1 sched-note">- 구체·상세 설계 진행, 샘플 목업/가제품 출력 및 검토</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mr-1">메이커스페이스</span></span>
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mr-1">207동 102호</span></span>
@@ -921,7 +924,7 @@
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">13:00~15:00</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">팀별활동<p class="text-sm font-medium opacity-80 mt-1">- 구체·상세 설계 진행, 샘플 목업/가제품 출력 및 검토</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">팀별활동<p class="text-sm font-medium opacity-80 mt-1 sched-note">- 구체·상세 설계 진행, 샘플 목업/가제품 출력 및 검토</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mr-1">메이커스페이스</span></span>
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mr-1">207동 102호</span></span>
@@ -932,7 +935,7 @@
                         <div class="md:w-1/2 font-bold text-lg md:px-4 text-purple-600">
                             빠른 피드백 (스크럼 피드백)
                             <p class="text-sm font-semibold opacity-80 mt-1"><span class="text-purple-500">발표 팀:</span> G · I · J</p>
-                            <p class="text-sm font-medium opacity-70 mt-0.5">그 외 팀: 학생활동 — 목업 및 실험</p>
+                            <p class="text-sm font-medium opacity-70 mt-0.5 sched-note">그 외 팀: 학생활동 — 목업 및 실험</p>
                         </div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mr-1">207동 102호</span>발표</span>
@@ -944,7 +947,7 @@
                         <div class="md:w-1/2 font-bold text-lg md:px-4 text-purple-600">
                             빠른 피드백 (스크럼 피드백)
                             <p class="text-sm font-semibold opacity-80 mt-1"><span class="text-purple-500">발표 팀:</span> D · E · F</p>
-                            <p class="text-sm font-medium opacity-70 mt-0.5">그 외 팀: 학생활동 — 목업 및 실험</p>
+                            <p class="text-sm font-medium opacity-70 mt-0.5 sched-note">그 외 팀: 학생활동 — 목업 및 실험</p>
                         </div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mr-1">207동 102호</span>발표</span>
@@ -956,7 +959,7 @@
                         <div class="md:w-1/2 font-bold text-lg md:px-4 text-purple-600">
                             빠른 피드백 (스크럼 피드백)
                             <p class="text-sm font-semibold opacity-80 mt-1"><span class="text-purple-500">발표 팀:</span> A · B+H · C</p>
-                            <p class="text-sm font-medium opacity-70 mt-0.5">그 외 팀: 학생활동 — 목업 및 실험</p>
+                            <p class="text-sm font-medium opacity-70 mt-0.5 sched-note">그 외 팀: 학생활동 — 목업 및 실험</p>
                         </div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mr-1">207동 102호</span>발표</span>
@@ -965,7 +968,7 @@
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">16:30~18:00</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">팀별활동<p class="text-sm font-medium opacity-80 mt-1">- 구체·상세 설계 진행, 샘플 목업/가제품 출력 및 검토</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">팀별활동<p class="text-sm font-medium opacity-80 mt-1 sched-note">- 구체·상세 설계 진행, 샘플 목업/가제품 출력 및 검토</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mr-1">메이커스페이스</span></span>
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mr-1">207동 102호</span></span>
@@ -978,7 +981,7 @@
                     </div>
                     <div class="flex flex-col md:flex-row py-4">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">19:00~20:00</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">팀별활동<p class="text-sm font-medium opacity-80 mt-1">- 구체·상세 설계 진행, 샘플 목업/가제품 출력 및 검토</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">팀별활동<p class="text-sm font-medium opacity-80 mt-1 sched-note">- 구체·상세 설계 진행, 샘플 목업/가제품 출력 및 검토</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right">
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mr-1">메이커스페이스</span></span>
                             <span class="block"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mr-1">207동 102호</span></span>
@@ -1049,7 +1052,7 @@
                     <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">CAU Guide 01</p>
                 </div>
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">중앙대학교 시설 이용 안내</h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">2차 워크숍(중앙대) · 기숙사 · 실습 공간 · 실습 장비 · 팀활동 공간</p>
+                <p class="text-base mt-3 opacity-90 font-semibold">2차 워크숍(중앙대) · 기숙사 · 실습 공간 · 실습 장비 · 팀활동 공간</p>
             </div>
             <button onclick="window.print()" class="no-print bg-black hover:bg-neutral-800 text-white text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-sm shrink-0">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
@@ -1057,7 +1060,7 @@
             </button>
         </header>
 
-        <main class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <main class="text-neutral-900 grid grid-cols-1 lg:grid-cols-2 gap-6">
 
             <!-- 1. 기숙사 & 식사 -->
             <section class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-7 lg:row-span-2">
@@ -1243,12 +1246,12 @@
                     <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">CAU Guide 02</p>
                 </div>
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">중앙대학교 기숙사 배정 공지</h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">2차 워크숍(중앙대) · 309관 기숙사 안내</p>
+                <p class="text-base mt-3 opacity-90 font-semibold">2차 워크숍(중앙대) · 309관 기숙사 안내</p>
             </div>
             <button onclick="navigateTo('cau-facility')" class="no-print inline-flex items-center gap-1.5 text-sm font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-lg px-4 py-2.5 transition-all shrink-0">🏠 시설 이용 안내 &rarr;</button>
         </header>
 
-        <main>
+        <main class="text-neutral-900">
             <div id="cau-dorm-top"></div>
             <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
                 <h2 class="text-xl font-extrabold mb-1">내 방 배정 확인</h2>
@@ -1280,12 +1283,12 @@
                     <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">CAU Guide 03</p>
                 </div>
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">중앙대학교 캠퍼스 맵</h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">2차 워크숍 주요 장소 안내 · 중앙대학교 서울캠퍼스</p>
+                <p class="text-base mt-3 opacity-90 font-semibold">2차 워크숍 주요 장소 안내 · 중앙대학교 서울캠퍼스</p>
             </div>
             <button onclick="navigateTo('cau-facility')" class="no-print inline-flex items-center gap-1.5 text-sm font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-lg px-4 py-2.5 transition-all shrink-0">🏠 시설 이용 안내 &rarr;</button>
         </header>
 
-        <main class="space-y-8">
+        <main class="text-neutral-900 space-y-8">
             <!-- 워크숍 주요 장소 범례 -->
             <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
                 <h2 class="text-xl font-extrabold mb-4">워크숍 주요 장소</h2>
@@ -1340,7 +1343,7 @@
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none uppercase">
                     3차 워크숍 (한기대) 일정
                 </h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">2026.08.19(수) ~ 08.21(금) &middot; 한국기술교육대학교 제1캠퍼스(병천) · 담헌실학관 102호 · 다담팩토리</p>
+                <p class="text-base mt-3 opacity-90 font-semibold">2026.08.19(수) ~ 08.21(금) &middot; 한국기술교육대학교 제1캠퍼스(병천) · 담헌실학관 102호 · 다담팩토리</p>
                 <div class="flex flex-wrap items-center gap-2 mt-3">
                     <span class="text-xs font-bold opacity-50">장소 구분:</span>
                     <span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700">담헌실학관 102호</span>
@@ -1404,17 +1407,17 @@
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">13:00~13:30</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 break-keep">개회 및 오리엔테이션<p class="text-sm font-medium opacity-70 mt-1">담당: 김성준 교수</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 break-keep">개회 및 오리엔테이션<p class="text-sm font-medium opacity-70 mt-1 sched-note">담당: 김성준 교수</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mb-1">담헌실학관 102호</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">13:30~14:00</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">시설 및 공간 투어<p class="text-sm font-medium opacity-70 mt-1 text-neutral-600">담당: 이유립</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">시설 및 공간 투어<p class="text-sm font-medium opacity-70 mt-1 sched-note">담당: 이유립</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mb-1">다담팩토리</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">14:00~14:30</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 break-keep">조별 발표 준비<p class="text-sm font-medium opacity-70 mt-1">담당: 지도교수</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 break-keep">조별 발표 준비<p class="text-sm font-medium opacity-70 mt-1 sched-note">담당: 지도교수</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-cyan-100 text-cyan-700 mb-1">담헌실학관</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
@@ -1424,12 +1427,12 @@
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">16:00~17:30</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-orange-600 break-keep">특별강의<p class="text-sm font-medium opacity-70 mt-1 text-neutral-600">연사: 민태기</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-orange-600 break-keep">특별강의<p class="text-sm font-medium opacity-70 mt-1 sched-note">연사: 민태기</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mb-1">담헌실학관 102호</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">17:30~18:00</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 break-keep">숙소 입실<p class="text-sm font-medium opacity-70 mt-1">담당: 정서요</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 break-keep">숙소 입실<p class="text-sm font-medium opacity-70 mt-1 sched-note">담당: 정서요</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700 mb-1">생활관 203동</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
@@ -1439,7 +1442,7 @@
                     </div>
                     <div class="flex flex-col md:flex-row py-4">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">19:00~21:00</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">조별 설계 과제 실습<p class="text-sm font-medium opacity-70 mt-1 text-neutral-600">담당: 지도교수</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">조별 설계 과제 실습<p class="text-sm font-medium opacity-70 mt-1 sched-note">담당: 지도교수</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mb-1">다담팩토리</span></div>
                     </div>
                 </div>
@@ -1454,7 +1457,7 @@
                 <div class="flex flex-col">
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">09:30~11:30</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">조별 설계 과제 실습<p class="text-sm font-medium opacity-70 mt-1 text-neutral-600">담당: 지도교수</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">조별 설계 과제 실습<p class="text-sm font-medium opacity-70 mt-1 sched-note">담당: 지도교수</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mb-1">다담팩토리</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
@@ -1464,7 +1467,7 @@
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">12:30~14:30</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">조별 설계 과제 실습<p class="text-sm font-medium opacity-70 mt-1 text-neutral-600">담당: 지도교수</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">조별 설계 과제 실습<p class="text-sm font-medium opacity-70 mt-1 sched-note">담당: 지도교수</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mb-1">다담팩토리</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
@@ -1474,7 +1477,7 @@
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">16:00~17:30</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">조별 설계 과제 실습<p class="text-sm font-medium opacity-70 mt-1 text-neutral-600">담당: 지도교수</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">조별 설계 과제 실습<p class="text-sm font-medium opacity-70 mt-1 sched-note">담당: 지도교수</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mb-1">다담팩토리</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
@@ -1484,7 +1487,7 @@
                     </div>
                     <div class="flex flex-col md:flex-row py-4">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">18:30~21:00</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">조별 설계 과제 실습<p class="text-sm font-medium opacity-70 mt-1 text-neutral-600">담당: 지도교수</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">조별 설계 과제 실습<p class="text-sm font-medium opacity-70 mt-1 sched-note">담당: 지도교수</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mb-1">다담팩토리</span></div>
                     </div>
                 </div>
@@ -1499,17 +1502,17 @@
                 <div class="flex flex-col">
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">08:30~09:30</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 break-keep">숙소 퇴실<p class="text-sm font-medium opacity-70 mt-1">담당: 정서요 · 퇴실 시 개인 짐을 모두 챙겨 주세요.</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 break-keep">숙소 퇴실<p class="text-sm font-medium opacity-70 mt-1 sched-note">담당: 정서요 · 퇴실 시 개인 짐을 모두 챙겨 주세요.</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-violet-100 text-violet-700 mb-1">생활관 203동</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">09:30~11:00</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">조별 설계 과제 실습<p class="text-sm font-medium opacity-70 mt-1 text-neutral-600">담당: 지도교수</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-blue-600 break-keep">조별 설계 과제 실습<p class="text-sm font-medium opacity-70 mt-1 sched-note">담당: 지도교수</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mb-1">다담팩토리</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">11:00~12:00</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-orange-600 break-keep">특별강의<p class="text-sm font-medium opacity-70 mt-1 text-neutral-600">연사: Sonia ACHARD</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 text-orange-600 break-keep">특별강의<p class="text-sm font-medium opacity-70 mt-1 sched-note">연사: Sonia ACHARD</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mb-1">담헌실학관 102호</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
@@ -1519,7 +1522,7 @@
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">13:00~13:30</div>
-                        <div class="md:w-1/2 font-bold text-lg md:px-4 break-keep">조별 발표 준비<p class="text-sm font-medium opacity-70 mt-1">담당: 지도교수</p></div>
+                        <div class="md:w-1/2 font-bold text-lg md:px-4 break-keep">조별 발표 준비<p class="text-sm font-medium opacity-70 mt-1 sched-note">담당: 지도교수</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 mb-1">다담팩토리</span></div>
                     </div>
                     <div class="flex flex-col md:flex-row py-4 border-b border-current border-opacity-10">
@@ -1529,7 +1532,7 @@
                     </div>
                     <div class="flex flex-col md:flex-row py-4">
                         <div class="md:w-1/4 font-eng font-bold text-lg opacity-80">15:30~16:00</div>
-                        <div class="md:w-1/2 font-black text-xl md:px-4 break-keep">향후 일정 안내 및 폐회 🏁<p class="text-sm font-medium opacity-70 mt-1">담당: 김석민 · 홍주표 교수</p></div>
+                        <div class="md:w-1/2 font-black text-xl md:px-4 break-keep">향후 일정 안내 및 폐회 🏁<p class="text-sm font-medium opacity-70 mt-1 sched-note">담당: 김석민 · 홍주표 교수</p></div>
                         <div class="md:w-1/4 text-sm font-semibold opacity-60 mt-1 md:mt-0 md:text-right"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 mb-1">담헌실학관 102호</span></div>
                     </div>
                 </div>
@@ -1542,21 +1545,21 @@
                     <span class="text-lg font-bold opacity-70 mb-0.5">워크숍 이후 주요 일정</span>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="rounded-xl border border-neutral-200 bg-neutral-50 p-5">
+                    <div class="rounded-xl border border-neutral-200 bg-neutral-50 p-5 text-neutral-900">
                         <p class="text-[11px] font-black uppercase tracking-widest text-blue-700">Conference</p>
                         <p class="font-extrabold text-lg mt-1 break-keep">대한기계학회 학술대회</p>
                         <p class="text-sm font-bold opacity-70 mt-1">2026.11.11(수) ~ 11.14(토)</p>
                         <p class="text-sm opacity-70 font-semibold">제주국제컨벤션센터 (ICC 제주)</p>
                         <a href="https://ksme.or.kr/Proceedings/2026a/post.asp" target="_blank" rel="noopener" class="no-print inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-800 hover:underline mt-3">주요일정 바로가기 &rarr;</a>
                     </div>
-                    <div class="rounded-xl border border-neutral-200 bg-neutral-50 p-5">
+                    <div class="rounded-xl border border-neutral-200 bg-neutral-50 p-5 text-neutral-900">
                         <p class="text-[11px] font-black uppercase tracking-widest text-emerald-700">Exhibition</p>
                         <p class="font-extrabold text-lg mt-1 break-keep">CO-SHOW</p>
                         <p class="text-sm font-bold opacity-70 mt-1">2026.11.18(수) ~ 11.21(토)</p>
                         <p class="text-sm opacity-70 font-semibold">광주 김대중컨벤션센터</p>
                         <a href="https://www.cossnet.com/coshow/intro" target="_blank" rel="noopener" class="no-print inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-800 hover:underline mt-3">행사 소개 바로가기 &rarr;</a>
                     </div>
-                    <div class="rounded-xl border border-neutral-200 bg-neutral-50 p-5">
+                    <div class="rounded-xl border border-neutral-200 bg-neutral-50 p-5 text-neutral-900">
                         <p class="text-[11px] font-black uppercase tracking-widest text-purple-700">Journal</p>
                         <p class="font-extrabold text-lg mt-1 break-keep">대한기계학회 논문집 「기술과 교육」</p>
                         <p class="text-sm opacity-70 font-semibold mt-1">논문 투고 · 구두발표 연계</p>
@@ -1586,12 +1589,12 @@
                     <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">KUT Guide 01</p>
                 </div>
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">한기대 오시는 길</h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">3차 워크숍 · 한국기술교육대학교 제1캠퍼스(병천)</p>
+                <p class="text-base mt-3 opacity-90 font-semibold">3차 워크숍 · 한국기술교육대학교 제1캠퍼스(병천)</p>
             </div>
             <button onclick="navigateTo('kut-campus-map')" class="no-print inline-flex items-center gap-1.5 text-sm font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg px-4 py-2.5 transition-all shrink-0">🗺️ 캠퍼스 맵 &rarr;</button>
         </header>
 
-        <main class="space-y-8">
+        <main class="text-neutral-900 space-y-8">
             <!-- 캠퍼스 착오 경고 -->
             <div class="rounded-2xl border-2 border-red-500 bg-red-50 px-6 py-5 flex items-start gap-3">
                 <span class="shrink-0 mt-0.5 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center font-black">!</span>
@@ -1675,12 +1678,12 @@
                     <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">KUT Guide 02</p>
                 </div>
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">한기대 캠퍼스 맵</h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">3차 워크숍 주요 장소 안내 · 한국기술교육대학교 제1캠퍼스</p>
+                <p class="text-base mt-3 opacity-90 font-semibold">3차 워크숍 주요 장소 안내 · 한국기술교육대학교 제1캠퍼스</p>
             </div>
             <button onclick="navigateTo('kut-directions')" class="no-print inline-flex items-center gap-1.5 text-sm font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-lg px-4 py-2.5 transition-all shrink-0">🚌 오시는 길 &rarr;</button>
         </header>
 
-        <main class="space-y-8">
+        <main class="text-neutral-900 space-y-8">
             <!-- 워크숍 주요 장소 범례 -->
             <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
                 <h2 class="text-xl font-extrabold mb-4">워크숍 주요 장소</h2>
@@ -1743,11 +1746,11 @@
                     <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">Busan Guide 01</p>
                 </div>
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">서울 ↔ 부산 버스 이동 공지</h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">1차 워크숍(부산대) · 단체 버스 이동 안내</p>
+                <p class="text-base mt-3 opacity-90 font-semibold">1차 워크숍(부산대) · 단체 버스 이동 안내</p>
             </div>
         </header>
 
-        <main class="space-y-8">
+        <main class="text-neutral-900 space-y-8">
             <!-- 가는 편 -->
             <div class="rounded-2xl border-2 border-amber-500 bg-white overflow-hidden">
                 <div class="bg-amber-500 text-white px-6 py-4">
@@ -1826,11 +1829,11 @@
                     <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">Busan Guide 02</p>
                 </div>
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">부산 숙소 배정 공지</h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">1차 워크숍(부산대) · 해운대 숙소 안내</p>
+                <p class="text-base mt-3 opacity-90 font-semibold">1차 워크숍(부산대) · 해운대 숙소 안내</p>
             </div>
         </header>
 
-        <main>
+        <main class="text-neutral-900">
             <div id="accommodation-top"></div>
             <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
                 <h2 class="text-xl font-extrabold mb-1">내 방 배정 확인</h2>
@@ -1872,11 +1875,11 @@
                     <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">Busan Guide 03</p>
                 </div>
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">부산대학교 캠퍼스 맵</h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800">1차 워크숍 주요 장소 안내 · 부산대학교 부산캠퍼스</p>
+                <p class="text-base mt-3 opacity-90 font-semibold">1차 워크숍 주요 장소 안내 · 부산대학교 부산캠퍼스</p>
             </div>
         </header>
 
-        <main class="space-y-8">
+        <main class="text-neutral-900 space-y-8">
             <!-- 워크숍 주요 장소 범례 -->
             <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
                 <h2 class="text-xl font-extrabold mb-4">워크숍 주요 장소</h2>
@@ -1936,7 +1939,7 @@
                 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none uppercase">
                     Design Team Allocation
                 </h1>
-                <p class="text-base mt-3 opacity-90 font-semibold text-neutral-800" id="teams-sub">디자이너 사전주제제안 — 팀 배정 현황</p>
+                <p class="text-base mt-3 opacity-90 font-semibold" id="teams-sub">디자이너 사전주제제안 — 팀 배정 현황</p>
             </div>
             
             <!-- CONTROLS (no-print) -->
@@ -2026,6 +2029,21 @@
         </div>
     </div>
 
+    <!-- Tailwind JIT 세이프리스트: main.js styleLandingTabs() 가 테마 전환 시 동적으로 넣는
+         탭 키컬러 클래스들. 초기 HTML에 한 번 등장해야 CDN JIT이 확실히 생성한다(화면에는 안 보임). -->
+    <div aria-hidden="true" data-tailwind-safelist="landing-tabs" class="hidden
+         border-amber-500 border-emerald-500 border-indigo-500 border-blue-500 border-teal-500 border-sky-500
+         hover:border-amber-300 hover:border-emerald-300 hover:border-indigo-300 hover:border-blue-300 hover:border-teal-300 hover:border-sky-300
+         hover:border-amber-500 hover:border-emerald-500 hover:border-indigo-500 hover:border-blue-500 hover:border-teal-500 hover:border-sky-500
+         text-amber-200 text-emerald-200 text-indigo-200 text-blue-200 text-teal-200 text-sky-200
+         text-amber-300 text-emerald-300 text-indigo-300 text-blue-300 text-teal-300 text-sky-300
+         text-amber-600 text-emerald-600 text-indigo-600 text-blue-600 text-teal-600 text-sky-600
+         text-amber-700 text-emerald-700 text-indigo-700 text-blue-700 text-teal-700 text-sky-700
+         group-hover:text-amber-800 group-hover:text-emerald-800 group-hover:text-indigo-800 group-hover:text-blue-800 group-hover:text-teal-800 group-hover:text-sky-800
+         hover:bg-amber-100 hover:bg-emerald-100 hover:bg-indigo-100 hover:bg-blue-100 hover:bg-teal-100 hover:bg-sky-100
+         group-hover:text-white text-neutral-400 text-neutral-500
+         hover:shadow-black/40 hover:shadow-emerald-950/20 hover:border-emerald-300 border-emerald-500"></div>
+
     <!-- ==================== Firebase (Compat SDK) ==================== -->
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -2050,6 +2068,6 @@
     <!-- 6-2) 중앙대 2차 워크숍 안내 (기숙사 방 배정 — 데이터·검색) -->
     <script src="js/cau-info.js?v=1"></script>
     <!-- 7) 화면 로직 (페이지 전환, 렌더링, 테마, 검색, Firestore 로드) -->
-    <script src="js/main.js?v=36"></script>
+    <script src="js/main.js?v=37"></script>
 </body>
 </html>
