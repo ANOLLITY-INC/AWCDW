@@ -134,6 +134,7 @@ function navigateTo(pageId) {
     const pageKut = document.getElementById('schedule-kut-page');
     const pageKutDirections = document.getElementById('kut-directions-page');
     const pageKutCampusMap = document.getElementById('kut-campus-map-page');
+    const pageKutDorm = document.getElementById('kut-dorm-page');
 
     // Hide all first
     page1.classList.add('hidden');
@@ -161,6 +162,7 @@ function navigateTo(pageId) {
     if (pageKut) pageKut.classList.add('hidden');
     if (pageKutDirections) pageKutDirections.classList.add('hidden');
     if (pageKutCampusMap) pageKutCampusMap.classList.add('hidden');
+    if (pageKutDorm) pageKutDorm.classList.add('hidden');
 
     if (pageId === 'auth') {
         if (pageAuth) { renderAuthPage(); pageAuth.classList.remove('hidden'); }
@@ -232,6 +234,10 @@ function navigateTo(pageId) {
         return;
     } else if (pageId === 'kut-directions') {
         if (pageKutDirections) { pageKutDirections.classList.remove('hidden'); }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    } else if (pageId === 'kut-dorm') {
+        if (pageKutDorm) { renderKutDorm(); pageKutDorm.classList.remove('hidden'); }
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
     } else if (pageId === 'kut-campus-map') {

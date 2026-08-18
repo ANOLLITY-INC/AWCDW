@@ -293,12 +293,12 @@
                     <span class="text-xl font-bold text-sky-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
                 </button>
 
-                <!-- KUT Tab 2: 기숙사 배정 · 시설 이용 안내 (자료 수령 전 — 준비중) -->
-                <button onclick="openPendingModal('3차 워크숍(한기대) 기숙사 배정 · 시설 이용')" class="group border border-neutral-300 bg-white hover:border-emerald-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-kut-2">
-                    <div class="absolute top-0 right-0 bg-amber-400 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">준비중</div>
+                <!-- KUT Tab 2: 한기대 기숙사 배정 공지 -->
+                <button onclick="navigateTo('kut-dorm')" class="group border border-neutral-300 bg-white hover:border-emerald-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-kut-2">
+                    <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">New</div>
                     <div>
                         <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">KUT 02</p>
-                        <h4 class="font-extrabold text-sm mt-1 text-emerald-700 group-hover:text-emerald-800 transition-colors">기숙사 배정 · 시설 이용 안내</h4>
+                        <h4 class="font-extrabold text-sm mt-1 text-emerald-700 group-hover:text-emerald-800 transition-colors">한국기술교육대학교 기숙사 배정</h4>
                     </div>
                     <span class="text-xl font-bold text-emerald-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
                 </button>
@@ -1371,9 +1371,10 @@
         </header>
 
         <!-- 이동/장소 바로가기 -->
-        <div class="no-print grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-            <button onclick="navigateTo('kut-directions')" class="inline-flex items-center justify-between gap-2 text-sm font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-xl px-5 py-3.5 transition-all">🚌 한기대 오시는 길 확인하기 <span>&rarr;</span></button>
-            <button onclick="navigateTo('kut-campus-map')" class="inline-flex items-center justify-between gap-2 text-sm font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl px-5 py-3.5 transition-all">🗺️ 캠퍼스 맵에서 장소 찾기 <span>&rarr;</span></button>
+        <div class="no-print grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+            <button onclick="navigateTo('kut-directions')" class="inline-flex items-center justify-between gap-2 text-sm font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-xl px-5 py-3.5 transition-all">🚌 오시는 길 <span>&rarr;</span></button>
+            <button onclick="navigateTo('kut-dorm')" class="inline-flex items-center justify-between gap-2 text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl px-5 py-3.5 transition-all">🛏️ 내 기숙사 방 확인 <span>&rarr;</span></button>
+            <button onclick="navigateTo('kut-campus-map')" class="inline-flex items-center justify-between gap-2 text-sm font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl px-5 py-3.5 transition-all">🗺️ 캠퍼스 맵 <span>&rarr;</span></button>
         </div>
 
         <!-- 비상연락처 배너 -->
@@ -1589,10 +1590,10 @@
                     <span class="inline-block w-3 h-3 bg-sky-500 rounded-full animate-pulse"></span>
                     <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">KUT Guide 01</p>
                 </div>
-                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">한기대 오시는 길</h1>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">한국기술교육대학교 오시는 길</h1>
                 <p class="text-base mt-3 opacity-90 font-semibold">3차 워크숍 · 한국기술교육대학교 제1캠퍼스(병천)</p>
             </div>
-            <button onclick="navigateTo('kut-campus-map')" class="no-print inline-flex items-center gap-1.5 text-sm font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg px-4 py-2.5 transition-all shrink-0">🗺️ 캠퍼스 맵 &rarr;</button>
+            <div class="no-print flex flex-wrap gap-2 shrink-0"><button onclick="navigateTo('kut-dorm')" class="inline-flex items-center gap-1.5 text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg px-4 py-2.5 transition-all">🛏️ 기숙사 배정 &rarr;</button><button onclick="navigateTo('kut-campus-map')" class="inline-flex items-center gap-1.5 text-sm font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg px-4 py-2.5 transition-all">🗺️ 캠퍼스 맵 &rarr;</button></div>
         </header>
 
         <main class="text-neutral-900 space-y-8">
@@ -1667,6 +1668,43 @@
         </footer>
     </div>
 
+    <!-- ==================== PAGE: KUT DORM (한기대 기숙사 배정) ==================== -->
+    <div id="kut-dorm-page" class="hidden fade-in max-w-5xl mx-auto px-6 py-12 lg:py-20">
+        <header class="border-b-2 border-current pb-8 mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <button onclick="navigateTo('landing')" class="no-print mr-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-black text-sm font-bold px-4 py-2.5 rounded-lg inline-flex items-center gap-1.5 transition-all">
+                        &larr; Back to Home
+                    </button>
+                    <span class="inline-block w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span>
+                    <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">KUT Guide 02</p>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">한국기술교육대학교 기숙사 배정 공지</h1>
+                <p class="text-base mt-3 opacity-90 font-semibold">3차 워크숍(한기대) · 생활관 203동 안내</p>
+            </div>
+            <button onclick="navigateTo('kut-campus-map')" class="no-print inline-flex items-center gap-1.5 text-sm font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg px-4 py-2.5 transition-all shrink-0">🗺️ 캠퍼스 맵 &rarr;</button>
+        </header>
+
+        <main class="text-neutral-900">
+            <div id="kut-dorm-top"></div>
+            <div class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
+                <h2 class="text-xl font-extrabold mb-1">내 방 배정 확인</h2>
+                <p class="text-sm opacity-60 font-semibold mb-4">본인 이름을 검색하면 배정된 호실·팀·룸메이트를 확인할 수 있습니다.</p>
+                <div class="relative max-w-md mb-5">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none opacity-50">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
+                    <input type="text" id="kut-dorm-search" oninput="kutDormSearch(this.value)" placeholder="이름 검색..." class="w-full text-sm pl-9 pr-4 py-2.5 bg-white border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-black">
+                </div>
+                <div id="kut-dorm-result"></div>
+            </div>
+        </main>
+
+        <footer class="mt-16 pt-8 border-t border-neutral-300 text-xs opacity-50">
+            <p>© 2026 Additive Manufacturing Collaborative Design Workshop. COSS&ByunSeoHee. All rights reserved.</p>
+        </footer>
+    </div>
+
     <!-- ==================== PAGE: KUT CAMPUS MAP (한기대 캠퍼스 맵) ==================== -->
     <div id="kut-campus-map-page" class="hidden fade-in max-w-5xl mx-auto px-6 py-12 lg:py-20">
         <header class="border-b-2 border-current pb-8 mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -1678,7 +1716,7 @@
                     <span class="inline-block w-3 h-3 bg-indigo-500 rounded-full animate-pulse"></span>
                     <p class="font-eng tracking-[0.2em] text-xs font-bold uppercase opacity-60">KUT Guide 02</p>
                 </div>
-                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">한기대 캠퍼스 맵</h1>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight leading-none">한국기술교육대학교 캠퍼스 맵</h1>
                 <p class="text-base mt-3 opacity-90 font-semibold">3차 워크숍 주요 장소 안내 · 한국기술교육대학교 제1캠퍼스</p>
             </div>
             <button onclick="navigateTo('kut-directions')" class="no-print inline-flex items-center gap-1.5 text-sm font-bold text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200 rounded-lg px-4 py-2.5 transition-all shrink-0">🚌 오시는 길 &rarr;</button>
@@ -1702,7 +1740,7 @@
                     <div class="rounded-xl border border-violet-200 bg-violet-50 p-4">
                         <span class="inline-block text-[10px] font-black px-2 py-0.5 rounded bg-violet-600 text-white uppercase tracking-wider mb-2">숙소</span>
                         <p class="font-extrabold text-violet-900">생활관 203동 (IH관)</p>
-                        <p class="text-xs opacity-70 font-semibold mt-1">1일차 17:30 입실 · 3일차 08:30~09:30 퇴실 (방 배정은 추후 공지)</p>
+                        <p class="text-xs opacity-70 font-semibold mt-1">1일차 17:30 입실 · 3일차 08:30~09:30 퇴실 · 호실은 「기숙사 배정 공지」에서 확인</p>
                     </div>
                     <div class="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
                         <span class="inline-block text-[10px] font-black px-2 py-0.5 rounded bg-neutral-700 text-white uppercase tracking-wider mb-2">식사</span>
@@ -2072,7 +2110,9 @@
     <script src="js/busan-info.js?v=28"></script>
     <!-- 6-2) 중앙대 2차 워크숍 안내 (기숙사 방 배정 — 데이터·검색) -->
     <script src="js/cau-info.js?v=1"></script>
+    <!-- 6-3) 한기대 3차 워크숍 안내 (기숙사 방 배정 — 데이터·검색) -->
+    <script src="js/kut-info.js?v=1"></script>
     <!-- 7) 화면 로직 (페이지 전환, 렌더링, 테마, 검색, Firestore 로드) -->
-    <script src="js/main.js?v=38"></script>
+    <script src="js/main.js?v=39"></script>
 </body>
 </html>
