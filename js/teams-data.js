@@ -25,7 +25,7 @@
 //   engProfs       : 공학 지도교수                  ┘  → teams.professorsRoster
 const MASTER_ASSIGNMENT = [
     { id: "A", name: "A팀",   code: "Team.A", designers: ["유서연", "김나연"], engineers: ["서민재", "장정우", "이상현"],            designProfs: ["김지헌"], engProfs: ["권순조"] },
-    { id: "B", name: "B+H팀", code: "Team.B", designers: ["황세현", "홍지혁"], engineers: ["함대희", "임창현", "홍창민", "조민우"], designProfs: ["정주영"], engProfs: ["김현준"] },
+    { id: "B", name: "B+H팀", code: "Team.B", designers: ["황세현", "홍지혁"], engineers: ["함대희", "임창현", "홍찬민", "조민우"], designProfs: ["정주영"], engProfs: ["김현준"] },
     { id: "C", name: "C팀",   code: "Team.C", designers: ["박준형", "이우철"], engineers: ["유지연", "강남원", "박준우"],            designProfs: ["김차중"], engProfs: ["김석"] },
     { id: "D", name: "D팀",   code: "Team.D", designers: ["김은채", "이시형"], engineers: ["김산들", "허준우", "조영유"],            designProfs: ["정주영"], engProfs: ["송기영"] },
     { id: "E", name: "E팀",   code: "Team.E", designers: ["조지운", "한영균"], engineers: ["황지민", "노현주", "김태호"],            designProfs: ["한아름"], engProfs: ["김현준", "김석민"] },
