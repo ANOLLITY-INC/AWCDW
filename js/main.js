@@ -163,6 +163,10 @@ function navigateTo(pageId) {
     if (pageKutDirections) pageKutDirections.classList.add('hidden');
     if (pageKutCampusMap) pageKutCampusMap.classList.add('hidden');
     if (pageKutDorm) pageKutDorm.classList.add('hidden');
+    ['ksme-attend-page', 'ksme-stay-page', 'ksme-results-page'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+    });
 
     if (pageId === 'auth') {
         if (pageAuth) { renderAuthPage(); pageAuth.classList.remove('hidden'); }
@@ -238,6 +242,17 @@ function navigateTo(pageId) {
         return;
     } else if (pageId === 'kut-dorm') {
         if (pageKutDorm) { renderKutDorm(); pageKutDorm.classList.remove('hidden'); }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    } else if (pageId === 'ksme-attend' || pageId === 'ksme-stay' || pageId === 'ksme-results') {
+        const el = document.getElementById(pageId + '-page');
+        if (el) {
+            if (typeof ksmeMsg !== 'undefined') ksmeMsg = { attend: '', stay: '' };
+            if (pageId === 'ksme-attend' && typeof renderKsmeAttend === 'function') renderKsmeAttend();
+            if (pageId === 'ksme-stay' && typeof renderKsmeStay === 'function') renderKsmeStay();
+            if (pageId === 'ksme-results' && typeof renderKsmeResults === 'function') renderKsmeResults();
+            el.classList.remove('hidden');
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
     } else if (pageId === 'kut-campus-map') {
@@ -549,6 +564,7 @@ const LANDING_TABS = {
     'tab-busan-1': 'amber', 'tab-busan-2': 'emerald', 'tab-busan-3': 'indigo', 'tab-busan-4': 'blue',
     'tab-cau-1': 'teal', 'tab-cau-2': 'emerald', 'tab-cau-3': 'indigo', 'tab-cau-4': 'blue',
     'tab-kut-1': 'sky', 'tab-kut-2': 'emerald', 'tab-kut-3': 'indigo', 'tab-kut-4': 'blue',
+    'tab-ksme-1': 'indigo', 'tab-ksme-2': 'violet', 'tab-ksme-3': 'rose',
     'tab-1': 'blue', 'tab-2': 'blue', 'tab-3': 'blue', 'tab-4': 'blue'
 };
 const TAB_BASE = "group p-5 rounded-xl flex items-center justify-between text-left transition-all relative overflow-hidden";
@@ -581,12 +597,30 @@ function styleLandingTabs(theme) {
     });
 }
 
+// 로드맵 "이번 차수 진행" 카드 — 날짜(사용자 PC 기준)로 자동 전환.
+//  · ~ 10.31 : 06 최종보고서 제출
+//  · 11.01 ~ 11.14 : 07 대한기계학회 예선 발표(11.13 금)
+//  · 11.15 ~ : 08 최종발표회 CO-SHOW(11.18~11.21)
+const ROADMAP_ACTIVE_FROM = [
+    { from: '2026-11-15', step: '8' },
+    { from: '2026-11-01', step: '7' },
+];
+function activeRoadmapStep(now) {
+    const d = now || new Date();
+    const ymd = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    const hit = ROADMAP_ACTIVE_FROM.find(r => ymd >= r.from);
+    return hit ? hit.step : '6';
+}
+
 // 워크숍 로드맵 카드 8개 — 차수 구분을 위해 카드별 키컬러(`data-color`)를 쓰고,
 // 안내 탭과 같은 규칙(다크 = 어두운 카드 + 선명한 테두리 + 밝은 글씨)으로 테마 전환한다.
 function styleRoadmapCards(theme) {
+    const activeStep = activeRoadmapStep();
     document.querySelectorAll('#schedule-grid > div[data-step]').forEach(card => {
         const c = card.dataset.color || 'blue';
-        const active = card.dataset.step === '5';
+        const active = card.dataset.step === activeStep;
+        const badgeEl = card.querySelector('[data-role="badge"]');
+        if (badgeEl) badgeEl.textContent = active ? '● 이번 차수 진행' : (card.dataset.label || badgeEl.textContent);
         const q = (role) => card.querySelector('[data-role="' + role + '"]');
         const base = "bg-white p-6 rounded-2xl relative transition-all group";
         const set = (role, cls) => { const el = q(role); if (el) el.className = cls; };
@@ -634,6 +668,9 @@ function styleRoadmapCards(theme) {
         }
     });
 }
+
+// 스크립트가 body 끝에서 로드되므로 카드 DOM 은 이미 있음 → 날짜 기준 활성 카드 즉시 반영
+styleRoadmapCards(currentTheme);
 
 // 4. Color Theme Presets
 function changeTheme(theme) {

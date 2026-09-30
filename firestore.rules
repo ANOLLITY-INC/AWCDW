@@ -105,6 +105,27 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // ---------- 07 대한기계학회 수요조사 (참석 여부 · 숙박 일자) ----------
+    //  · 문서 ID = 응답자 uid → 1계정 1응답(수정 가능).
+    //  · 응답: 로그인 + 팀 배정(학생 teamId / 교수 advisingTeamIds)된 본인만. 이름은 프로필과 일치해야 함.
+    //  · 열람: 본인 + 교수 + 관리자(결과 페이지).
+    match /ksmeSurvey/{uid} {
+      function teamAssigned() {
+        return hasProfile() && (
+          (userDoc().get('teamId', null) != null && userDoc().get('teamId', null) != '')
+          || (isProfessor() && userDoc().get('advisingTeamIds', []).size() > 0));
+      }
+      function validAnswer() {
+        return request.resource.data.uid == request.auth.uid
+            && request.resource.data.name == userDoc().name
+            && request.resource.data.get('attend', null) in [null, 'yes', 'no']
+            && request.resource.data.get('stay', null) in [null, 'd12', 'd13', 'any'];
+      }
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin() || isProfessor());
+      allow create, update: if request.auth.uid == uid && teamAssigned() && validAnswer();
+      allow delete: if isAdmin() || (signedIn() && request.auth.uid == uid);
+    }
+
     // ---------- 지원서 (Phase 4) — 선착순 즉시 배정 ----------
     //  · 문서 ID = engineerId(uid) → 1인 1지원 보장.
     //  · read: 로그인 사용자 전체(지원 보드의 팀별 정원/마감·배정 현황 표시를 위해 공개).

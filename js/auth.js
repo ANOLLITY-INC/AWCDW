@@ -209,6 +209,7 @@ function initAuth() {
         }
         authResolved = true;
         renderAuthBar();
+        if (typeof ksmeOnAuthChange === "function") ksmeOnAuthChange(); // 기계학회 수요조사 페이지 재렌더
     });
 }
 
@@ -426,6 +427,7 @@ const DASHBOARD_MENUS = {
         { t: "지원 현황", d: "공학생 지원·배정 관리", ready: true, onclick: "openApplicants()" },
         { t: "팀 배정 현황판", d: "공개 팀 보드 보기", ready: true, onclick: "openProposalBoard()" },
         { t: "차수별 진행 결과", d: "워크숍 진행 결과 발표 보드", ready: true, onclick: "openResultsBoard()" },
+        { t: "기계학회 수요조사 결과", d: "참석·숙박 일자별 인원", ready: true, go: "ksme-results" },
     ],
     professor: [
         { t: "작품 열람", d: "전체 작품 보기", ready: true, onclick: "openWorksGallery()" },
@@ -433,18 +435,22 @@ const DASHBOARD_MENUS = {
         { t: "지원자 명단", d: "공학생 지원 현황", ready: true, onclick: "openApplicants()" },
         { t: "팀 보드", d: "전체 팀 현황", ready: true, onclick: "openProposalBoard()" },
         { t: "차수별 진행 결과", d: "워크숍 진행 결과 발표 보드", ready: true, onclick: "openResultsBoard()" },
+        { t: "기계학회 참석·숙박 조사", d: "참석 여부 · 숙박 일자 응답", ready: true, go: "ksme-attend" },
+        { t: "기계학회 수요조사 결과", d: "참석·숙박 일자별 인원", ready: true, go: "ksme-results" },
     ],
     designer: [
         { t: "작품 업로드", d: "우리 팀 작품 제출", ready: true, onclick: "goMyDesignerUpload()" },
         { t: "피드백 확인", d: "우리 팀 작품·피드백 보기", ready: true, onclick: "goMyTeam()" },
         { t: "팀 보드", d: "전체 팀 현황", ready: true, onclick: "openProposalBoard()" },
         { t: "차수별 진행 결과", d: "워크숍 진행 결과 발표 보드", ready: true, onclick: "openResultsBoard()" },
+        { t: "기계학회 참석·숙박 조사", d: "참석 여부 · 숙박 일자 응답", ready: true, go: "ksme-attend" },
     ],
     engineer: [
         { t: "팀 지원", d: "팀 보드에서 신청", ready: true, onclick: "openProposalBoard()" },
         { t: "지원 현황", d: "내 배정 결과 확인", ready: true, onclick: "openApply()" },
         { t: "작품 둘러보기", d: "공개 작품 보기", ready: true, onclick: "openWorksGallery()" },
         { t: "차수별 진행 결과", d: "워크숍 진행 결과 발표 보드", ready: true, onclick: "openResultsBoard()" },
+        { t: "기계학회 참석·숙박 조사", d: "참석 여부 · 숙박 일자 응답", ready: true, go: "ksme-attend" },
     ],
 };
 

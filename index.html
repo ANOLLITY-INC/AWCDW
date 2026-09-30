@@ -73,6 +73,11 @@
     <div id="apply-page" class="hidden fade-in min-h-screen"></div>
     <div id="applicants-page" class="hidden fade-in min-h-screen"></div>
 
+    <!-- 07 대한기계학회 수요조사 (ksme-survey.js 가 렌더) -->
+    <div id="ksme-attend-page" class="hidden fade-in min-h-screen"></div>
+    <div id="ksme-stay-page" class="hidden fade-in min-h-screen"></div>
+    <div id="ksme-results-page" class="hidden fade-in min-h-screen"></div>
+
     <!-- ==================== PAGE 1: LANDING PAGE ==================== -->
     <div id="landing-page" class="fade-in max-w-7xl mx-auto px-6 py-12 lg:py-20">
         
@@ -111,7 +116,7 @@
                  (HTML 에 적힌 클래스는 라이트 테마 기준 초기값) -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="schedule-grid">
                 <!-- 01 -->
-                <div class="border border-neutral-200 hover:border-violet-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="1" data-color="violet">
+                <div class="border border-neutral-200 hover:border-violet-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="1" data-label="온라인 아이디어" data-color="violet">
                     <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-violet-500 opacity-20">01</span>
                     <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-violet-100 text-violet-700">온라인 아이디어</span>
                     <h4 data-role="title" class="font-extrabold text-base mb-2 text-neutral-900">디자인팀 온라인 사전주제제안</h4>
@@ -119,7 +124,7 @@
                 </div>
 
                 <!-- 02 -->
-                <div class="border border-neutral-200 hover:border-cyan-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="2" data-color="cyan">
+                <div class="border border-neutral-200 hover:border-cyan-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="2" data-label="온라인 사전" data-color="cyan">
                     <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-cyan-500 opacity-20">02</span>
                     <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-cyan-100 text-cyan-700">온라인 사전</span>
                     <h4 data-role="title" id="step2-title" class="font-extrabold text-base mb-2 text-neutral-900">온라인 사전 워크숍 운영</h4>
@@ -127,7 +132,7 @@
                 </div>
 
                 <!-- 03 -->
-                <div class="border border-neutral-200 hover:border-amber-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="3" data-color="amber">
+                <div class="border border-neutral-200 hover:border-amber-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="3" data-label="1차 오프라인" data-color="amber">
                     <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-amber-500 opacity-20">03</span>
                     <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-amber-100 text-amber-700">1차 오프라인</span>
                     <h4 data-role="title" class="font-extrabold text-base mb-1 text-neutral-900">1차 워크숍 (부산대학교)</h4>
@@ -136,7 +141,7 @@
                 </div>
 
                 <!-- 04 -->
-                <div class="border border-neutral-200 hover:border-teal-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="4" data-color="teal">
+                <div class="border border-neutral-200 hover:border-teal-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="4" data-label="2차 오프라인" data-color="teal">
                     <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-teal-500 opacity-20">04</span>
                     <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-teal-100 text-teal-700">2차 오프라인</span>
                     <h4 data-role="title" class="font-extrabold text-base mb-1 text-neutral-900">2차 워크숍 (중앙대학교)</h4>
@@ -145,40 +150,79 @@
                 </div>
 
                 <!-- 05 -->
-                <div class="border-2 border-blue-500 shadow-[0_0_20px_rgba(0,0,0,0.08)] scale-[1.02] bg-white p-6 rounded-2xl relative transition-all group" data-step="5" data-color="blue">
+                <div class="border border-neutral-200 hover:border-blue-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="5" data-label="3차 오프라인" data-color="blue">
                     <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-blue-500 opacity-20">05</span>
-                    <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-blue-100 text-blue-700 animate-pulse">● 이번 차수 진행</span>
+                    <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-blue-100 text-blue-700">3차 오프라인</span>
                     <h4 data-role="title" class="font-extrabold text-base mb-1 text-neutral-900">3차 워크숍 (한국기술교육대)</h4>
                     <p data-role="date" class="text-xs font-semibold mb-2 text-neutral-500">2026.08.19.(수) ~ 08.21.(금)</p>
                     <p data-role="desc" class="text-[11px] leading-relaxed font-medium p-2.5 rounded-lg bg-neutral-50 border border-neutral-100 text-neutral-600">사용자 평가 및 시제품 완성 <span data-role="note" class="font-bold text-[10px] block mt-1 text-blue-600">2박3일 &middot; 숙소 제공</span></p>
                 </div>
 
                 <!-- 06 -->
-                <div class="border border-neutral-200 hover:border-rose-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="6" data-color="rose">
+                <div class="border-2 border-rose-500 shadow-[0_0_20px_rgba(0,0,0,0.08)] scale-[1.02] bg-white p-6 rounded-2xl relative transition-all group" data-step="6" data-label="최종 제출" data-color="rose">
                     <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-rose-500 opacity-20">06</span>
-                    <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-rose-100 text-rose-700">최종 제출</span>
+                    <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-rose-100 text-rose-700 animate-pulse">● 이번 차수 진행</span>
                     <h4 data-role="title" class="font-extrabold text-base mb-2 text-neutral-900">최종보고서 및 전시 기획서 제출</h4>
                     <p data-role="date" class="text-xs font-semibold text-neutral-500">~ 2026.09.</p>
                     <p data-role="sub" class="text-[10px] font-bold mt-2 text-neutral-500">대한기계학회논문집 구두발표 논문 투고, 재료비/전시비용 지원</p>
                 </div>
 
                 <!-- 07 -->
-                <div class="border border-neutral-200 hover:border-indigo-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="7" data-color="indigo">
+                <div class="border border-neutral-200 hover:border-indigo-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="7" data-label="학회 예선" data-color="indigo">
                     <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-indigo-500 opacity-20">07</span>
                     <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-indigo-100 text-indigo-700">학회 예선</span>
                     <h4 data-role="title" class="font-extrabold text-base mb-2 text-neutral-900">대한기계학회 특별세션 예선 발표</h4>
-                    <p data-role="date" class="text-xs font-semibold text-neutral-500">2026.11초 예정</p>
-                    <p data-role="sub" class="text-[10px] font-bold mt-2 text-neutral-500">제주도 (장소 확정 예정)</p>
+                    <p data-role="date" class="text-xs font-semibold text-neutral-500">2026.11.13.(금) 15:20 ~ 17:30</p>
+                    <p data-role="sub" class="text-[10px] font-bold mt-2 text-neutral-500">제주국제컨벤션센터 (ICC 제주)</p>
+                    <button onclick="navigateTo('ksme-attend')" class="no-print mt-3 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-all">참석·숙박 수요조사 &rarr;</button>
                 </div>
 
                 <!-- 08 -->
-                <div class="border border-neutral-200 hover:border-emerald-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="8" data-color="emerald">
+                <div class="border border-neutral-200 hover:border-emerald-500 hover:shadow-md bg-white p-6 rounded-2xl relative transition-all group" data-step="8" data-label="최종 발표" data-color="emerald">
                     <span data-role="num" class="text-3xl font-black font-eng absolute right-4 top-4 transition-opacity text-emerald-500 opacity-20">08</span>
                     <span data-role="badge" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded mb-3 inline-block bg-emerald-100 text-emerald-700">최종 발표</span>
                     <h4 data-role="title" class="font-extrabold text-base mb-2 text-neutral-900">최종발표회 (CO-SHOW)</h4>
                     <p data-role="date" class="text-xs font-semibold text-neutral-500">2026.11.18.(수) ~ 11.21.(토)</p>
                     <p data-role="sub" class="text-[10px] font-bold mt-2 text-neutral-500">광주광역시 김대중컨벤션센터</p>
                 </div>
+            </div>
+        </section>
+
+        <!-- KSME SURVEY TABS (로드맵 07 대한기계학회 수요조사) -->
+        <section class="mt-12 mb-16">
+            <h3 class="text-sm font-extrabold tracking-wider uppercase opacity-50 mb-6">KSME CONFERENCE SURVEY &middot; 07 대한기계학회 참가 수요조사</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+                <!-- KSME Tab 1 -->
+                <button onclick="navigateTo('ksme-attend')" class="group border border-neutral-300 bg-white hover:border-indigo-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-ksme-1">
+                    <div class="absolute top-0 right-0 bg-indigo-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">New</div>
+                    <div>
+                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">KSME 01 · 참석 조사</p>
+                        <h4 class="font-extrabold text-sm mt-1 text-indigo-700 group-hover:text-indigo-800 transition-colors">기계학회 참석 여부 조사</h4>
+                    </div>
+                    <span class="text-xl font-bold text-indigo-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                </button>
+
+                <!-- KSME Tab 2 -->
+                <button onclick="navigateTo('ksme-stay')" class="group border border-neutral-300 bg-white hover:border-violet-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-ksme-2">
+                    <div class="absolute top-0 right-0 bg-violet-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">New</div>
+                    <div>
+                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">KSME 02 · 숙박 조사</p>
+                        <h4 class="font-extrabold text-sm mt-1 text-violet-700 group-hover:text-violet-800 transition-colors">기계학회 숙박 일자 조사</h4>
+                    </div>
+                    <span class="text-xl font-bold text-violet-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                </button>
+
+                <!-- KSME Tab 3 -->
+                <button onclick="navigateTo('ksme-results')" class="group border border-neutral-300 bg-white hover:border-rose-500 p-5 rounded-xl flex items-center justify-between text-left transition-all hover:shadow-md relative overflow-hidden" id="tab-ksme-3">
+                    <div class="absolute top-0 right-0 bg-rose-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">전용</div>
+                    <div>
+                        <p class="text-[10px] font-bold opacity-40 uppercase tracking-widest">KSME 03 · 교수·관리자</p>
+                        <h4 class="font-extrabold text-sm mt-1 text-rose-700 group-hover:text-rose-800 transition-colors">수요조사 결과 확인</h4>
+                    </div>
+                    <span class="text-xl font-bold text-rose-600 opacity-80 group-hover:opacity-100 group-hover:translate-x-1 transition-all">&rarr;</span>
+                </button>
+
             </div>
         </section>
 
@@ -2085,6 +2129,7 @@
          bg-amber-100 bg-blue-100 bg-cyan-100 bg-emerald-100 bg-indigo-100 bg-rose-100 bg-sky-100 bg-teal-100 bg-violet-100
          bg-amber-900 bg-blue-900 bg-cyan-900 bg-emerald-900 bg-indigo-900 bg-rose-900 bg-sky-900 bg-teal-900 bg-violet-900
          hover:bg-amber-100 hover:bg-blue-100 hover:bg-cyan-100 hover:bg-emerald-100 hover:bg-indigo-100 hover:bg-rose-100 hover:bg-sky-100 hover:bg-teal-100 hover:bg-violet-100
+         border-indigo-200 border-violet-200 border-rose-200 text-indigo-900 text-violet-900 text-rose-900 bg-violet-50 bg-rose-50 hover:bg-violet-100 hover:bg-rose-100 border-amber-300 bg-amber-50 accent-indigo-600
          group-hover:text-white text-neutral-300 text-neutral-400 text-neutral-500 text-neutral-600 text-neutral-700 text-neutral-900 bg-neutral-900 border-neutral-800 hover:shadow-black/40 hover:shadow-emerald-950/20 shadow-black/40"></div>
 
     <!-- ==================== Firebase (Compat SDK) ==================== -->
@@ -2099,7 +2144,7 @@
     <!-- 1) 팀 데이터 (로컬 폴백 + 시드 원본 / 추후 Firestore로 완전 이전) -->
     <script src="js/teams-data.js?v=32"></script>
     <!-- 2) 인증 & 역할 (로그인/회원가입/대시보드/페이지 가드) -->
-    <script src="js/auth.js?v=32"></script>
+    <script src="js/auth.js?v=33"></script>
     <!-- 3) 작품 기능 (팀 상세·작품 목록/상세·업로드, Phase 2) -->
     <script src="js/works.js?v=33"></script>
     <!-- 4) 피드백 (작품 상세의 교수 피드백, Phase 3) -->
@@ -2112,7 +2157,8 @@
     <script src="js/cau-info.js?v=1"></script>
     <!-- 6-3) 한기대 3차 워크숍 안내 (기숙사 방 배정 — 데이터·검색) -->
     <script src="js/kut-info.js?v=2"></script>
+    <script src="js/ksme-survey.js?v=1"></script>
     <!-- 7) 화면 로직 (페이지 전환, 렌더링, 테마, 검색, Firestore 로드) -->
-    <script src="js/main.js?v=39"></script>
+    <script src="js/main.js?v=40"></script>
 </body>
 </html>
