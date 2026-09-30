@@ -121,7 +121,7 @@ const _KSME_FOOTER = `
 function _ksmeEventCard() {
     return `
         <div class="rounded-2xl border-2 border-indigo-500 bg-indigo-50 p-6 md:p-8 mb-8">
-            <p class="text-[11px] font-black uppercase tracking-widest text-indigo-700 mb-3">Roadmap 07 · 행사 정보</p>
+            <p class="text-[11px] font-black uppercase tracking-widest text-indigo-700 mb-3">행사 정보</p>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div class="rounded-xl border border-indigo-200 bg-white p-4"><p class="text-[11px] font-black uppercase tracking-widest text-indigo-700">행사</p><p class="text-sm font-black text-indigo-900 mt-1.5 break-keep">${KSME_EVENT.title}</p></div>
                 <div class="rounded-xl border border-indigo-200 bg-white p-4"><p class="text-[11px] font-black uppercase tracking-widest text-indigo-700">일시</p><p class="text-sm font-black text-indigo-900 mt-1.5 break-keep">${KSME_EVENT.when}</p></div>
@@ -226,7 +226,7 @@ async function renderKsmeAttend() {
 
     page.innerHTML = `
         <div class="max-w-5xl mx-auto px-6 py-12 lg:py-20">
-            ${_ksmeHeader("KSME Survey 01", "대한기계학회 참석 여부 조사", "로드맵 07 · 특별세션 예선 발표 참석 인원 파악", "bg-indigo-500")}
+            ${_ksmeHeader("KSME Survey 01", "대한기계학회 참석 여부 조사", "특별세션 예선 발표 참석 인원 파악", "bg-indigo-500")}
             <main class="text-neutral-900">
                 ${_ksmeEventCard()}
                 ${body}
@@ -278,7 +278,7 @@ async function renderKsmeStay() {
 
     page.innerHTML = `
         <div class="max-w-5xl mx-auto px-6 py-12 lg:py-20">
-            ${_ksmeHeader("KSME Survey 02", "기계학회 숙박 희망 일자 조사", "로드맵 07 · 숙박 예정자 필요 일자 수요 파악", "bg-violet-500")}
+            ${_ksmeHeader("KSME Survey 02", "기계학회 숙박 희망 일자 조사", "숙박 예정자 필요 일자 수요 파악", "bg-violet-500")}
             <main class="text-neutral-900">
                 ${_ksmeEventCard()}
                 ${body}
