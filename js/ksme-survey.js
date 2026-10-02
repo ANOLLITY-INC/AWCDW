@@ -24,7 +24,8 @@ const KSME_ATTEND_OPTIONS = [
     { v: "no",  t: "참석하지 않습니다 (불참)", d: "이번 기계학회 예선 발표에는 참석하지 않습니다." },
 ];
 
-// 숙박 희망 일자 선택지 — 모두 1박(하룻밤) 기준. 입실일·퇴실일을 함께 적어 착오 방지.
+// 숙박 희망 일자 선택지 — 입실일·퇴실일을 함께 적어 착오 방지.
+//  nights = 숙박하는 밤, flex = 그중 하룻밤만 배정(무관)
 const KSME_STAY_OPTIONS = [
     { v: "d12", short: "12일(목) 밤 1박",
       t: "11월 12일(목) 밤 1박",
@@ -32,9 +33,12 @@ const KSME_STAY_OPTIONS = [
     { v: "d13", short: "13일(금) 밤 1박",
       t: "11월 13일(금) 밤 1박",
       d: "13일(금) 입실 → 14일(토) 퇴실 · 발표 당일 숙박", nights: ["13"] },
-    { v: "any", short: "둘 중 어느 날이든 무관",
+    { v: "d1213", short: "12~13일 2박 3일",
+      t: "11월 12일(목) ~ 14일(토) 2박 3일",
+      d: "12일(목) 입실 → 14일(토) 퇴실 · 12일 밤과 13일 밤 모두 숙박", nights: ["12", "13"] },
+    { v: "any", short: "1박, 어느 날이든 무관",
       t: "12일(목) 밤 · 13일(금) 밤 중 어느 날이든 무관 (1박)",
-      d: "위 두 날짜 중 배정되는 하룻밤에 숙박 가능합니다.", nights: ["12", "13"] },
+      d: "위 두 날짜 중 배정되는 하룻밤에 숙박 가능합니다.", nights: ["12", "13"], flex: true },
 ];
 
 let ksmeMyDoc = null;        // 내 응답 문서(ksmeSurvey/{uid})
@@ -174,12 +178,12 @@ function ksmeHighlight(input) {
 window.ksmeHighlight = ksmeHighlight;
 
 // 숙박 선택지 옆 날짜 띠: 12(목)·13(금)·14(토) 중 숙박하는 밤을 색칠
-function _ksmeNightStrip(nights) {
+function _ksmeNightStrip(nights, flex) {
     const days = [["12", "12(목)"], ["13", "13(금)"], ["14", "14(토)"]];
     const cells = days.map(([k, lab], i) => {
         const night = i < 2 && nights.indexOf(k) >= 0;
         const nightCell = i < 2
-            ? `<span class="flex-1 h-2 rounded-full ${night ? (nights.length > 1 ? "bg-indigo-300" : "bg-indigo-600") : "bg-neutral-200"}"></span>`
+            ? `<span class="flex-1 h-2 rounded-full ${night ? (flex ? "bg-indigo-300" : "bg-indigo-600") : "bg-neutral-200"}"></span>`
             : "";
         return `<span class="text-[11px] font-bold text-neutral-600 shrink-0">${lab}</span>${nightCell}`;
     }).join("");
@@ -260,12 +264,12 @@ async function renderKsmeStay() {
         body = `
             <form onsubmit="ksmeSubmit(event,'stay')" class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8">
                 <h2 class="text-xl font-extrabold mb-1">숙박이 필요한 날짜를 골라 주세요</h2>
-                <p class="text-sm opacity-60 font-semibold mb-1">숙박이 필요한 분만 응답합니다. 세 선택지 모두 <b>1박(하룻밤)</b> 기준입니다.</p>
+                <p class="text-sm opacity-60 font-semibold mb-1">숙박이 필요한 분만 응답합니다. <b>2박 3일</b>은 4번째 선택지 하나만, 나머지는 <b>1박(하룻밤)</b>입니다.</p>
                 <p class="text-sm opacity-60 font-semibold mb-4">발표일은 <b>11월 13일(금)</b>입니다. 「OO일 밤」은 그날 입실해서 다음 날 아침 퇴실한다는 뜻입니다.</p>
                 ${_ksmeWhoHtml()}
                 ${noStayHint}
                 <div class="grid grid-cols-1 gap-3 mb-5">
-                    ${KSME_STAY_OPTIONS.map(o => _ksmeOptionHtml("ksme-stay", o, cur === o.v, _ksmeNightStrip(o.nights))).join("")}
+                    ${KSME_STAY_OPTIONS.map(o => _ksmeOptionHtml("ksme-stay", o, cur === o.v, _ksmeNightStrip(o.nights, o.flex))).join("")}
                 </div>
                 <div class="flex flex-wrap items-center gap-3">
                     <button type="submit" ${ksmeBusy ? "disabled" : ""} class="bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white text-sm font-bold px-6 py-3 rounded-xl transition-all">${cur ? "응답 수정" : "응답 제출"}</button>
@@ -483,8 +487,10 @@ async function renderKsmeResults(skipLoad) {
     const yes = people.filter(p => p.attend === "yes");
     const no = people.filter(p => p.attend === "no");
     const byStay = v => people.filter(p => p.stay === v);
-    const s12 = byStay("d12"), s13 = byStay("d13"), sAny = byStay("any");
-    const stayTotal = s12.length + s13.length + sAny.length;
+    const stayGroups = KSME_STAY_OPTIONS.map(o => ({ o, list: byStay(o.v) }));
+    const stayTotal = stayGroups.reduce((n, g) => n + g.list.length, 0);
+    const cnt = v => byStay(v).length;
+    const night12 = cnt("d12") + cnt("d1213"), night13 = cnt("d13") + cnt("d1213"), flexN = cnt("any");
     const dupCount = notes.filter(n => n.kind === "dup").length;
 
     const noteHtml = notes.length ? notes.map(n => {
@@ -530,18 +536,17 @@ async function renderKsmeResults(skipLoad) {
         </section>
 
         <section class="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8 mb-6">
-            <h2 class="text-lg font-extrabold mb-4">② 숙박 희망 일자 <span class="text-sm font-semibold text-neutral-500">— 숙박 응답 ${stayTotal}명 · 모두 1박</span></h2>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-                ${_ksmeStatCard("12일(목) 밤 1박", s12.length, "12(목) 입실 → 13(금) 퇴실", "violet")}
-                ${_ksmeStatCard("13일(금) 밤 1박", s13.length, "13(금) 입실 → 14(토) 퇴실", "violet")}
-                ${_ksmeStatCard("어느 날이든 무관", sAny.length, "12일 밤 · 13일 밤 중 배정", "violet")}
+            <h2 class="text-lg font-extrabold mb-4">② 숙박 희망 일자 <span class="text-sm font-semibold text-neutral-500">— 숙박 응답 ${stayTotal}명</span></h2>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+                ${_ksmeStatCard("12일(목) 밤 1박", cnt("d12"), "12(목) 입실 → 13(금) 퇴실", "violet")}
+                ${_ksmeStatCard("13일(금) 밤 1박", cnt("d13"), "13(금) 입실 → 14(토) 퇴실", "violet")}
+                ${_ksmeStatCard("2박 3일", cnt("d1213"), "12(목) 입실 → 14(토) 퇴실", "violet")}
+                ${_ksmeStatCard("1박 · 날짜 무관", cnt("any"), "12일 밤 · 13일 밤 중 배정", "violet")}
             </div>
-            <p class="text-xs font-black uppercase tracking-widest text-violet-700 mb-2">12일(목) 밤 1박</p>
-            ${_ksmeNameChips(s12)}
-            <p class="text-xs font-black uppercase tracking-widest text-violet-700 mb-2 mt-4">13일(금) 밤 1박</p>
-            ${_ksmeNameChips(s13)}
-            <p class="text-xs font-black uppercase tracking-widest text-violet-700 mb-2 mt-4">어느 날이든 무관</p>
-            ${_ksmeNameChips(sAny)}
+            <p class="text-sm font-bold text-neutral-700 bg-violet-50 border border-violet-200 rounded-lg px-4 py-2.5 mb-5 break-keep">밤별 숙박 인원(2박 포함): 12일(목) 밤 <b>${night12}명</b> · 13일(금) 밤 <b>${night13}명</b>${flexN ? ` <span class="text-violet-700">+ 날짜 무관 ${flexN}명 배정 필요</span>` : ""}</p>
+            ${stayGroups.map((g, i) => `
+            <p class="text-xs font-black uppercase tracking-widest text-violet-700 mb-2${i ? " mt-4" : ""}">${_ksmeEsc(g.o.short)}</p>
+            ${_ksmeNameChips(g.list)}`).join("")}
         </section>
 
         ${nonRespHtml}

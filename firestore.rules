@@ -119,7 +119,7 @@ service cloud.firestore {
         return request.resource.data.uid == request.auth.uid
             && request.resource.data.name == userDoc().name
             && request.resource.data.get('attend', null) in [null, 'yes', 'no']
-            && request.resource.data.get('stay', null) in [null, 'd12', 'd13', 'any'];
+            && request.resource.data.get('stay', null) in [null, 'd12', 'd13', 'd1213', 'any'];
       }
       allow read: if signedIn() && (request.auth.uid == uid || isAdmin() || isProfessor());
       allow create, update: if request.auth.uid == uid && teamAssigned() && validAnswer();
